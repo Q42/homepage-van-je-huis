@@ -1,6 +1,6 @@
 export type IngestSource = {
     ingestSourcePath: string;
-    outputName: string;
+    tableName: string;
     columnTypes?: Record<string, ColumnTypes>;
 };
 
@@ -27,4 +27,6 @@ type ColumnTypes =
     | "TINYINT"
     | "BLOB";
 
-export type OutputFormats = "json" | "parquet";
+export type IntermediateOutputFormats = "json" | "parquet";
+
+export type IntermediateTableRef = { fileLocation: string; tableName: string };

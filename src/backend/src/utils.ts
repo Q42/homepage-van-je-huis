@@ -1,14 +1,16 @@
 import fs from "fs";
-import { IngestSource, IngestSources } from "./types";
+import { IngestSource, IngestSources, IntermediateOutputFormats, IntermediateTableRef } from "./types";
+import { PipelineConfig } from "../pipelineConfig";
 
-export function checkIngestSources(sources: IngestSources) {
+export function checkFilePaths(paths: string[]) {
     const missingSources: string[] = [];
 
-    Object.entries(sources).forEach(([key, value]) => {
-        if (!fs.existsSync(value.ingestSourcePath)) {
-            missingSources.push(value.ingestSourcePath);
+    paths.forEach(([path]) => {
+        if (!fs.existsSync(path)) {
+            missingSources.push(path);
         }
     });
+
     if (missingSources.length > 0) {
         throw new Error(`Missing source files: ${missingSources.join(", ")}`);
     }
@@ -18,6 +20,11 @@ export function createDirectory(directoryName: string): void {
     if (!fs.existsSync(directoryName)) {
         return fs.mkdirSync(directoryName);
     }
+}
+
+export function writeObjectToJsonFile(object: any, filePath: string): void {
+    const json = JSON.stringify(object, null, 2);
+    return fs.writeFileSync(filePath, json);
 }
 
 export function getColumnKeysFromSourceDef(source: IngestSource) {
@@ -36,4 +43,24 @@ export async function measureExecutionTime(fn: () => Promise<any>) {
     const endTime = Date.now();
     const executionTime = endTime - startTime;
     console.log(`Execution time: ${executionTime}ms`);
+}
+
+export function getIngestFilePathsFromSources(sources: IngestSources) {
+    const filePaths: string[] = [];
+    Object.entries(sources).forEach(([key, source]) => {
+        filePaths.push(source.ingestSourcePath);
+    });
+    return filePaths;
+}
+
+export function getIntermediateTableRefsFromSource(sources: IngestSources, pipelineConfig: PipelineConfig) {
+    const intermediateDirs: IntermediateTableRef[] = [];
+    Object.entries(sources).forEach(([key, value]) => {
+        value.tableName !== undefined &&
+            intermediateDirs.push({
+                fileLocation: `${pipelineConfig.intermediateOutputDirectory}/${value.tableName}.${pipelineConfig.intermediateOutputFormat}`,
+                tableName: value.tableName
+            });
+    });
+    return intermediateDirs;
 }

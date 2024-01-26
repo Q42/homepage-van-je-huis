@@ -1,5 +1,5 @@
 import { Database } from "duckdb-async";
-import { IngestSource, OutputFormats } from "./types";
+import { IngestSource, IntermediateOutputFormats, IntermediateTableRef } from "./types";
 
 type DuckDBConfig = {
     dbLocation?: string;
@@ -26,21 +26,26 @@ export class DuckDBService {
     }
 
     public async ingestCSV(source: IngestSource) {
+        const ingestArgs = [`'${source.ingestSourcePath}'`, "header=true"];
         if (!this.db) {
             throw dbNotInitializedError;
         }
 
-        let columnDefenitions = "";
-
-        let querystring = `CREATE TABLE ${source.outputName} AS FROM read_csv_auto('${source.ingestSourcePath}', header=true)`;
-
         if (source.columnTypes) {
+            const columnTypesArg = "types=" + JSON.stringify(source.columnTypes);
+            ingestArgs.push(columnTypesArg);
         }
 
+        const querystring = `CREATE TABLE ${source.tableName} AS FROM read_csv_auto(${ingestArgs.join(", ")})`;
         await this.runQuery(querystring);
     }
 
-    public async exportTable(tableName: string, outputFile: string, columns?: string[], outputFormat?: OutputFormats) {
+    public async exportTable(
+        tableName: string,
+        outputFile: string,
+        columns?: string[],
+        outputFormat?: IntermediateOutputFormats
+    ) {
         if (!this.db) {
             throw dbNotInitializedError;
         }
@@ -55,13 +60,48 @@ export class DuckDBService {
         switch (outputFormat) {
             case "parquet":
                 exportSuffix = "(FORMAT PARQUET)";
+                outputFile += ".parquet";
                 break;
             default: // JSON doesn't need an export suffix
                 exportSuffix = "";
+                outputFile += ".json";
         }
 
         const queryToRun = `COPY ${selectStatement} TO '${outputFile}' ${exportSuffix};`;
-        console.log(queryToRun);
+
         return this.runQuery(queryToRun);
+    }
+
+    public async dropTable(tableName: string) {
+        if (!this.db) {
+            throw dbNotInitializedError;
+        }
+
+        return this.runQuery(`DROP TABLE ${tableName}`);
+    }
+
+    public async loadTablesFromIntermediateRefs(intermediateRefs: IntermediateTableRef[]) {
+        if (!this.db) {
+            throw dbNotInitializedError;
+        }
+
+        for (const intermediateRef of intermediateRefs) {
+            let intermediateReader = "";
+
+            switch (intermediateRef.fileLocation.split(".").pop()) {
+                case "json":
+                    intermediateReader = "read_json_auto";
+                    break;
+                case "parquet":
+                    intermediateReader = "read_parquet";
+                    break;
+                default:
+                    throw new Error("Unsupported file format");
+            }
+
+            const querystring = `CREATE TABLE ${intermediateRef.tableName} AS FROM ${intermediateReader}('${intermediateRef.fileLocation}')`;
+            await this.runQuery(querystring);
+            console.log(`Ingested ${intermediateRef.fileLocation}`);
+        }
     }
 }
