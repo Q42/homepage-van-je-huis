@@ -34,9 +34,11 @@ export const ingestSources: IngestSources = {
 export type PipelineConfig = {
     intermediateOutputDirectory: string;
     intermediateOutputFormat: IntermediateOutputFormats;
+    apiOutputDirectory: string;
 };
 
 export const pipelineConfig: PipelineConfig = {
     intermediateOutputDirectory: "./intermediate_output",
-    intermediateOutputFormat: "parquet"
+    intermediateOutputFormat: "parquet",
+    apiOutputDirectory: "./api_generated"
 };

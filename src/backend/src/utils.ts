@@ -5,14 +5,14 @@ import { PipelineConfig } from "../pipelineConfig";
 export function checkFilePaths(paths: string[]) {
     const missingSources: string[] = [];
 
-    paths.forEach(([path]) => {
+    paths.forEach((path) => {
         if (!fs.existsSync(path)) {
             missingSources.push(path);
         }
     });
 
     if (missingSources.length > 0) {
-        throw new Error(`Missing source files: ${missingSources.join(", ")}`);
+        throw new Error(`Missing ingest files: ${missingSources.join(", ")}`);
     }
 }
 
@@ -22,8 +22,8 @@ export function createDirectory(directoryName: string): void {
     }
 }
 
-export function writeObjectToJsonFile(object: any, filePath: string): void {
-    const json = JSON.stringify(object, null, 2);
+export function writeObjectToJsonFile(object: Record<any, any>, filePath: string): void {
+    const json = JSON.stringify(object, null);
     return fs.writeFileSync(filePath, json);
 }
 
@@ -63,4 +63,14 @@ export function getIntermediateTableRefsFromSource(sources: IngestSources, pipel
             });
     });
     return intermediateDirs;
+}
+
+export function generateShortId(): string {
+    const characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    let id = "";
+    for (let i = 0; i < 6; i++) {
+        const randomIndex = Math.floor(Math.random() * characters.length);
+        id += characters[randomIndex];
+    }
+    return id;
 }
