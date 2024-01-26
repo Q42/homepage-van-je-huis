@@ -1,5 +1,5 @@
 import { Database } from "duckdb-async";
-import { FileIngestSource } from "./types";
+import { IngestSource, OutputFormats } from "./types";
 
 type DuckDBConfig = {
     dbLocation?: string;
@@ -21,24 +21,47 @@ export class DuckDBService {
         return await this.db.all(querystring);
     }
 
-    public async loadDB({ dbLocation = ":memory:" }: DuckDBConfig): Promise<void> {
+    public async initDb({ dbLocation = ":memory:" }: DuckDBConfig): Promise<void> {
         this.db = await Database.create(dbLocation);
     }
 
-    public async ingestCSV(source: FileIngestSource) {
+    public async ingestCSV(source: IngestSource) {
         if (!this.db) {
             throw dbNotInitializedError;
         }
-        const querystring = `CREATE TABLE ${source.outputName} AS FROM read_csv_auto('${source.ingestSourcePath}')`;
+
+        let columnDefenitions = "";
+
+        let querystring = `CREATE TABLE ${source.outputName} AS FROM read_csv_auto('${source.ingestSourcePath}', header=true)`;
+
+        if (source.columnTypes) {
+        }
+
         await this.runQuery(querystring);
     }
 
-    public async exportTableToJson(tableName: string, outputFile: string) {
+    public async exportTable(tableName: string, outputFile: string, columns?: string[], outputFormat?: OutputFormats) {
         if (!this.db) {
             throw dbNotInitializedError;
         }
 
-        const queryToRun = `COPY ${tableName} TO '${outputFile}';`;
+        let selectStatement = tableName;
+
+        if (columns && columns.length > 0) {
+            selectStatement = `(SELECT ${columns.join(", ")} FROM ${tableName})`;
+        }
+
+        let exportSuffix = "";
+        switch (outputFormat) {
+            case "parquet":
+                exportSuffix = "(FORMAT PARQUET)";
+                break;
+            default: // JSON doesn't need an export suffix
+                exportSuffix = "";
+        }
+
+        const queryToRun = `COPY ${selectStatement} TO '${outputFile}' ${exportSuffix};`;
+        console.log(queryToRun);
         return this.runQuery(queryToRun);
     }
 }
