@@ -1,0 +1,28 @@
+{
+    "name": "homepagevanjehuis_backend",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "devDependencies": {
+        "@types/node": "^20.11.6",
+        "@typescript-eslint/eslint-plugin": "^6.19.1",
+        "@typescript-eslint/parser": "^6.19.1",
+        "eslint": "^8.56.0",
+        "eslint-config-prettier": "^9.1.0",
+        "prettier": "3.2.4",
+        "ts-node": "^10.9.2",
+        "typescript": "^5.3.3"
+    },
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "dev": "echo \"run 'cli' to start the processing pipeline \" && exit 1",
+        "ingest:files": "npx tsx --tsconfig ./tsconfig.json ingestFiles.ts",
+        "generate": "npx tsx --tsconfig ./tsconfig.json generateAPI.ts"
+    },
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+        "duckdb": "^0.9.2",
+        "duckdb-async": "^0.9.2"
+    }
+}
