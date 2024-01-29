@@ -24,6 +24,6 @@
     "dependencies": {
         "duckdb": "^0.9.2",
         "duckdb-async": "^0.9.2",
-        "fast-xml-parser": "^4.3.3"
+        "rss-parser": "^3.13.0"
     }
 }

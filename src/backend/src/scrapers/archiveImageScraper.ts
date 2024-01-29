@@ -1,15 +1,10 @@
 import { BaseRecord } from "../models/baseRecord";
 import { ImageRecord } from "../models/imageRecord";
 import { Scraper } from "./scraper";
-import { X2jOptions, XMLParser } from "fast-xml-parser";
 
-const xmlParserOptions: X2jOptions = {
-    ignoreAttributes: false,
-    attributeNamePrefix: "@_",
-    allowBooleanAttributes: true
-};
+import Parser from "rss-parser";
 
-const xmlParser = new XMLParser(xmlParserOptions);
+const rssParser = new Parser({ customFields: { item: ["dc_date"] } });
 
 type ArchiveImageApiRecord = {
     link: string;
@@ -17,26 +12,15 @@ type ArchiveImageApiRecord = {
     dc_date: string;
     identifier: string;
     enclosure: {
-        "@_url": string;
+        url: string;
     };
 };
 type ArchiveImageApiResponse = Record<string, any>[];
 
 async function archiveImageApiClient(query: string): Promise<ArchiveImageApiResponse> {
     const apiUrl = "https://archief.amsterdam/api/opensearch/";
-    const res = await fetch(`${apiUrl}?q=${query}`);
-    if (!res.ok) {
-        throw new Error(`Failed to fetch from ${apiUrl}: ${res.status} ${res.statusText}`);
-    }
-    const resText = await res.text();
-    if (!resText) {
-        throw new Error(`Didn't get response contents from ${apiUrl}: ${res.status} ${res.statusText}`);
-    }
-    try {
-        return xmlParser.parse(resText).rss.channel.item as ArchiveImageApiResponse;
-    } catch (e) {
-        return [];
-    }
+    const res = await rssParser.parseURL(`${apiUrl}?q=${query}`);
+    return res.items;
 }
 
 function mapArchiveImages(baseRecord: BaseRecord, data: ArchiveImageApiResponse): ImageRecord[] {
@@ -45,7 +29,8 @@ function mapArchiveImages(baseRecord: BaseRecord, data: ArchiveImageApiResponse)
     return data.map((record) => {
         const newRecord: ImageRecord = {
             ...baseRecord,
-            imgUrl: record.enclosure["@_url"],
+            imgUrl: record.enclosure.url,
+            visitUrl: record.link,
             date: record.dc_date
         };
         return newRecord;
@@ -55,10 +40,3 @@ function mapArchiveImages(baseRecord: BaseRecord, data: ArchiveImageApiResponse)
 const archiveImageScraper = new Scraper(archiveImageApiClient, mapArchiveImages);
 
 export default archiveImageScraper;
-
-async function testStuff() {
-    const stuff = await archiveImageApiClient("prinsengracht+1");
-    console.log(stuff);
-}
-
-testStuff();
