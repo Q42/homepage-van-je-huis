@@ -65,5 +65,5 @@ export const pipelineConfig: PipelineConfig = {
     intermediateOutputFormat: "parquet",
     apiOutputDirectory: "./api_generated",
     scraperGuideFileDirectory: "./crawler_guide_files",
-    batchInsertThreshold: 5
+    batchInsertThreshold: 1000
 };

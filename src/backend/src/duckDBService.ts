@@ -87,12 +87,12 @@ export class DuckDBService {
         return this.runQuery(`DROP TABLE ${tableName}`);
     }
 
-    public async loadParquetIntoTable(tableName: string, parquetFile: string) {
+    public async loadParquetIntoTable(tableName: string, parquetFile: string, tempTable?: boolean) {
         if (!parquetFile.endsWith(".parquet")) {
             throw new Error("Invalid file format. Expected .parquet file.");
         }
 
-        const querystring = `CREATE TABLE ${tableName} AS FROM read_parquet('${parquetFile}')`;
+        const querystring = `CREATE ${tempTable ? "TEMP " : ""}TABLE ${tableName} AS FROM read_parquet('${parquetFile}')`;
         return await this.runQuery(querystring);
     }
 
@@ -104,7 +104,7 @@ export class DuckDBService {
         if (!this.db) {
             throw dbNotInitializedError;
         }
-        let querystring = `CREATE TABLE ${tableName} (`;
+        let querystring = `CREATE ${tempTable ? "TEMP" : ""} TABLE ${tableName} (`;
         Object.entries(columnDefinitions).forEach(([columnName, columnType]) => {
             querystring += `"${columnName}" ${columnType}, `;
         });
@@ -138,6 +138,7 @@ export class DuckDBService {
     }
 
     public async insertIntoTable<T extends BaseApiResponse>(tableName: string, records: T[]) {
+        console.log("beep");
         if (!this.db) {
             throw dbNotInitializedError;
         }
