@@ -1,5 +1,12 @@
 import { Database } from "duckdb-async";
-import { IngestSource, IntermediateOutputFormats, IntermediateTableRef } from "./types";
+import {
+    BaseApiResponse,
+    ColumnDefenitions,
+    CsvIngestSource,
+    IntermediateOutputFormats,
+    IntermediateTableRef
+} from "./types";
+import { parseValueForDbInsert } from "./utils";
 
 type DuckDBConfig = {
     dbLocation?: string;
@@ -25,14 +32,14 @@ export class DuckDBService {
         this.db = await Database.create(dbLocation);
     }
 
-    public async ingestCSV(source: IngestSource) {
+    public async ingestCSV(source: CsvIngestSource) {
         const ingestArgs = [`'${source.ingestSourcePath}'`, "header=true"];
         if (!this.db) {
             throw dbNotInitializedError;
         }
 
-        if (source.columnTypes) {
-            const columnTypesArg = "types=" + JSON.stringify(source.columnTypes);
+        if (source.outputColumns) {
+            const columnTypesArg = "types=" + JSON.stringify(source.outputColumns);
             ingestArgs.push(columnTypesArg);
         }
 
@@ -80,6 +87,31 @@ export class DuckDBService {
         return this.runQuery(`DROP TABLE ${tableName}`);
     }
 
+    public async loadParquetIntoTable(tableName: string, parquetFile: string) {
+        if (!parquetFile.endsWith(".parquet")) {
+            throw new Error("Invalid file format. Expected .parquet file.");
+        }
+
+        const querystring = `CREATE TABLE ${tableName} AS FROM read_parquet('${parquetFile}')`;
+        return await this.runQuery(querystring);
+    }
+
+    public async createTableFromDefinition(
+        tableName: string,
+        columnDefinitions: ColumnDefenitions,
+        tempTable?: boolean
+    ) {
+        if (!this.db) {
+            throw dbNotInitializedError;
+        }
+        let querystring = `CREATE TABLE ${tableName} (`;
+        Object.entries(columnDefinitions).forEach(([columnName, columnType]) => {
+            querystring += `"${columnName}" ${columnType}, `;
+        });
+        querystring = querystring += ");";
+        return await this.runQuery(querystring);
+    }
+
     public async loadTablesFromIntermediateRefs(intermediateRefs: IntermediateTableRef[]) {
         if (!this.db) {
             throw dbNotInitializedError;
@@ -103,5 +135,26 @@ export class DuckDBService {
             await this.runQuery(querystring);
             console.log(`Ingested ${intermediateRef.fileLocation}`);
         }
+    }
+
+    public async insertIntoTable<T extends BaseApiResponse>(tableName: string, records: T[]) {
+        if (!this.db) {
+            throw dbNotInitializedError;
+        }
+        if (records.length === 0) {
+            return;
+        }
+
+        const columnNames = Object.keys(records[0]);
+
+        const valuesArray = records.map((record) => {
+            return `(${Object.values(record)
+                .map((value) => parseValueForDbInsert(value))
+                .join(",")})`;
+        });
+
+        let querystring = `INSERT INTO ${tableName}(${columnNames.join(", ")}) VALUES ${valuesArray.join(", ")} `;
+
+        return await this.runQuery(querystring);
     }
 }

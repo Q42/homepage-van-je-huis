@@ -1,6 +1,7 @@
 import { BaseRecord } from "../models/baseRecord";
 import { ImageRecord } from "../models/imageRecord";
-import { Scraper } from "./scraper";
+import { BaseApiResponse } from "../types";
+import { Crawler } from "./crawler";
 
 import Parser from "rss-parser";
 
@@ -15,9 +16,10 @@ type ArchiveImageApiRecord = {
         url: string;
     };
 };
-type ArchiveImageApiResponse = Record<string, any>[];
+type ArchiveImageApiResponse = BaseApiResponse[];
 
 async function archiveImageApiClient(query: string): Promise<ArchiveImageApiResponse> {
+    const sanitizedQuery = query.replace(" ", "+");
     const apiUrl = "https://archief.amsterdam/api/opensearch/";
     const res = await rssParser.parseURL(`${apiUrl}?q=${query}`);
     return res.items;
@@ -37,6 +39,6 @@ function mapArchiveImages(baseRecord: BaseRecord, data: ArchiveImageApiResponse)
     });
 }
 
-const archiveImageScraper = new Scraper(archiveImageApiClient, mapArchiveImages);
+const archiveImageCrawler = new Crawler<ImageRecord>(archiveImageApiClient, mapArchiveImages);
 
-export default archiveImageScraper;
+export default archiveImageCrawler;

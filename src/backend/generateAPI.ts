@@ -1,4 +1,4 @@
-import { ingestSources, pipelineConfig as pc } from "./pipelineConfig";
+import { csvIngestSources, pipelineConfig as pc } from "./pipelineConfig";
 import { DuckDBService } from "./src/duckDBService";
 import { queries } from "./src/queries";
 import {
@@ -15,7 +15,7 @@ const duckDBService = new DuckDBService();
 async function generateAPI() {
     await duckDBService.initDb({ dbLocation: ":memory:" });
 
-    const intermediateRefs = getIntermediateTableRefsFromSource(ingestSources, pc);
+    const intermediateRefs = getIntermediateTableRefsFromSource(csvIngestSources, pc);
     checkFilePaths(intermediateRefs.map((ref) => ref.fileLocation));
 
     await duckDBService.loadTablesFromIntermediateRefs(intermediateRefs);

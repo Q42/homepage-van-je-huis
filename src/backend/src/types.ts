@@ -1,11 +1,24 @@
-export type IngestSource = {
+import { Crawler } from "./scrapers/crawler";
+
+export type CsvIngestSource = {
     ingestSourcePath: string;
     tableName: string;
-    columnTypes?: Record<string, ColumnTypes>;
+    outputColumns: ColumnDefenitions;
 };
 
-export type IngestSources = {
-    [key: string]: IngestSource;
+export type CsvIngestSources = {
+    [key: string]: CsvIngestSource;
+};
+
+export type CrawlerSource<T> = {
+    crawler: Crawler<T>;
+    tableName: string;
+    guideFile: string;
+    outputColumns: ColumnDefenitions;
+};
+
+export type CrawlerSources = {
+    [key: string]: CrawlerSource<any>;
 };
 
 // there are more types, but these are the main ones
@@ -27,6 +40,10 @@ type ColumnTypes =
     | "TINYINT"
     | "BLOB";
 
+export type ColumnDefenitions = Record<string, ColumnTypes>;
+
 export type IntermediateOutputFormats = "json" | "parquet";
 
 export type IntermediateTableRef = { fileLocation: string; tableName: string };
+
+export type BaseApiResponse = Record<string, any>;

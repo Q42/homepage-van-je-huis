@@ -1,7 +1,7 @@
 import { BaseRecord } from "../models/baseRecord";
 import { ApiClient, ApiParser as ApiMapper } from "./scaperTypes";
 
-export class Scraper<T> {
+export class Crawler<T> {
     protected client: ApiClient;
     protected mapper: ApiMapper<T>;
 
@@ -10,12 +10,12 @@ export class Scraper<T> {
         this.mapper = mapper;
     }
 
-    protected parse(baseRecord: BaseRecord, data: Record<string, any>[]): T[] {
+    protected mapToRecord(baseRecord: BaseRecord, data: Record<string, any>[]): T[] {
         return this.mapper(baseRecord, data);
     }
 
-    public async scrape(baseRecord: BaseRecord, ...args: string[]): Promise<T[]> {
+    public async crawl(baseRecord: BaseRecord, ...args: string[]): Promise<T[]> {
         const data = await this.client(...args);
-        return this.parse(baseRecord, data);
+        return this.mapToRecord(baseRecord, data);
     }
 }

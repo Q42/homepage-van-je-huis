@@ -1,5 +1,11 @@
 import fs from "fs";
-import { IngestSource, IngestSources, IntermediateOutputFormats, IntermediateTableRef } from "./types";
+import {
+    CsvIngestSource,
+    CsvIngestSources,
+    IntermediateOutputFormats,
+    IntermediateTableRef,
+    CrawlerSources
+} from "./types";
 import { PipelineConfig } from "../pipelineConfig";
 
 export function checkFilePaths(paths: string[]) {
@@ -16,6 +22,10 @@ export function checkFilePaths(paths: string[]) {
     }
 }
 
+/**
+ * Creates a directory with the specified name if it doesn't already exist.
+ * @param directoryName - The name of the directory to create.
+ */
 export function createDirectory(directoryName: string): void {
     if (!fs.existsSync(directoryName)) {
         return fs.mkdirSync(directoryName);
@@ -27,16 +37,19 @@ export function writeObjectToJsonFile(object: Record<any, any>, filePath: string
     return fs.writeFileSync(filePath, json);
 }
 
-export function getColumnKeysFromSourceDef(source: IngestSource) {
+export function getColumnKeysFromSourceDef(source: CsvIngestSource) {
     const columnKeys: string[] = [];
-    if (source.columnTypes !== undefined) {
-        Object.keys(source.columnTypes).forEach((key) => {
-            columnKeys.push(`"${key}"`);
-        });
-    }
+    Object.keys(source.outputColumns).forEach((key) => {
+        columnKeys.push(`"${key}"`);
+    });
     return columnKeys;
 }
 
+/**
+ * Runs a given asynchronous function and logs its duration.
+ * @param fn - The function to be measured.
+
+ */
 export async function measureExecutionTime(fn: () => Promise<any>) {
     const startTime = Date.now();
     await fn();
@@ -45,15 +58,15 @@ export async function measureExecutionTime(fn: () => Promise<any>) {
     console.log(`Execution time: ${executionTime}ms`);
 }
 
-export function getIngestFilePathsFromSources(sources: IngestSources) {
+export function getIngestFilePathsFromSources(sources: CsvIngestSources | CrawlerSources) {
     const filePaths: string[] = [];
     Object.entries(sources).forEach(([key, source]) => {
-        filePaths.push(source.ingestSourcePath);
+        filePaths.push(source.ingestSourcePath ?? source.guideFile);
     });
     return filePaths;
 }
 
-export function getIntermediateTableRefsFromSource(sources: IngestSources, pipelineConfig: PipelineConfig) {
+export function getIntermediateTableRefsFromSource(sources: CsvIngestSources, pipelineConfig: PipelineConfig) {
     const intermediateDirs: IntermediateTableRef[] = [];
     Object.entries(sources).forEach(([key, value]) => {
         value.tableName !== undefined &&
@@ -73,4 +86,14 @@ export function generateShortId(): string {
         id += characters[randomIndex];
     }
     return id;
+}
+
+export function parseValueForDbInsert(value: any): string {
+    if (!value) {
+        return "NULL";
+    }
+    if (typeof value === "string") {
+        return `'${value}'`;
+    }
+    return value.toString();
 }
