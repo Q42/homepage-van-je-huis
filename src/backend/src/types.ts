@@ -1,4 +1,5 @@
 import { AbstractCrawler } from "./scrapers/abstractCrawler";
+import { ImageArchiveCrawler } from "./scrapers/archiveImageCrawler";
 
 export type CsvIngestSource = {
     ingestSourcePath: string;

@@ -7,6 +7,7 @@ import {
     IntermediateTableRef
 } from "./types";
 import { parseValueForDbInsert } from "./utils";
+import { devMode } from "../pipelineConfig";
 
 type DuckDBConfig = {
     dbLocation?: string;
@@ -25,6 +26,11 @@ export class DuckDBService {
         if (!this.db) {
             throw dbNotInitializedError;
         }
+
+        if (devMode && querystring.toLowerCase().includes("select")) {
+            querystring += " LIMIT 10";
+        }
+
         return await this.db.all(querystring);
     }
 
@@ -138,7 +144,6 @@ export class DuckDBService {
     }
 
     public async insertIntoTable<T extends BaseApiResponse>(tableName: string, records: T[]) {
-        console.log("beep");
         if (!this.db) {
             throw dbNotInitializedError;
         }

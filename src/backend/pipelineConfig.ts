@@ -2,6 +2,9 @@ import { ImageArchiveCrawler } from "./src/scrapers/archiveImageCrawler";
 
 import { CrawlerConfigs, CsvIngestSources, IntermediateOutputFormats } from "./src/types";
 
+// devMode limits all select queries to a max of 10 rows
+export const devMode = true;
+
 export const csvIngestSources: CsvIngestSources = {
     adressen: {
         ingestSourcePath: "./data_input/BAG_verblijfsobject_Actueel.csv",

@@ -40,7 +40,9 @@ export class ImageArchiveCrawler extends AbstractCrawler<ImageRecord, RowData> {
     }
 
     protected mapArchiveImages(baseRecord: BaseRecord, data: ArchiveImageApiResponse): ImageRecord[] {
-        data as ArchiveImageApiRecord[];
+        if (!Array.isArray(data)) {
+            throw new Error("Data is not an array");
+        }
 
         return data.map((record) => {
             const newRecord: ImageRecord = {
@@ -57,7 +59,7 @@ export class ImageArchiveCrawler extends AbstractCrawler<ImageRecord, RowData> {
         await this.duckDbService.loadParquetIntoTable(this.tempTableName, this.crawlerConfig.guideFile, true);
 
         return await this.duckDbService.runQuery(
-            `SELECT "identificatie", "huisnummerHoofdadres", "huisletterHoofdadres", "huisnummertoevoegingHoofdadres", "ligtAan:BAG.ORE.naamHoofdadres" FROM ${this.tempTableName} LIMIT 10`
+            `SELECT "identificatie", "huisnummerHoofdadres", "huisletterHoofdadres", "huisnummertoevoegingHoofdadres", "ligtAan:BAG.ORE.naamHoofdadres" FROM ${this.tempTableName}`
         );
     }
 

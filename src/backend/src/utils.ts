@@ -50,6 +50,7 @@ export async function measureExecutionTime(fn: () => Promise<any>) {
     const endTime = Date.now();
     const executionTime = endTime - startTime;
     console.log(`Execution time: ${executionTime}ms`);
+    return;
 }
 
 export function getIngestFilePathsFromSources(sources: CsvIngestSources | CrawlerConfigs) {
