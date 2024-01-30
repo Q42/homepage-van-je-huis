@@ -23,6 +23,8 @@
     "license": "ISC",
     "dependencies": {
         "duckdb": "^0.9.2",
-        "duckdb-async": "^0.9.2"
+        "duckdb-async": "^0.9.2",
+        "p-retry": "^6.2.0",
+        "rss-parser": "^3.13.0"
     }
 }

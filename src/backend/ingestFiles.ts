@@ -6,7 +6,7 @@ import {
     measureExecutionTime
 } from "./src/utils";
 import { DuckDBService } from "./src/duckDBService";
-import { ingestSources, pipelineConfig as pc } from "./pipelineConfig";
+import { csvIngestSources, pipelineConfig as pc } from "./pipelineConfig";
 
 const duckDBService = new DuckDBService();
 
@@ -14,26 +14,26 @@ async function normalizeFileSources() {
     console.log("starting");
     // system initialization
 
-    checkFilePaths(getIngestFilePathsFromSources(ingestSources));
+    checkFilePaths(getIngestFilePathsFromSources(csvIngestSources));
     await duckDBService.initDb({ dbLocation: ":memory:" });
     createDirectory(pc.intermediateOutputDirectory);
 
     // create intermediary table files
-    await duckDBService.ingestCSV(ingestSources.adressen);
-    await duckDBService.exportTable(
-        ingestSources.adressen.tableName,
-        `${pc.intermediateOutputDirectory}/${ingestSources.adressen.tableName}`,
-        getColumnKeysFromSourceDef(ingestSources.adressen),
+    await duckDBService.ingestCSV(csvIngestSources.adressen);
+    await duckDBService.exportFiltered(
+        csvIngestSources.adressen.tableName,
+        `${pc.intermediateOutputDirectory}/${csvIngestSources.adressen.tableName}`,
+        getColumnKeysFromSourceDef(csvIngestSources.adressen),
         pc.intermediateOutputFormat
     );
 
-    await duckDBService.dropTable(ingestSources.adressen.tableName);
+    await duckDBService.dropTable(csvIngestSources.adressen.tableName);
 
-    await duckDBService.ingestCSV(ingestSources.straatOmschrijving);
-    await duckDBService.exportTable(
-        ingestSources.straatOmschrijving.tableName,
-        `${pc.intermediateOutputDirectory}/${ingestSources.straatOmschrijving.tableName}`,
-        getColumnKeysFromSourceDef(ingestSources.straatOmschrijving),
+    await duckDBService.ingestCSV(csvIngestSources.straatOmschrijving);
+    await duckDBService.exportFiltered(
+        csvIngestSources.straatOmschrijving.tableName,
+        `${pc.intermediateOutputDirectory}/${csvIngestSources.straatOmschrijving.tableName}`,
+        getColumnKeysFromSourceDef(csvIngestSources.straatOmschrijving),
         pc.intermediateOutputFormat
     );
 }

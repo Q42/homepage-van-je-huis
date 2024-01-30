@@ -1,11 +1,28 @@
-export type IngestSource = {
+import { AbstractCrawler } from "./scrapers/abstractCrawler";
+import { Options as PRetryOptions } from "p-retry";
+
+export type CsvIngestSource = {
     ingestSourcePath: string;
     tableName: string;
-    columnTypes?: Record<string, ColumnTypes>;
+    outputColumns: ColumnDefenitions;
 };
 
-export type IngestSources = {
-    [key: string]: IngestSource;
+export type CsvIngestSources = {
+    [key: string]: CsvIngestSource;
+};
+
+type AnyCrawler = new (crawlerConfig: CrawlerConfig, ...args: any[]) => AbstractCrawler<any, any>;
+
+export type CrawlerConfig = {
+    crawler: AnyCrawler;
+    outputTableName: string;
+    guideFile: string;
+    outputColumns: ColumnDefenitions;
+    retryConfig: PRetryOptions;
+};
+
+export type CrawlerConfigs = {
+    [key: string]: CrawlerConfig;
 };
 
 // there are more types, but these are the main ones
@@ -27,6 +44,10 @@ type ColumnTypes =
     | "TINYINT"
     | "BLOB";
 
+export type ColumnDefenitions = Record<string, ColumnTypes>;
+
 export type IntermediateOutputFormats = "json" | "parquet";
 
 export type IntermediateTableRef = { fileLocation: string; tableName: string };
+
+export type BaseApiResponse = Record<string, any>;
