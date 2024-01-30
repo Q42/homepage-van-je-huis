@@ -1,4 +1,4 @@
-import { Crawler } from "./scrapers/crawler";
+import { AbstractCrawler } from "./scrapers/abstractCrawler";
 
 export type CsvIngestSource = {
     ingestSourcePath: string;
@@ -10,15 +10,17 @@ export type CsvIngestSources = {
     [key: string]: CsvIngestSource;
 };
 
-export type CrawlerSource<T> = {
-    crawler: Crawler<T>;
-    tableName: string;
+type AnyCrawler = new (crawlerConfig: CrawlerConfig, ...args: any[]) => AbstractCrawler<any, any>;
+
+export type CrawlerConfig = {
+    crawler: AnyCrawler;
+    outputTableName: string;
     guideFile: string;
     outputColumns: ColumnDefenitions;
 };
 
-export type CrawlerSources = {
-    [key: string]: CrawlerSource<any>;
+export type CrawlerConfigs = {
+    [key: string]: CrawlerConfig;
 };
 
 // there are more types, but these are the main ones

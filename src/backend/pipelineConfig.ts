@@ -1,6 +1,6 @@
-import { ImageRecord } from "./src/models/imageRecord";
-import archiveImageCrawler from "./src/scrapers/archiveImageCrawler";
-import { CrawlerSource, CrawlerSources, CsvIngestSources, IntermediateOutputFormats } from "./src/types";
+import { ImageArchiveCrawler } from "./src/scrapers/archiveImageCrawler";
+
+import { CrawlerConfigs, CsvIngestSources, IntermediateOutputFormats } from "./src/types";
 
 export const csvIngestSources: CsvIngestSources = {
     adressen: {
@@ -33,21 +33,19 @@ export const csvIngestSources: CsvIngestSources = {
     }
 };
 
-const imageArchiveCrawler: CrawlerSource<ImageRecord> = {
-    crawler: archiveImageCrawler,
-    tableName: "afbeeldingen",
-    guideFile: "./intermediate_output/adressen.parquet",
-    outputColumns: {
-        id: "VARCHAR",
-        idTo: "VARCHAR",
-        imgUrl: "VARCHAR",
-        visitUrl: "VARCHAR",
-        date: "VARCHAR"
+export const crawlerConfigs: CrawlerConfigs = {
+    imageArchive: {
+        crawler: ImageArchiveCrawler,
+        outputTableName: "afbeeldingen",
+        guideFile: "./intermediate_output/adressen.parquet",
+        outputColumns: {
+            id: "VARCHAR",
+            idTo: "VARCHAR",
+            imgUrl: "VARCHAR",
+            visitUrl: "VARCHAR",
+            date: "VARCHAR"
+        }
     }
-};
-
-export const crawlerSources: CrawlerSources = {
-    imageArchive: imageArchiveCrawler
 };
 
 export type PipelineConfig = {

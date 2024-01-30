@@ -1,11 +1,5 @@
 import fs from "fs";
-import {
-    CsvIngestSource,
-    CsvIngestSources,
-    IntermediateOutputFormats,
-    IntermediateTableRef,
-    CrawlerSources
-} from "./types";
+import { CsvIngestSource, CsvIngestSources, IntermediateTableRef, CrawlerConfigs } from "./types";
 import { PipelineConfig } from "../pipelineConfig";
 
 export function checkFilePaths(paths: string[]) {
@@ -58,7 +52,7 @@ export async function measureExecutionTime(fn: () => Promise<any>) {
     console.log(`Execution time: ${executionTime}ms`);
 }
 
-export function getIngestFilePathsFromSources(sources: CsvIngestSources | CrawlerSources) {
+export function getIngestFilePathsFromSources(sources: CsvIngestSources | CrawlerConfigs) {
     const filePaths: string[] = [];
     Object.entries(sources).forEach(([key, source]) => {
         filePaths.push(source.ingestSourcePath ?? source.guideFile);
