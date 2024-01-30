@@ -1,29 +1,52 @@
-import { checkFilePaths, createDirectory, getIngestFilePathsFromSources, measureExecutionTime } from "./src/utils";
+import {
+    checkFilePaths,
+    createDirectory,
+    generateSessionName,
+    getIngestFilePathsFromSources,
+    measureExecutionTime,
+    writeObjectToJsonFile
+} from "./src/utils";
 import { crawlerConfigs as cc, pipelineConfig as pc } from "./pipelineConfig";
 import { DuckDBService } from "./src/duckDBService";
 import { AbstractCrawler } from "./src/scrapers/abstractCrawler";
 import { ImageArchiveCrawler } from "./src/scrapers/archiveImageCrawler";
+import pRetry from "p-retry";
+import { appendObjectToFile } from "./src/failureLog";
 
 const duckDBService = new DuckDBService();
 
+async function manageDbProcess() {
+    try {
+        await runCrawlers();
+    } finally {
+        await duckDBService.teardown();
+    }
+}
+
 async function runCrawlers() {
     console.log("starting");
+    const sessionName = generateSessionName("ingest-run");
     // system initialization
     checkFilePaths(getIngestFilePathsFromSources(cc));
+    createDirectory(pc.crawlerOutputDirectory);
 
-    await duckDBService.initDb({ dbLocation: ":memory:" });
+    await duckDBService.initDb({ dbLocation: `${pc.crawlerOutputDirectory}/${sessionName}.duckdb` });
 
     const instantiatedCrawlers = {
         imageArchive: new cc.imageArchive.crawler(cc.imageArchive, duckDBService) as ImageArchiveCrawler
     };
 
-    createDirectory(pc.scraperOutputDirectory);
-
-    await runCrawler(instantiatedCrawlers.imageArchive, duckDBService);
+    await runCrawler(instantiatedCrawlers.imageArchive, duckDBService, sessionName);
 }
 
-async function runCrawler(instantiatedCrawler: AbstractCrawler<any, any>, dbService: DuckDBService) {
+async function runCrawler(
+    instantiatedCrawler: AbstractCrawler<any, any>,
+    dbService: DuckDBService,
+    sessionName: string
+) {
     const insertBatch = [];
+
+    let consecutiveFailures = 0;
 
     const guideData = await instantiatedCrawler.loadGuideData();
 
@@ -33,15 +56,36 @@ async function runCrawler(instantiatedCrawler: AbstractCrawler<any, any>, dbServ
     );
 
     for (const row of guideData) {
-        const crawlResult = await instantiatedCrawler.crawl(row);
+        const crawlResult: any[] = [];
+
+        try {
+            const intermediateResult = await pRetry(
+                async () => await instantiatedCrawler.crawl(row),
+                instantiatedCrawler.crawlerConfig.retryConfig
+            );
+            crawlResult.push(...intermediateResult);
+            consecutiveFailures = 0;
+        } catch (e) {
+            consecutiveFailures++;
+            appendObjectToFile(
+                row,
+                `${pc.crawlerOutputDirectory}/${sessionName}_${instantiatedCrawler.crawlerConfig.outputTableName}-failed.json`
+            );
+
+            console.log(e);
+            console.log("error crawling row:", row);
+        }
 
         if (crawlResult.length > 0) {
             insertBatch.push(...crawlResult);
         }
 
-        if (insertBatch.length >= pc.batchInsertThreshold) {
+        if (insertBatch.length >= pc.batchInsertMinThreshold) {
             await dbService.insertIntoTable(instantiatedCrawler.crawlerConfig.outputTableName, insertBatch);
             insertBatch.length = 0;
+        }
+        if (consecutiveFailures >= pc.maxConsecutiveCrawlFailures) {
+            throw new Error("max consecutive failures reached, aborting crawl");
         }
     }
     if (insertBatch.length > 0) {
@@ -49,10 +93,12 @@ async function runCrawler(instantiatedCrawler: AbstractCrawler<any, any>, dbServ
         insertBatch.length = 0;
     }
     await instantiatedCrawler.teardown();
-
-    // do data export stuff here
-
-    console.log(await duckDBService.runQuery(`SELECT * FROM ${instantiatedCrawler.crawlerConfig.outputTableName}`));
+    dbService.exportTable(
+        instantiatedCrawler.crawlerConfig.outputTableName,
+        `${pc.crawlerOutputDirectory}/${instantiatedCrawler.crawlerConfig.outputTableName}_${sessionName}`,
+        undefined,
+        "parquet"
+    );
 }
 
-measureExecutionTime(runCrawlers);
+measureExecutionTime(manageDbProcess);

@@ -1,5 +1,5 @@
 import { AbstractCrawler } from "./scrapers/abstractCrawler";
-import { ImageArchiveCrawler } from "./scrapers/archiveImageCrawler";
+import { Options as PRetryOptions } from "p-retry";
 
 export type CsvIngestSource = {
     ingestSourcePath: string;
@@ -18,6 +18,7 @@ export type CrawlerConfig = {
     outputTableName: string;
     guideFile: string;
     outputColumns: ColumnDefenitions;
+    retryConfig: PRetryOptions;
 };
 
 export type CrawlerConfigs = {

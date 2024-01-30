@@ -21,21 +21,24 @@ export class DuckDBService {
     constructor() {
         this.db = undefined;
     }
+    public async initDb({ dbLocation = ":memory:" }: DuckDBConfig): Promise<void> {
+        this.db = await Database.create(dbLocation);
+    }
+
+    public async teardown(): Promise<void> {
+        return await this.db?.close();
+    }
 
     public async runQuery(querystring: string) {
         if (!this.db) {
             throw dbNotInitializedError;
         }
 
-        if (devMode && querystring.toLowerCase().includes("select")) {
-            querystring += " LIMIT 10";
+        if (devMode.enabled && querystring.toLowerCase().includes("select")) {
+            querystring += ` LIMIT ${devMode.limit}`;
         }
 
         return await this.db.all(querystring);
-    }
-
-    public async initDb({ dbLocation = ":memory:" }: DuckDBConfig): Promise<void> {
-        this.db = await Database.create(dbLocation);
     }
 
     public async ingestCSV(source: CsvIngestSource) {

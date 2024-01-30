@@ -20,7 +20,7 @@ async function normalizeFileSources() {
 
     // create intermediary table files
     await duckDBService.ingestCSV(csvIngestSources.adressen);
-    await duckDBService.exportTable(
+    await duckDBService.exportFiltered(
         csvIngestSources.adressen.tableName,
         `${pc.intermediateOutputDirectory}/${csvIngestSources.adressen.tableName}`,
         getColumnKeysFromSourceDef(csvIngestSources.adressen),
@@ -30,7 +30,7 @@ async function normalizeFileSources() {
     await duckDBService.dropTable(csvIngestSources.adressen.tableName);
 
     await duckDBService.ingestCSV(csvIngestSources.straatOmschrijving);
-    await duckDBService.exportTable(
+    await duckDBService.exportFiltered(
         csvIngestSources.straatOmschrijving.tableName,
         `${pc.intermediateOutputDirectory}/${csvIngestSources.straatOmschrijving.tableName}`,
         getColumnKeysFromSourceDef(csvIngestSources.straatOmschrijving),

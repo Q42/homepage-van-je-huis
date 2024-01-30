@@ -92,3 +92,10 @@ export function parseValueForDbInsert(value: any): string {
     }
     return value.toString();
 }
+
+export function generateSessionName(start?: string): string {
+    const date = new Date();
+    const dateString = date.toISOString().replace(/\.\d+Z/, "");
+
+    return start ? start + "-" + dateString : dateString;
+}

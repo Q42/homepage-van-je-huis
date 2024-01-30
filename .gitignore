@@ -5,3 +5,5 @@ src/backend/intermediate_output/
 src/backend/api_generated/
 src/backend/crawler_output/
 src/backend//crawler_guide_files/
+**/*.parquet
+**/*.duckdb

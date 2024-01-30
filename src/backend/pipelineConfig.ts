@@ -1,9 +1,10 @@
 import { ImageArchiveCrawler } from "./src/scrapers/archiveImageCrawler";
+import pRetry, { AbortError, Options as PRetryOptions } from "p-retry";
 
 import { CrawlerConfigs, CsvIngestSources, IntermediateOutputFormats } from "./src/types";
 
-// devMode limits all select queries to a max of 10 rows
-export const devMode = true;
+// devMode limits all select queries to a specified max number of rows
+export const devMode = { enabled: true, limit: 10 };
 
 export const csvIngestSources: CsvIngestSources = {
     adressen: {
@@ -36,10 +37,17 @@ export const csvIngestSources: CsvIngestSources = {
     }
 };
 
+export const defaultCrawlerRetryConfig: PRetryOptions = {
+    retries: 3,
+    minTimeout: 500,
+    maxTimeout: 2000,
+    randomize: true
+};
+
 export const crawlerConfigs: CrawlerConfigs = {
     imageArchive: {
         crawler: ImageArchiveCrawler,
-        outputTableName: "afbeeldingen",
+        outputTableName: "archief_afbeeldingen",
         guideFile: "./intermediate_output/adressen.parquet",
         outputColumns: {
             id: "VARCHAR",
@@ -47,24 +55,27 @@ export const crawlerConfigs: CrawlerConfigs = {
             imgUrl: "VARCHAR",
             visitUrl: "VARCHAR",
             date: "VARCHAR"
-        }
+        },
+        retryConfig: defaultCrawlerRetryConfig
     }
 };
 
 export type PipelineConfig = {
     intermediateOutputDirectory: string;
     scraperGuideFileDirectory: string;
-    scraperOutputDirectory: string;
+    crawlerOutputDirectory: string;
     intermediateOutputFormat: IntermediateOutputFormats;
     apiOutputDirectory: string;
-    batchInsertThreshold: number;
+    batchInsertMinThreshold: number;
+    maxConsecutiveCrawlFailures: number;
 };
 
 export const pipelineConfig: PipelineConfig = {
     intermediateOutputDirectory: "./intermediate_output",
-    scraperOutputDirectory: "./crawler_output",
+    crawlerOutputDirectory: "./crawler_output",
     intermediateOutputFormat: "parquet",
     apiOutputDirectory: "./api_generated",
     scraperGuideFileDirectory: "./crawler_guide_files",
-    batchInsertThreshold: 1000
+    batchInsertMinThreshold: 1000,
+    maxConsecutiveCrawlFailures: 25
 };

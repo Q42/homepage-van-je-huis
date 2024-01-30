@@ -6,16 +6,8 @@ import { AbstractCrawler } from "./abstractCrawler";
 
 import Parser from "rss-parser";
 import { DuckDBService } from "../duckDBService";
+import pRetry, { AbortError } from "p-retry";
 
-type ArchiveImageApiRecord = {
-    link: string;
-    dc_title: string;
-    dc_date: string;
-    identifier: string;
-    enclosure: {
-        url: string;
-    };
-};
 type ArchiveImageApiResponse = BaseApiResponse[];
 
 export class ImageArchiveCrawler extends AbstractCrawler<ImageRecord, RowData> {
@@ -47,9 +39,9 @@ export class ImageArchiveCrawler extends AbstractCrawler<ImageRecord, RowData> {
         return data.map((record) => {
             const newRecord: ImageRecord = {
                 ...baseRecord,
-                imgUrl: record.enclosure.url,
-                visitUrl: record.link,
-                date: record.dc_date
+                imgUrl: record?.enclosure?.url,
+                visitUrl: record?.link,
+                date: record?.dc_date
             };
             return newRecord;
         });
@@ -64,6 +56,7 @@ export class ImageArchiveCrawler extends AbstractCrawler<ImageRecord, RowData> {
     }
 
     public async crawl(guideRecord: RowData): Promise<ImageRecord[]> {
+        throw new Error("dummy  error.");
         const query = this.generateQuery(guideRecord);
         const baseRecord: BaseRecord = {
             id: guideRecord.identificatie,
