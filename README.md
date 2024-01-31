@@ -1,60 +1,13 @@
 # Homepage van je huis
 
-[t.b.d.]
-
-## ✨ See it in action ✨
-
-| Environment | ...      |
-| ----------- | -------- |
-| `...`       | 🚧 / ... |
+For the Amsterdam 750 campaign, the idea is to give al residents of the city of amsterdam a "homepage van je huis", where they can discover interesting bits of archival information, facts, foto's, stories and more about their house, street, neighbourhood and city.
 
 ## 🧰 External tooling
 
-<!-- Provide links to external used tooling, like a Sketch, Jira, etc. -->
+- [trello](https://trello.com/b/AHRzG005/homepage-van-je-huis-dev)
 
-- ...
+- [figma](https://www.figma.com/file/xENvvr5YeosgiLiVbdkKrd/Homepage-van-je-huis---Concept?type=design&node-id=1228-39993&mode=design&t=LxlNmGQXvJT4CRv3-0) (Ask Daniël Wortel from Fabrique for access)
 
-## 🚀 Getting started
+# Repository setup
 
-### Prerequisites
-
-<!--
-   Which software or library's are needed to be able to install this project?
- -->
-
-- ...
-
-### Installation
-
-<!-- How to install this project (after having the prerequisites)? -->
-
-- ...
-
-### Development
-
-<!-- How to actually start developing? -->
-
-- ...
-
-### Deployment / Release process
-
-<!-- How to deploy it to an environment or release it to an environment / store? -->
-
-- ...
-
-## 🤚 Good to know
-
-<!--
-  A place to provide extra information (or links to it) about the project.
--->
-
-- ...
-
-<!--
-
-or use headings (when having lots of information)
-
-## ...
-...
-
--->
+This repository contains both a frontend and a backend directory, which each their own readmes.
