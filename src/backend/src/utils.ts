@@ -88,7 +88,7 @@ export function parseValueForDbInsert(value: any): string {
         return "NULL";
     }
     if (typeof value === "string") {
-        return `'${value}'`;
+        return `'${value.replace("'", '"')}'`;
     }
     return value.toString();
 }

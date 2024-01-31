@@ -52,9 +52,12 @@ export const crawlerConfigs: CrawlerConfigs = {
         outputColumns: {
             id: "VARCHAR",
             idTo: "VARCHAR",
+            title: "VARCHAR",
+            description: "VARCHAR",
             imgUrl: "VARCHAR",
             visitUrl: "VARCHAR",
-            date: "VARCHAR"
+            date: "INTEGER",
+            copyright: "VARCHAR"
         },
         retryConfig: defaultCrawlerRetryConfig
     }
