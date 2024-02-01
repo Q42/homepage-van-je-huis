@@ -60,7 +60,7 @@ export class SparqlImageArchiveCrawler extends AbstractCrawler<ImageRecord, RowD
         await this.duckDbService.loadParquetIntoTable(this.tempTableName, this.crawlerConfig.guideFile, true);
 
         return await this.duckDbService.runQuery(
-            `SELECT "identificatie", "huisnummerHoofdadres", "ligtAan:BAG.ORE.naamHoofdadres" FROM ${this.tempTableName}`
+            `SELECT "identificatie", "huisnummerHoofdadres", "ligtAan:BAG.ORE.naamHoofdadres" FROM ${this.tempTableName} LIMIT 1000`
         );
     }
 
