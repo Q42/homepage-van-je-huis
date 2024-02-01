@@ -1,6 +1,7 @@
 import {
     checkFilePaths,
     createDirectory,
+    generateSessionName,
     getColumnKeysFromSourceDef,
     getIngestFilePathsFromSources,
     measureExecutionTime
@@ -10,13 +11,16 @@ import { csvIngestSources, pipelineConfig as pc } from "./pipelineConfig";
 
 const duckDBService = new DuckDBService();
 
-async function normalizeFileSources() {
+async function ingestFileSources() {
+    const sessionName = generateSessionName("csv-ingest-run");
+
     console.log("starting");
     // system initialization
 
     checkFilePaths(getIngestFilePathsFromSources(csvIngestSources));
-    await duckDBService.initDb({ dbLocation: ":memory:" });
     createDirectory(pc.intermediateOutputDirectory);
+    await duckDBService.initDb({ dbLocation: `${pc.intermediateOutputDirectory}/${sessionName}.duckdb` });
+    await duckDBService.enableSpatialExtension();
 
     // create intermediary table files
     await duckDBService.ingestCSV(csvIngestSources.adressen);
@@ -26,8 +30,6 @@ async function normalizeFileSources() {
         getColumnKeysFromSourceDef(csvIngestSources.adressen),
         pc.intermediateOutputFormat
     );
-
-    await duckDBService.dropTable(csvIngestSources.adressen.tableName);
 
     await duckDBService.ingestCSV(csvIngestSources.straatOmschrijving);
     await duckDBService.exportTable(
@@ -39,7 +41,7 @@ async function normalizeFileSources() {
 }
 async function dbProcessRunner() {
     try {
-        return normalizeFileSources();
+        return ingestFileSources();
     } finally {
         await duckDBService.db?.close();
     }

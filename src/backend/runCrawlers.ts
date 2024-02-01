@@ -25,7 +25,7 @@ async function manageDbProcess() {
 
 async function runCrawlers() {
     console.log("starting");
-    const sessionName = generateSessionName("ingest-run");
+    const sessionName = generateSessionName("crawler-run");
     // system initialization
     checkFilePaths(getIngestFilePathsFromSources(cc));
     createDirectory(pc.crawlerOutputDirectory);

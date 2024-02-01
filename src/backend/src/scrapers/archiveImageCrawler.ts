@@ -108,7 +108,6 @@ export class ImageArchiveCrawler extends AbstractCrawler<ImageRecord, RowData> {
 
     public async crawl(guideRecord: RowData): Promise<ImageRecord[]> {
         const query = this.generateQuery(guideRecord);
-        console.log(query);
         const baseRecord: BaseRecord = {
             id: guideRecord.identificatie,
             idTo: "adres"

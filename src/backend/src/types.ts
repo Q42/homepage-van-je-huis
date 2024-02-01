@@ -4,7 +4,8 @@ import { Options as PRetryOptions } from "p-retry";
 export type CsvIngestSource = {
     ingestSourcePath: string;
     tableName: string;
-    outputColumns: ColumnDefenitions;
+    inputColumns: ColumnDefenitions;
+    outputColumns: string[];
 };
 
 export type CsvIngestSources = {
@@ -42,7 +43,8 @@ type ColumnTypes =
     | "TIME"
     | "TIMESTAMP"
     | "TINYINT"
-    | "BLOB";
+    | "BLOB"
+    | "GEOMETRY";
 
 export type ColumnDefenitions = Record<string, ColumnTypes>;
 
