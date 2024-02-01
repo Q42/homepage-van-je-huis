@@ -31,12 +31,9 @@ export function writeObjectToJsonFile(object: Record<any, any>, filePath: string
     return fs.writeFileSync(filePath, json);
 }
 
-export function getColumnKeysFromSourceDef(source: CsvIngestSource) {
-    const columnKeys: string[] = [];
-    Object.keys(source.outputColumns).forEach((key) => {
-        columnKeys.push(`"${key}"`);
-    });
-    return columnKeys;
+export function getColumnKeysFromSourceDef(source: CsvIngestSource): string[] {
+    // This is to ensure the SQL query doesn't trip over any special characters in the column names
+    return source.outputColumns.map((key) => `"${key}"`);
 }
 
 /**
@@ -88,7 +85,7 @@ export function parseValueForDbInsert(value: any): string {
         return "NULL";
     }
     if (typeof value === "string") {
-        return `'${value}'`;
+        return `'${value.replace("'", '"')}'`;
     }
     return value.toString();
 }

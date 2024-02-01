@@ -25,6 +25,14 @@ export class DuckDBService {
         this.db = await Database.create(dbLocation);
     }
 
+    public async enableSpatialExtension(): Promise<void> {
+        if (!this.db) {
+            throw dbNotInitializedError;
+        }
+
+        return await this.db.exec("INSTALL spatial; LOAD spatial;");
+    }
+
     public async teardown(): Promise<void> {
         return await this.db?.close();
     }
@@ -34,25 +42,21 @@ export class DuckDBService {
             throw dbNotInitializedError;
         }
 
-        if (devMode.enabled && querystring.toLowerCase().includes("select")) {
-            querystring += ` LIMIT ${devMode.limit}`;
-        }
-
         return await this.db.all(querystring);
     }
 
     public async ingestCSV(source: CsvIngestSource) {
-        const ingestArgs = [`'${source.ingestSourcePath}'`, "header=true"];
+        const ingestArgs = [`'${source.ingestSourcePath}'`, "header=true", "delim=';'"];
         if (!this.db) {
             throw dbNotInitializedError;
         }
 
-        if (source.outputColumns) {
-            const columnTypesArg = "types=" + JSON.stringify(source.outputColumns);
+        if (source.inputColumns) {
+            const columnTypesArg = "columns=" + JSON.stringify(source.inputColumns);
             ingestArgs.push(columnTypesArg);
         }
 
-        const querystring = `CREATE TABLE ${source.tableName} AS FROM read_csv_auto(${ingestArgs.join(", ")})`;
+        const querystring = `CREATE TABLE ${source.tableName} AS FROM read_csv(${ingestArgs.join(", ")})`;
         await this.runQuery(querystring);
     }
 
@@ -83,7 +87,7 @@ export class DuckDBService {
                 outputFile += ".json";
         }
 
-        const queryToRun = `COPY ${selectStatement} TO '${outputFile}' ${exportSuffix};`;
+        const queryToRun = `COPY ${selectStatement} TO '${outputFile}' ${exportSuffix}`;
 
         return this.runQuery(queryToRun);
     }
