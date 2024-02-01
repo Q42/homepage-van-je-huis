@@ -91,6 +91,16 @@ export const csvIngestSources: CsvIngestSources = {
             beschrijving: "VARCHAR"
         },
         outputColumns: ["identificatie", "naam", "beschrijving"]
+    },
+    dummyArt: {
+        ingestSourcePath: "./data_input/dummy_art.csv",
+        tableName: "buitenkunst",
+        inputColumns: {
+            id: "VARCHAR",
+            naam: "VARCHAR",
+            geometrie: "GEOMETRY"
+        },
+        outputColumns: ["id", "naam", "geometrie"]
     }
 };
 
