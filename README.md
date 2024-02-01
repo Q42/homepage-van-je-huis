@@ -10,4 +10,4 @@ For the Amsterdam 750 campaign, the idea is to give al residents of the city of 
 
 # Repository setup
 
-This repository contains both a frontend and a backend directory, which each their own readmes.
+This repository contains both a frontend and a backend directory, which each have their own readmes.
