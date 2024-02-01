@@ -60,7 +60,7 @@ export class SparqlImageArchiveCrawler extends AbstractCrawler<ImageRecord, RowD
         await this.duckDbService.loadParquetIntoTable(this.tempTableName, this.crawlerConfig.guideFile, true);
 
         return await this.duckDbService.runQuery(
-            `SELECT "identificatie", "huisletterHoofdadres", "ligtAan:BAG.ORE.naamHoofdadres" FROM ${this.tempTableName}`
+            `SELECT "identificatie", "huisnummerHoofdadres", "ligtAan:BAG.ORE.naamHoofdadres" FROM ${this.tempTableName}`
         );
     }
 
@@ -70,7 +70,7 @@ export class SparqlImageArchiveCrawler extends AbstractCrawler<ImageRecord, RowD
             idTo: "adres"
         };
 
-        const apiResponse = await this.archiveImageApiClient(guideRecord["ligtAan:BAG.ORE.naamHoofdadres"], guideRecord["huisletterHoofdadres"]);
+        const apiResponse = await this.archiveImageApiClient(guideRecord["ligtAan:BAG.ORE.naamHoofdadres"], guideRecord["huisnummerHoofdadres"]);
         
         return this.mapArchiveImages(baseRecord, apiResponse);
     }
