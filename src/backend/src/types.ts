@@ -53,3 +53,7 @@ export type IntermediateOutputFormats = "json" | "parquet";
 export type IntermediateTableRef = { fileLocation: string; tableName: string };
 
 export type BaseApiResponse = Record<string, any>;
+
+export type ImageUrlRepsonse = {
+    url: string
+}
