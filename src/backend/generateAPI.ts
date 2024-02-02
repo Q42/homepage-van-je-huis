@@ -8,7 +8,7 @@ import {
     getIntermediateTableRefsFromSource,
     measureExecutionTime,
     writeObjectToJsonFile
-} from "./src/utils";
+} from "./src/utils/general";
 
 const duckDBService = new DuckDBService();
 

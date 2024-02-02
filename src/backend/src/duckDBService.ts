@@ -6,7 +6,7 @@ import {
     IntermediateOutputFormats,
     IntermediateTableRef
 } from "./types";
-import { parseValueForDbInsert } from "./utils";
+import { parseValueForDbInsert } from "./utils/general";
 import { devMode } from "../pipelineConfig";
 
 type DuckDBConfig = {
