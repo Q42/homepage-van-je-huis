@@ -9,8 +9,8 @@ type TimelineEntry = {
     month?: number; // Month of the entry
     year: number; // Year of the entry
     image: string; // URL to the image
-    visitUrl: string; // URL to the source where people can find out more info about the image
-    altDescription: string; // Alt text for the image
+    visitUrl?: string; // URL to the source where people can find out more info about the image
+    altDescription?: string; // Alt text for the image
 };
 
 type Story = {
