@@ -51,3 +51,19 @@ export type IntermediateOutputFormats = "json" | "parquet";
 export type IntermediateTableRef = { fileLocation: string; tableName: string };
 
 export type BaseApiResponse = Record<string, any>;
+
+export type BaseDBAddress = {
+    "identificatie": string;
+    "huisnummerHoofdadres": number;
+    "huisletterHoofdadres": string | undefined;
+    "huisnummertoevoegingHoofdadres": string | undefined;
+    "postcodeHoofdadres": string;
+    "ligtAan:BAG.ORE.identificatieHoofdadres": string;
+    "ligtAan:BAG.ORE.naamHoofdadres": string;
+    "gebruiksdoel": string | undefined;
+    "ligtIn:GBD.BRT.code": string;
+    "ligtIn:GBD.WIJK.code": string;
+    "ligtIn:GBD.GGW.code": string;
+    "ligtIn:GBD.SDL.code": string;
+    "geometrie": string;
+};

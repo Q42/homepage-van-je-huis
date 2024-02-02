@@ -1,11 +1,13 @@
+import { AddressRecord } from "./apiSchema/addressRecord";
 import { csvIngestSources, pipelineConfig as pc } from "./pipelineConfig";
 import { DuckDBService } from "./src/duckDBService";
 import { queries } from "./src/queries";
+import { BaseDBAddress } from "./src/types";
+import { generateAddressID, generateBaseApiRecord, mapAddressIndexRefsToAddressIndex } from "./src/utils/api";
 
 import {
     checkFilePaths,
     createDirectory,
-    generateShortId,
     getIntermediateTableRefsFromSource,
     measureExecutionTime,
     writeObjectToJsonFile
@@ -21,20 +23,23 @@ async function generateAPI() {
 
     await duckDBService.loadTablesFromIntermediateRefs(intermediateRefs);
 
-    const addressIndexOutput = await duckDBService.runQuery(queries.getAddressIndex);
-    console.log(addressIndexOutput);
+    const baseAdressList = (await duckDBService.runQuery(queries.getBaseTable)) as BaseDBAddress[];
 
-    // const addressDescriptionOutput = await duckDBService.runQuery(
-    //     'SELECT huisnummerHoofdadres AS huisnummer, "ligtAan:BAG.ORE.naamHoofdadres" as straatnaam, beschrijving FROM adressen JOIN straatNaamOmschrijving ON (adressen."ligtAan:BAG.ORE.identificatieHoofdadres" = straatNaamOmschrijving.identificatie)'
-    // );
+    createDirectory(pc.apiOutputDirectory);
+    const apiOutput: AddressRecord[] = [];
 
-    // createDirectory(pc.apiOutputDirectory + "/adressen");
-    // addressDescriptionOutput.forEach((row) => {
-    //     writeObjectToJsonFile(
-    //         row,
-    //         `${pc.apiOutputDirectory}/adressen/${row.straatnaam}-${row.huisnummer}-${generateShortId()}.json`
-    //     );
-    // });
+    for (const address of baseAdressList) {
+        const addressRecord: AddressRecord = generateBaseApiRecord(address);
+
+        // this is where all the api building magic goes
+
+        writeObjectToJsonFile(
+            addressRecord,
+            `${pc.apiOutputDirectory}/${generateAddressID(addressRecord.address)}.json`
+        );
+    }
+
+    apiOutput.forEach((output) => {});
 }
 
 async function dbProcessRunner() {

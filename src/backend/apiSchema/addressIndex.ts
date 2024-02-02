@@ -1,9 +1,9 @@
-type AddressRef = {
-    id: string;
-    streetName: string;
-    number: string;
-};
+type StreetName = string;
+type StreetNumber = string;
+type BAGId = string;
 
 export type AddressIndex = {
-    addresses: AddressRef[];
+    [key: StreetName]: {
+        [key: StreetNumber]: BAGId;
+    };
 };

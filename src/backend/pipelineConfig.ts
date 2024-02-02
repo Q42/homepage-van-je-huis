@@ -4,7 +4,7 @@ import pRetry, { AbortError, Options as PRetryOptions } from "p-retry";
 import { CrawlerConfigs, CsvIngestSources, IntermediateOutputFormats } from "./src/types";
 
 // devMode limits all select queries to a specified max number of rows
-export const devMode = { enabled: true, limit: 10 };
+export const devMode = { enabled: true, limit: 100 };
 
 export const csvIngestSources: CsvIngestSources = {
     adressen: {
