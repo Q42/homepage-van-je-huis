@@ -8,9 +8,7 @@ export type CsvIngestSource = {
     outputColumns: string[];
 };
 
-export type CsvIngestSources = {
-    [key: string]: CsvIngestSource;
-};
+export type CsvIngestSources = Record<string, CsvIngestSource>;
 
 type AnyCrawler = new (crawlerConfig: CrawlerConfig, ...args: any[]) => AbstractCrawler<any, any>;
 

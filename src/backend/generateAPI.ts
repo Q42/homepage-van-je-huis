@@ -1,5 +1,6 @@
 import { csvIngestSources, pipelineConfig as pc } from "./pipelineConfig";
 import { DuckDBService } from "./src/duckDBService";
+import { queries } from "./src/queries";
 
 import {
     checkFilePaths,
@@ -20,17 +21,20 @@ async function generateAPI() {
 
     await duckDBService.loadTablesFromIntermediateRefs(intermediateRefs);
 
-    const addressDescriptionOutput = await duckDBService.runQuery(
-        'SELECT huisnummerHoofdadres AS huisnummer, "ligtAan:BAG.ORE.naamHoofdadres" as straatnaam, beschrijving FROM adressen JOIN straatNaamOmschrijving ON (adressen."ligtAan:BAG.ORE.identificatieHoofdadres" = straatNaamOmschrijving.identificatie)'
-    );
+    const addressIndexOutput = await duckDBService.runQuery(queries.getAddressIndex);
+    console.log(addressIndexOutput);
 
-    createDirectory(pc.apiOutputDirectory + "/adressen");
-    addressDescriptionOutput.forEach((row) => {
-        writeObjectToJsonFile(
-            row,
-            `${pc.apiOutputDirectory}/adressen/${row.straatnaam}-${row.huisnummer}-${generateShortId()}.json`
-        );
-    });
+    // const addressDescriptionOutput = await duckDBService.runQuery(
+    //     'SELECT huisnummerHoofdadres AS huisnummer, "ligtAan:BAG.ORE.naamHoofdadres" as straatnaam, beschrijving FROM adressen JOIN straatNaamOmschrijving ON (adressen."ligtAan:BAG.ORE.identificatieHoofdadres" = straatNaamOmschrijving.identificatie)'
+    // );
+
+    // createDirectory(pc.apiOutputDirectory + "/adressen");
+    // addressDescriptionOutput.forEach((row) => {
+    //     writeObjectToJsonFile(
+    //         row,
+    //         `${pc.apiOutputDirectory}/adressen/${row.straatnaam}-${row.huisnummer}-${generateShortId()}.json`
+    //     );
+    // });
 }
 
 async function dbProcessRunner() {
