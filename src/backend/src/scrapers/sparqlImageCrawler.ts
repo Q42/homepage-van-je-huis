@@ -4,22 +4,21 @@ import { ImageRecord } from "../models/imageRecord";
 import { CrawlerConfig, ImageUrlRepsonse } from "../types";
 import { AbstractCrawler } from "./abstractCrawler";
 
-const SparqlClient = require('sparql-http-client');
+import SparqlClient from "sparql-http-client";
 import { DuckDBService } from "../duckDBService";
 import { queries } from "../queries";
 
-const endpoint = 'https://lod.uba.uva.nl/_api/datasets/ATM/ATM-KG/services/ATM-KG/sparql';
+const endpoint = "https://lod.uba.uva.nl/_api/datasets/ATM/ATM-KG/services/ATM-KG/sparql";
 
 type ArchiveImageApiResponse = ImageUrlRepsonse[];
 
 export class SparqlImageArchiveCrawler extends AbstractCrawler<ImageRecord, RowData> {
     protected duckDbService: DuckDBService;
     protected tempTableName = "TempImgGuide";
-    
+
     public constructor(crawlerConfig: CrawlerConfig, duckDbService: DuckDBService) {
         super(crawlerConfig);
         this.duckDbService = duckDbService;
-
     }
 
     protected upscaleMemorixThumbnailImageUrl(url: string): string {
@@ -27,13 +26,13 @@ export class SparqlImageArchiveCrawler extends AbstractCrawler<ImageRecord, RowD
     }
 
     protected async archiveImageApiClient(street: string, houseNumber: number): Promise<ArchiveImageApiResponse> {
-        const client = new SparqlClient({ endpointUrl: endpoint })
+        const client = new SparqlClient({ endpointUrl: endpoint });
         const stream = await client.query.select(queries.sparqlSearchByAddress(street, houseNumber));
 
         const result: ImageUrlRepsonse[] = [];
 
         for await (const chunk of stream) {
-            const image: ImageUrlRepsonse  = {
+            const image: ImageUrlRepsonse = {
                 url: chunk.url.value
             };
             result.push(image);
@@ -50,7 +49,7 @@ export class SparqlImageArchiveCrawler extends AbstractCrawler<ImageRecord, RowD
         return data.map((record) => {
             const newRecord: ImageRecord = {
                 ...baseRecord,
-                imgUrl: this.upscaleMemorixThumbnailImageUrl(record.url),
+                imgUrl: this.upscaleMemorixThumbnailImageUrl(record.url)
             };
             return newRecord;
         });
@@ -60,7 +59,7 @@ export class SparqlImageArchiveCrawler extends AbstractCrawler<ImageRecord, RowD
         await this.duckDbService.loadParquetIntoTable(this.tempTableName, this.crawlerConfig.guideFile, true);
 
         return await this.duckDbService.runQuery(
-            `SELECT "identificatie", "huisnummerHoofdadres", "ligtAan:BAG.ORE.naamHoofdadres" FROM ${this.tempTableName} LIMIT 1000`
+            `SELECT "identificatie", "huisnummerHoofdadres", "ligtAan:BAG.ORE.naamHoofdadres" FROM ${this.tempTableName}`
         );
     }
 
@@ -70,8 +69,11 @@ export class SparqlImageArchiveCrawler extends AbstractCrawler<ImageRecord, RowD
             idTo: "adres"
         };
 
-        const apiResponse = await this.archiveImageApiClient(guideRecord["ligtAan:BAG.ORE.naamHoofdadres"], guideRecord["huisnummerHoofdadres"]);
-        
+        const apiResponse = await this.archiveImageApiClient(
+            guideRecord["ligtAan:BAG.ORE.naamHoofdadres"],
+            guideRecord["huisnummerHoofdadres"]
+        );
+
         return this.mapArchiveImages(baseRecord, apiResponse);
     }
 

@@ -41,13 +41,16 @@ export class DuckDBService {
         if (!this.db) {
             throw dbNotInitializedError;
         }
-        if (devMode.enabled && querystring.toLowerCase().includes("select")) {
+        if (
+            devMode.enabled &&
+            querystring.toLowerCase().includes("select") &&
+            !querystring.toLowerCase().includes("limit")
+        ) {
             if (querystring.trim().endsWith(";")) {
                 querystring = querystring.trim().slice(0, -1);
-                querystring += ` LIMIT ${devMode.limit};`;
             }
+            querystring += ` LIMIT ${devMode.limit};`;
         }
-
         return await this.db.all(querystring);
     }
 
