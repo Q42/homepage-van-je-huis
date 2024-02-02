@@ -1,6 +1,6 @@
 import fs from "fs";
-import { CsvIngestSource, CsvIngestSources, IntermediateTableRef, CrawlerConfigs } from "./types";
-import { PipelineConfig } from "../pipelineConfig";
+import { CsvIngestSource, CsvIngestSources, IntermediateTableRef, CrawlerConfigs } from "../types";
+import { PipelineConfig } from "../../pipelineConfig";
 
 export function checkFilePaths(paths: string[]) {
     const missingSources: string[] = [];

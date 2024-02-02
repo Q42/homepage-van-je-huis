@@ -5,7 +5,7 @@ import {
     getIngestFilePathsFromSources,
     measureExecutionTime,
     writeObjectToJsonFile
-} from "./src/utils";
+} from "./src/utils/general";
 import { crawlerConfigs as cc, pipelineConfig as pc } from "./pipelineConfig";
 import { DuckDBService } from "./src/duckDBService";
 import { AbstractCrawler } from "./src/crawlers/abstractCrawler";

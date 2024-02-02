@@ -5,7 +5,7 @@ import {
     getColumnKeysFromSourceDef,
     getIngestFilePathsFromSources,
     measureExecutionTime
-} from "./src/utils";
+} from "./src/utils/general";
 import { DuckDBService } from "./src/duckDBService";
 import { csvIngestSources, pipelineConfig as pc } from "./pipelineConfig";
 
