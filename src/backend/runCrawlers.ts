@@ -8,8 +8,8 @@ import {
 } from "./src/utils";
 import { crawlerConfigs as cc, pipelineConfig as pc } from "./pipelineConfig";
 import { DuckDBService } from "./src/duckDBService";
-import { AbstractCrawler } from "./src/scrapers/abstractCrawler";
-import { ImageArchiveCrawler } from "./src/scrapers/archiveImageCrawler";
+import { AbstractCrawler } from "./src/crawlers/abstractCrawler";
+import { ImageArchiveCrawler } from "./src/crawlers/archiveImageCrawler";
 import pRetry from "p-retry";
 import { appendObjectToFile } from "./src/failureLog";
 import cliProgress from "cli-progress";

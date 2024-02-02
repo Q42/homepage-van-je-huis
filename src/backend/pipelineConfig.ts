@@ -1,10 +1,10 @@
-import { SparqlImageArchiveCrawler } from "./src/scrapers/sparqlImageCrawler";
+import { SparqlImageArchiveCrawler } from "./src/crawlers/sparqlImageCrawler";
 import { Options as PRetryOptions } from "p-retry";
 
 import { CrawlerConfigs, CsvIngestSources, IntermediateOutputFormats } from "./src/types";
 
 // devMode limits all select queries to a specified max number of rows
-export const devMode = { enabled: true, limit: 1000 };
+export const devMode = { enabled: true, limit: 5 };
 
 export const csvIngestSources: CsvIngestSources = {
     adressen: {

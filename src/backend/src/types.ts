@@ -1,4 +1,4 @@
-import { AbstractCrawler } from "./scrapers/abstractCrawler";
+import { AbstractCrawler } from "./crawlers/abstractCrawler";
 import { Options as PRetryOptions } from "p-retry";
 
 export type CsvIngestSource = {
@@ -55,5 +55,5 @@ export type IntermediateTableRef = { fileLocation: string; tableName: string };
 export type BaseApiResponse = Record<string, any>;
 
 export type ImageUrlRepsonse = {
-    url: string
-}
+    url: string;
+};
