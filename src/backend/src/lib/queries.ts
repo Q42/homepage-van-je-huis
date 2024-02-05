@@ -1,4 +1,4 @@
-import { csvIngestSources as cs } from "../pipelineConfig";
+import { csvIngestSources as cs } from "../../pipelineConfig";
 
 export const queries = {
     selectDistinct: (tableName: string, column: string, columnAs?: string) =>

@@ -1,6 +1,6 @@
 import { PipelineConfig } from "../../pipelineConfig";
-import { DuckDBService } from "../duckDBService";
-import { CsvIngestSource } from "../types";
+import { DuckDBService } from "../lib/duckDBService";
+import { CsvIngestSource } from "../lib/types";
 import { getColumnKeysFromSourceDef } from "./general";
 
 export async function loadFileToParquet(

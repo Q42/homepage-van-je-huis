@@ -2,7 +2,7 @@ import slugify from "slugify";
 
 import crypto from "crypto";
 import { AddresDescription, AddressRecord } from "../../apiSchema/addressRecord";
-import { EnrichedDBAddress } from "../types";
+import { EnrichedDBAddress } from "../lib/types";
 import { PastData } from "../../apiSchema/past";
 import { PresentData } from "../../apiSchema/present";
 

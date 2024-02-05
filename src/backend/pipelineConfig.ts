@@ -1,7 +1,7 @@
 import { ImageArchiveCrawler } from "./src/scrapers/archiveImageCrawler";
 import pRetry, { AbortError, Options as PRetryOptions } from "p-retry";
 
-import { CrawlerConfigs, CsvIngestSources, IntermediateOutputFormats } from "./src/types";
+import { CrawlerConfigs, CsvIngestSources, IntermediateOutputFormats } from "./src/lib/types";
 
 // devMode limits all select queries to a specified max number of rows
 export const devMode = { enabled: true, limit: 15 };

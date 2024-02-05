@@ -7,7 +7,7 @@ import {
     measureExecutionTime
 } from "./src/utils/general";
 import { loadFileToParquet } from "./src/utils/db";
-import { DuckDBService } from "./src/duckDBService";
+import { DuckDBService } from "./src/lib/duckDBService";
 import { csvIngestSources, pipelineConfig as pc } from "./pipelineConfig";
 
 const duckDBService = new DuckDBService();

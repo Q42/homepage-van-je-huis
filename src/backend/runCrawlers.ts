@@ -7,11 +7,11 @@ import {
     writeObjectToJsonFile
 } from "./src/utils/general";
 import { crawlerConfigs as cc, pipelineConfig as pc } from "./pipelineConfig";
-import { DuckDBService } from "./src/duckDBService";
+import { DuckDBService } from "./src/lib/duckDBService";
 import { AbstractCrawler } from "./src/scrapers/abstractCrawler";
 import { ImageArchiveCrawler } from "./src/scrapers/archiveImageCrawler";
 import pRetry from "p-retry";
-import { appendObjectToFile } from "./src/failureLog";
+import { appendObjectToFile } from "./src/lib/failureLog";
 
 const duckDBService = new DuckDBService();
 

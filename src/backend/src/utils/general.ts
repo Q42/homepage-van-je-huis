@@ -1,5 +1,5 @@
 import fs from "fs";
-import { CsvIngestSource, CsvIngestSources, IntermediateTableRef, CrawlerConfigs } from "../types";
+import { CsvIngestSource, CsvIngestSources, IntermediateTableRef, CrawlerConfigs } from "../lib/types";
 import { PipelineConfig } from "../../pipelineConfig";
 
 export function checkFilePaths(paths: string[]) {

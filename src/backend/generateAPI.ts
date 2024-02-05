@@ -2,10 +2,10 @@ import { AddressRecord } from "./apiSchema/addressRecord";
 import { PastData } from "./apiSchema/past";
 import { AgendaItem, PresentData } from "./apiSchema/present";
 import { csvIngestSources, devMode, pipelineConfig as pc } from "./pipelineConfig";
-import { DuckDBService } from "./src/duckDBService";
+import { DuckDBService } from "./src/lib/duckDBService";
 import { calendarEvent } from "./src/models/eventCalendar";
-import { queries } from "./src/queries";
-import { EnrichedDBAddress } from "./src/types";
+import { queries } from "./src/lib/queries";
+import { EnrichedDBAddress } from "./src/lib/types";
 import { generateAddressID, assembleApiRecord, getMinMaxRangeFromPastData } from "./src/utils/api";
 
 import {

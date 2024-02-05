@@ -1,4 +1,4 @@
-import { AbstractCrawler } from "./scrapers/abstractCrawler";
+import { AbstractCrawler } from "../scrapers/abstractCrawler";
 import { Options as PRetryOptions } from "p-retry";
 
 export type CsvIngestSource = {
