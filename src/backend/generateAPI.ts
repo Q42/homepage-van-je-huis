@@ -5,7 +5,7 @@ import { csvIngestSources, pipelineConfig as pc } from "./pipelineConfig";
 import { DuckDBService } from "./src/duckDBService";
 import { queries } from "./src/queries";
 import { EnrichedDBAddress } from "./src/types";
-import { generateAddressID, assembleApiRecord } from "./src/utils/api";
+import { generateAddressID, assembleApiRecord, getMinMaxRangeFromPastData } from "./src/utils/api";
 
 import {
     checkFilePaths,
@@ -51,6 +51,13 @@ async function generateAPI() {
                 title: "Hier komt je straatnaam vandaan.",
                 contents: address.straatnaamBeschrijving.trim()
             });
+        }
+
+        // This is where the record gets finalized
+        if (addressPast.timeline.length > 0) {
+            const pastStartEnd = getMinMaxRangeFromPastData(addressPast);
+            addressPast.timeRangeStart = pastStartEnd.timeRangeStart;
+            addressPast.timeRangeEnd = pastStartEnd.timeRangeEnd;
         }
 
         const addressRecord: AddressRecord = assembleApiRecord(address, addressPresent, addressPast);

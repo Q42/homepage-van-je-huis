@@ -40,3 +40,10 @@ export function assembleApiRecord(
         pastData
     };
 }
+
+export function getMinMaxRangeFromPastData(pastData: PastData): { timeRangeStart: number; timeRangeEnd: number } {
+    const timeline = pastData.timeline.map((entry) => entry.year);
+    const timeRangeStart = Math.min(...timeline);
+    const timeRangeEnd = Math.max(...timeline);
+    return { timeRangeEnd, timeRangeStart };
+}
