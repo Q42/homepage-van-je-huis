@@ -15,6 +15,7 @@ import {
     measureExecutionTime,
     writeObjectToJsonFile
 } from "./src/utils/general";
+import { stringLibrary } from "./src/lib/strings";
 
 const duckDBService = new DuckDBService();
 
@@ -33,7 +34,7 @@ async function generateAPI() {
     const eventCalendar = (await duckDBService.runQuery(queries.getEventCalendar)) as calendarEvent[];
     const events: AgendaItem[] = eventCalendar.map((event) => ({
         title: event.Name_event,
-        description: event.Description ?? "Dit evenement heeft nog geen omschrijving.",
+        description: event.Description ?? stringLibrary.eventNoDescription,
         date: event.Date_start,
         dateEnd:
             event.Date_end && event.Date_end.toUTCString() !== event.Date_start.toUTCString()
@@ -59,7 +60,7 @@ async function generateAPI() {
         // This is where all the data gets added to the api files
         if (address?.straatnaamBeschrijving) {
             addressPast.stories.push({
-                title: "Hier komt je straatnaam vandaan.",
+                title: stringLibrary.streetNameOrigin,
                 contents: address.straatnaamBeschrijving.trim()
             });
         }

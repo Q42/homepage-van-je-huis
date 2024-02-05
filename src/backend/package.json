@@ -15,7 +15,6 @@
     },
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
-        "dev": "echo \"run 'cli' to start the processing pipeline \" && exit 1",
         "ingest:files": "npx tsx --tsconfig ./tsconfig.json ingestFiles.ts",
         "generate": "npx tsx --tsconfig ./tsconfig.json generateAPI.ts"
     },
