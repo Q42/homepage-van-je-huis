@@ -1,5 +1,3 @@
-import { TableData } from "duckdb";
-import { AddressIndex } from "../../apiSchema/addressIndex";
 import slugify from "slugify";
 
 import crypto from "crypto";
@@ -7,17 +5,6 @@ import { AddresDescription, AddressRecord } from "../../apiSchema/addressRecord"
 import { EnrichedDBAddress } from "../types";
 import { PastData } from "../../apiSchema/past";
 import { PresentData } from "../../apiSchema/present";
-
-export function mapAddressIndexRefsToAddressIndex(refs: TableData): AddressIndex {
-    const addressIndex: AddressIndex = {};
-    refs.forEach((address) => {
-        if (address.streetName && !addressIndex[address.streetName]) {
-            addressIndex[address.streetName] = {};
-        }
-        addressIndex[address.streetName][address.streetNumber] = address.id;
-    });
-    return addressIndex;
-}
 
 export function generateAddressID(address: AddresDescription): string {
     const slugifyOptions = {

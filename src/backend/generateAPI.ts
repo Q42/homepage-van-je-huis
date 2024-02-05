@@ -5,7 +5,7 @@ import { csvIngestSources, pipelineConfig as pc } from "./pipelineConfig";
 import { DuckDBService } from "./src/duckDBService";
 import { queries } from "./src/queries";
 import { EnrichedDBAddress } from "./src/types";
-import { generateAddressID, assembleApiRecord, mapAddressIndexRefsToAddressIndex } from "./src/utils/api";
+import { generateAddressID, assembleApiRecord } from "./src/utils/api";
 
 import {
     checkFilePaths,
