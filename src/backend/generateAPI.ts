@@ -1,8 +1,9 @@
 import { AddressRecord } from "./apiSchema/addressRecord";
 import { PastData } from "./apiSchema/past";
-import { PresentData } from "./apiSchema/present";
-import { csvIngestSources, pipelineConfig as pc } from "./pipelineConfig";
+import { AgendaItem, PresentData } from "./apiSchema/present";
+import { csvIngestSources, devMode, pipelineConfig as pc } from "./pipelineConfig";
 import { DuckDBService } from "./src/duckDBService";
+import { calendarEvent } from "./src/models/eventCalendar";
 import { queries } from "./src/queries";
 import { EnrichedDBAddress } from "./src/types";
 import { generateAddressID, assembleApiRecord, getMinMaxRangeFromPastData } from "./src/utils/api";
@@ -28,14 +29,24 @@ async function generateAPI() {
     const baseAdressList = (await duckDBService.runQuery(queries.getBaseTable)) as EnrichedDBAddress[];
 
     createDirectory(pc.apiOutputDirectory);
-    const apiOutput: AddressRecord[] = [];
+
+    const eventCalendar = (await duckDBService.runQuery(queries.getEventCalendar)) as calendarEvent[];
+    const events: AgendaItem[] = eventCalendar.map((event) => ({
+        title: event.Name_event,
+        description: event.Description ?? "Dit evenement heeft nog geen omschrijving.",
+        date: event.Date_start,
+        dateEnd:
+            event.Date_end && event.Date_end.toUTCString() !== event.Date_start.toUTCString()
+                ? event.Date_end
+                : undefined
+    }));
 
     for (const address of baseAdressList) {
         const addressPresent: PresentData = {
             distanceRangeStart: 0,
             distanceRangeEnd: 0,
             slider: [],
-            agenda: []
+            agenda: events
         };
 
         const addressPast: PastData = {
@@ -63,7 +74,8 @@ async function generateAPI() {
         const addressRecord: AddressRecord = assembleApiRecord(address, addressPresent, addressPast);
         writeObjectToJsonFile(
             addressRecord,
-            `${pc.apiOutputDirectory}/${generateAddressID(addressRecord.address)}.json`
+            `${pc.apiOutputDirectory}/${generateAddressID(addressRecord.address)}.json`,
+            devMode.enabled
         );
     }
 }

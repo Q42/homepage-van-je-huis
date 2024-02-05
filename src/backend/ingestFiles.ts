@@ -32,6 +32,7 @@ async function ingestFileSources() {
     await loadFileToParquet(duckDBService, csvIngestSources.straatOmschrijving, pc);
 
     await loadFileToParquet(duckDBService, csvIngestSources.artPlaceholder, pc);
+    await loadFileToParquet(duckDBService, csvIngestSources.eventsPlaceholder, pc);
 }
 
 async function dbProcessRunner() {

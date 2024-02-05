@@ -103,6 +103,18 @@ export const csvIngestSources: CsvIngestSources = {
             geometrie: "GEOMETRY"
         },
         outputColumns: ["id", "naam", "afbeelding", "geometrie"]
+    },
+    eventsPlaceholder: {
+        ingestSourcePath: "./data_input/AMS750_events_csv.csv",
+        tableName: "events",
+        inputColumns: {
+            Name_event: "VARCHAR",
+            Date_start: "DATE",
+            Date_end: "DATE",
+            Location: "VARCHAR",
+            Description: "VARCHAR"
+        },
+        outputColumns: ["Name_event", "Date_start", "Date_end", "Location", "Description"]
     }
 };
 

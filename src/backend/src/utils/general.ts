@@ -26,8 +26,8 @@ export function createDirectory(directoryName: string): void {
     }
 }
 
-export function writeObjectToJsonFile(object: Record<any, any>, filePath: string): void {
-    const json = JSON.stringify(object, null);
+export function writeObjectToJsonFile(object: Record<any, any>, filePath: string, prettyJson?: boolean): void {
+    const json = JSON.stringify(object, null, prettyJson ? 2 : undefined);
     return fs.writeFileSync(filePath, json);
 }
 
