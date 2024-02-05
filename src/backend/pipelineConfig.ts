@@ -4,7 +4,7 @@ import pRetry, { AbortError, Options as PRetryOptions } from "p-retry";
 import { CrawlerConfigs, CsvIngestSources, IntermediateOutputFormats } from "./src/types";
 
 // devMode limits all select queries to a specified max number of rows
-export const devMode = { enabled: true, limit: 100 };
+export const devMode = { enabled: true, limit: 15 };
 
 export const csvIngestSources: CsvIngestSources = {
     adressen: {
@@ -74,6 +74,7 @@ export const csvIngestSources: CsvIngestSources = {
             "postcodeHoofdadres",
             "ligtAan:BAG.ORE.identificatieHoofdadres",
             "ligtAan:BAG.ORE.naamHoofdadres",
+            "ligtIn:BAG.PND.identificatie",
             "gebruiksdoel",
             "ligtIn:GBD.BRT.code",
             "ligtIn:GBD.WIJK.code",

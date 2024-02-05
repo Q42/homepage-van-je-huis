@@ -29,8 +29,8 @@ export function assembleApiRecord(
     pastData: PastData
 ): AddressRecord {
     return {
-        addressId: baseAddress.identificatie,
-        address: {
+        "ligtIn:BAG.PND.identificatie": baseAddress["ligtIn:BAG.PND.identificatie"],
+        "address": {
             streetName: baseAddress["ligtAan:BAG.ORE.naamHoofdadres"],
             houseNumber: baseAddress.huisnummerHoofdadres,
             houseNumberSuffix: baseAddress.huisletterHoofdadres,

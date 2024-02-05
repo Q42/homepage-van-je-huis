@@ -53,7 +53,7 @@ export type IntermediateTableRef = { fileLocation: string; tableName: string };
 export type BaseApiResponse = Record<string, any>;
 
 export type EnrichedDBAddress = {
-    "identificatie": string;
+    "ligtIn:BAG.PND.identificatie": string;
     "huisnummerHoofdadres": number;
     "huisletterHoofdadres": string | undefined;
     "huisnummertoevoegingHoofdadres": string | undefined;
