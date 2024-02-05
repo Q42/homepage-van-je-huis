@@ -1,5 +1,6 @@
 import { TableData } from "duckdb";
 import { AddressIndex } from "../../apiSchema/addressIndex";
+import slugify from "slugify";
 
 import crypto from "crypto";
 import { AddresDescription, AddressRecord } from "../../apiSchema/addressRecord";
@@ -19,6 +20,11 @@ export function mapAddressIndexRefsToAddressIndex(refs: TableData): AddressIndex
 }
 
 export function generateAddressID(address: AddresDescription): string {
+    const slugifyOptions = {
+        lower: true,
+        trim: true
+    };
+
     const addressBase: string[] = [address.streetName.toLowerCase(), String(address.houseNumber)];
     if (address.houseNumberSuffix) {
         addressBase.push(address.houseNumberSuffix.toLowerCase());
@@ -26,8 +32,8 @@ export function generateAddressID(address: AddresDescription): string {
     if (address.houseNumberSuffix2) {
         addressBase.push(address.houseNumberSuffix2.toLowerCase());
     }
-    const baseString = addressBase.join("-");
-    return crypto.createHash("md5").update(baseString).digest("hex");
+    const slug = slugify(addressBase.join(" "), slugifyOptions);
+    return crypto.createHash("md5").update(slug).digest("hex");
 }
 
 export function assembleApiRecord(
