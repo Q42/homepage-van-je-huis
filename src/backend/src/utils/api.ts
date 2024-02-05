@@ -3,7 +3,9 @@ import { AddressIndex } from "../../apiSchema/addressIndex";
 
 import crypto from "crypto";
 import { AddresDescription, AddressRecord } from "../../apiSchema/addressRecord";
-import { BaseDBAddress } from "../types";
+import { EnrichedDBAddress } from "../types";
+import { PastData } from "../../apiSchema/past";
+import { PresentData } from "../../apiSchema/present";
 
 export function mapAddressIndexRefsToAddressIndex(refs: TableData): AddressIndex {
     const addressIndex: AddressIndex = {};
@@ -28,7 +30,11 @@ export function generateAddressID(address: AddresDescription): string {
     return crypto.createHash("md5").update(baseString).digest("hex");
 }
 
-export function generateBaseApiRecord(baseAddress: BaseDBAddress): AddressRecord {
+export function assembleApiRecord(
+    baseAddress: EnrichedDBAddress,
+    presentData: PresentData,
+    pastData: PastData
+): AddressRecord {
     return {
         addressId: baseAddress.identificatie,
         address: {
@@ -37,17 +43,7 @@ export function generateBaseApiRecord(baseAddress: BaseDBAddress): AddressRecord
             houseNumberSuffix: baseAddress.huisletterHoofdadres,
             houseNumberSuffix2: baseAddress.huisnummertoevoegingHoofdadres
         },
-        presentData: {
-            distanceRangeStart: 0,
-            distanceRangeEnd: 0,
-            slider: [],
-            stories: []
-        },
-        pastData: {
-            timeRangeStart: 0,
-            timeRangeEnd: 0,
-            timeline: [],
-            stories: []
-        }
+        presentData,
+        pastData
     };
 }

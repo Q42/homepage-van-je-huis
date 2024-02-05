@@ -52,7 +52,7 @@ export type IntermediateTableRef = { fileLocation: string; tableName: string };
 
 export type BaseApiResponse = Record<string, any>;
 
-export type BaseDBAddress = {
+export type EnrichedDBAddress = {
     "identificatie": string;
     "huisnummerHoofdadres": number;
     "huisletterHoofdadres": string | undefined;
@@ -66,4 +66,5 @@ export type BaseDBAddress = {
     "ligtIn:GBD.GGW.code": string;
     "ligtIn:GBD.SDL.code": string;
     "geometrie": string;
+    "straatnaamBeschrijving": string;
 };

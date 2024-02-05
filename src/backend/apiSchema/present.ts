@@ -6,7 +6,7 @@ export type PresentData = {
     distanceRangeStart: number; // Meters at which the slider starts
     distanceRangeEnd: number; // Meters at which the slider starts
     slider: SliderEntry[]; // The entries for on the slider
-    stories: AgendaItem[]; // The stories
+    agenda: AgendaItem[]; // The events and such
 };
 
 interface SliderEntry extends BaseDataEntity {
