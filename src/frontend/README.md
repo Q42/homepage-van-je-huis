@@ -35,6 +35,12 @@ To run a production build:
 - Run `npm run build`
 - Run `npm run preview`
 
+### Adding components
+
+We use plop to add new components. This way all new components have an accompanying story and are uniform.
+
+`npm run plop [name of your component]`
+
 ### Storybook
 
 We use [Storybook](https://storybook.js.org/) to build all the components and pages. This way we can built isolated and create a nice overview of all the components we have.
@@ -42,10 +48,9 @@ Run `npm run storybook` to open Storybook. Documentation of the components can b
 
 Creating a new component:
 
-1. Create your component: `npm run plop [name of your component]`
-2. Run Storybook: `npm run storybook`
-3. Now you can see your component in Storybook
-4. Start building!
+1. Run Storybook: `npm run storybook`
+2. Now you can see your component in Storybook
+3. Start building!
 
 ### Browser & device support
 
