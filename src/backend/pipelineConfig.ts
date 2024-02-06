@@ -1,7 +1,10 @@
 import { ImageArchiveCrawler } from "./src/scrapers/archiveImageCrawler";
 import pRetry, { AbortError, Options as PRetryOptions } from "p-retry";
 
-import { ApiCrawlerConfigs, CsvIngestSources, IntermediateOutputFormats } from "./src/lib/types";
+import { ApiCrawlerConfigs as CrawlerConfigs, CsvIngestSources, IntermediateOutputFormats } from "./src/lib/types";
+import { PublicArtCrawler } from "./src/scrapers/publicArtCrawler";
+import { imageRecordOutputColumns } from "./src/models/imageRecord";
+import { publicArtRecordOutputColumns } from "./src/models/publicArtRecord";
 
 // devMode limits all select queries to a specified max number of rows
 export const devMode = { enabled: true, limit: 15 };
@@ -125,22 +128,19 @@ export const defaultCrawlerRetryConfig: PRetryOptions = {
     randomize: true
 };
 
-export const crawlerConfigs: ApiCrawlerConfigs = {
+export const crawlerConfigs: CrawlerConfigs = {
     imageArchive: {
         crawler: ImageArchiveCrawler,
         outputTableName: "archief_afbeeldingen",
         guideFile: "./intermediate_output/adressen.parquet",
-        outputColumns: {
-            id: "VARCHAR",
-            idTo: "VARCHAR",
-            title: "VARCHAR",
-            description: "VARCHAR",
-            imgUrl: "VARCHAR",
-            visitUrl: "VARCHAR",
-            date: "INTEGER",
-            copyright: "VARCHAR"
-        },
+        outputColumns: imageRecordOutputColumns,
         retryConfig: defaultCrawlerRetryConfig
+    },
+    publicArt: {
+        crawler: PublicArtCrawler,
+        retryConfig: { ...defaultCrawlerRetryConfig, retries: 1 },
+        outputTableName: "buitenkunst",
+        outputColumns: publicArtRecordOutputColumns
     }
 };
 

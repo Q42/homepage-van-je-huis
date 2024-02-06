@@ -1,5 +1,8 @@
 // from https://gist.github.com/erikvullings/a2c58cecc3f0a27b043deba90089af57
 
+import { GeoString } from "../lib/types";
+import { GeoLocation } from "../models/shared";
+
 /**
  * Convert RD (Rijksdriehoek) coordinates to WGS84 and vice versa.
  * @see https://thomasv.nl/2014/03/rd-naar-gps/
@@ -88,3 +91,8 @@ const projectionBetweenRdWgs84 = () => {
 };
 
 export const projectRdWgs84 = projectionBetweenRdWgs84();
+
+export function geoLocationToRDGeometryString(geoLocation: GeoLocation): GeoString {
+    const { x, y } = projectRdWgs84.wgs84ToRd(geoLocation.latitude, geoLocation.longitude);
+    return `POINT(${x} ${y})`;
+}

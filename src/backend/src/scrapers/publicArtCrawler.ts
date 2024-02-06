@@ -1,24 +1,63 @@
-import { Browser, Page } from "puppeteer";
-import { GeoLocation } from "../models/shared";
-import { AbstractWebsiteCrawler } from "./abstractCrawler";
-import { WebsiteCrawlerConfig } from "../lib/types";
+import puppeteer, { Browser, Page, PuppeteerLaunchOptions } from "puppeteer";
+import { AbstractCrawler } from "./abstractCrawler";
+import { CrawlerConfig } from "../lib/types";
+import { geoLocationToRDGeometryString } from "../utils/rijksdriehoek";
+import { PublicArtRecord } from "../models/publicArtRecord";
 
-type PublicArtRecord = {
-    title: string;
-    image: string;
-    visitUrl: string;
-    location: GeoLocation;
-};
+export class PublicArtCrawler extends AbstractCrawler<PublicArtRecord, string> {
+    browser: Browser | null;
+    fetcherPage: Page | null;
+    puppeteerOptions: PuppeteerLaunchOptions;
 
-export class PublicArtCrawler extends AbstractWebsiteCrawler<PublicArtRecord> {
-    constructor(crawlerConfig: WebsiteCrawlerConfig, browser: Browser) {
-        super(crawlerConfig, browser);
+    constructor(crawlerConfig: CrawlerConfig, puppeteerOptions?: PuppeteerLaunchOptions) {
+        super(crawlerConfig);
+        this.browser = null;
+        this.fetcherPage = null;
+        this.puppeteerOptions = puppeteerOptions ?? {};
+    }
+
+    public async loadGuideData(): Promise<string[]> {
+        return await this.getArtUrls();
+    }
+    public async crawl(guideRecord: string): Promise<PublicArtRecord[]> {
+        if (!this.browser) {
+            this.browser = await puppeteer.launch();
+        }
+        if (!this.fetcherPage) {
+            this.fetcherPage = await this.browser.newPage();
+        }
+
+        await this.fetcherPage.goto(guideRecord, {
+            waitUntil: "domcontentloaded"
+        });
+        const record = await this.extractArtDetails(this.fetcherPage);
+        return [
+            {
+                ...record,
+                visitUrl: guideRecord
+            }
+        ];
+    }
+
+    public async teardown(): Promise<void> {
+        if (this.fetcherPage) {
+            await this.fetcherPage.close();
+            this.fetcherPage = null;
+        }
+        if (this.browser) {
+            await this.browser.close();
+            this.browser = null;
+        }
     }
 
     protected async getArtUrls(): Promise<string[]> {
         const numberOfPages = 108;
         const baseArtUrl = "https://amsterdam.kunstwacht.nl";
         const artUrls: string[] = [];
+
+        if (!this.browser) {
+            this.browser = await puppeteer.launch({});
+        }
 
         const page = await this.browser.newPage();
         for (let currentPage = 1; currentPage <= numberOfPages; currentPage++) {
@@ -42,18 +81,6 @@ export class PublicArtCrawler extends AbstractWebsiteCrawler<PublicArtRecord> {
         return artUrls;
     }
 
-    protected extractCoordinates(str: string): GeoLocation {
-        const coordinateMatch = str.match(/placeMarker\(([^,]+), ([^,]+)/);
-        if (coordinateMatch) {
-            return {
-                latitude: parseFloat(coordinateMatch[1]),
-                longitude: parseFloat(coordinateMatch[2])
-            };
-        } else {
-            throw new Error("No coordinates found in the string");
-        }
-    }
-
     protected async extractArtCoordinates(page: Page) {
         const markerScriptString = await page.evaluate(() => {
             const scriptString = document.body.querySelector("#object_map")?.querySelector("script")?.textContent;
@@ -61,7 +88,13 @@ export class PublicArtCrawler extends AbstractWebsiteCrawler<PublicArtRecord> {
         });
 
         if (markerScriptString) {
-            return this.extractCoordinates(markerScriptString);
+            const coordinateMatch = markerScriptString.match(/placeMarker\(([^,]+), ([^,]+)/);
+            if (coordinateMatch) {
+                return {
+                    latitude: parseFloat(coordinateMatch[1]),
+                    longitude: parseFloat(coordinateMatch[2])
+                };
+            }
         }
     }
 
@@ -95,28 +128,7 @@ export class PublicArtCrawler extends AbstractWebsiteCrawler<PublicArtRecord> {
         return {
             title: title,
             image: image,
-            location: location
+            location: geoLocationToRDGeometryString(location)
         };
-    }
-
-    public async run(): Promise<PublicArtRecord[]> {
-        const urls = await this.getArtUrls();
-        const records: PublicArtRecord[] = [];
-
-        const page = await this.browser.newPage();
-        for (const url of urls) {
-            await page.goto(url, {
-                waitUntil: "domcontentloaded"
-            });
-
-            const record = await this.extractArtDetails(page);
-            records.push({
-                ...record,
-                visitUrl: url
-            });
-        }
-        await page.close();
-
-        return records;
     }
 }

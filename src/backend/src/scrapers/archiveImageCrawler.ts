@@ -1,22 +1,22 @@
 import { RowData } from "duckdb";
 import { BaseRecord } from "../models/baseRecord";
 import { ImageRecord } from "../models/imageRecord";
-import { BaseApiResponse, ApiCrawlerConfig } from "../lib/types";
-import { AbstractApiCrawler } from "./abstractCrawler";
+import { BaseApiResponse, CrawlerConfig } from "../lib/types";
+import { AbstractCrawler } from "./abstractCrawler";
 
 import Parser from "rss-parser";
 import { DuckDBService } from "../lib/duckDBService";
 
 type ArchiveImageApiResponse = BaseApiResponse[];
 
-export class ImageArchiveCrawler extends AbstractApiCrawler<ImageRecord, RowData> {
+export class ImageArchiveCrawler extends AbstractCrawler<ImageRecord, RowData> {
     protected duckDbService: DuckDBService;
     protected tempTableName = "TempImgGuide";
     protected rssParser = new Parser({
         customFields: { item: ["dc_date", "dc_description", "dc_title", "sr_rechthebbende"] }
     });
 
-    public constructor(crawlerConfig: ApiCrawlerConfig, duckDbService: DuckDBService) {
+    public constructor(crawlerConfig: CrawlerConfig, duckDbService: DuckDBService) {
         super(crawlerConfig);
         this.duckDbService = duckDbService;
     }
@@ -99,6 +99,9 @@ export class ImageArchiveCrawler extends AbstractApiCrawler<ImageRecord, RowData
     }
 
     public async loadGuideData(): Promise<RowData[]> {
+        if (!this.crawlerConfig.guideFile) {
+            throw new Error("No guide file specified whilst that is required for the archive image crawler.");
+        }
         await this.duckDbService.loadParquetIntoTable(this.tempTableName, this.crawlerConfig.guideFile, true);
 
         return await this.duckDbService.runQuery(

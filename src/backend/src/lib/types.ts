@@ -1,4 +1,4 @@
-import { AbstractApiCrawler, AbstractWebsiteCrawler } from "../scrapers/abstractCrawler";
+import { AbstractCrawler } from "../scrapers/abstractCrawler";
 import { Options as PRetryOptions } from "p-retry";
 
 export type CsvIngestSource = {
@@ -10,25 +10,21 @@ export type CsvIngestSource = {
 
 export type CsvIngestSources = Record<string, CsvIngestSource>;
 
-type AnyApiCrawler = new (crawlerConfig: ApiCrawlerConfig, ...args: any[]) => AbstractApiCrawler<any, any>;
-type AnyWebsiteCrawler = new (crawlerConfig: WebsiteCrawlerConfig, ...args: any[]) => AbstractWebsiteCrawler<any>;
+type AnyApiCrawler = new (crawlerConfig: CrawlerConfig, ...args: any[]) => AbstractCrawler<any, any>;
 
 type BaseCrawlerConfig = {
     outputTableName: string;
     outputColumns: ColumnDefenitions;
 };
 
-export interface ApiCrawlerConfig extends BaseCrawlerConfig {
+export interface CrawlerConfig extends BaseCrawlerConfig {
     crawler: AnyApiCrawler;
-    guideFile: string;
+    guideFile?: string;
     retryConfig: PRetryOptions;
 }
 
-export interface WebsiteCrawlerConfig extends BaseCrawlerConfig {
-    crawler: AnyWebsiteCrawler;
-}
 export type ApiCrawlerConfigs = {
-    [key: string]: ApiCrawlerConfig;
+    [key: string]: CrawlerConfig;
 };
 
 // there are more types, but these are the main ones
@@ -50,6 +46,8 @@ type ColumnTypes =
     | "TINYINT"
     | "BLOB"
     | "GEOMETRY";
+
+export type GeoString = `POINT(${number} ${number})`;
 
 export type ColumnDefenitions = Record<string, ColumnTypes>;
 
