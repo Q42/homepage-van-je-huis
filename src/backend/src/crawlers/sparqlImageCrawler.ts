@@ -1,12 +1,11 @@
 import { RowData } from "duckdb";
 import { BaseRecord } from "../models/baseRecord";
 import { ImageRecord } from "../models/imageRecord";
-import { CrawlerConfig, ImageUrlRepsonse } from "../types";
-import { AbstractCrawler } from "./abstractCrawler";
-
 import SparqlClient from "sparql-http-client";
-import { DuckDBService } from "../duckDBService";
 import { queries } from "../queries";
+import { DuckDBService } from "../lib/duckDBService";
+import { AbstractCrawler } from "./abstractCrawler";
+import { CrawlerConfig, ImageUrlRepsonse } from "../lib/types";
 
 const endpoint = "https://lod.uba.uva.nl/_api/datasets/ATM/ATM-KG/services/ATM-KG/sparql";
 

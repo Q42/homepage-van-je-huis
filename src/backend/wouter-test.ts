@@ -1,6 +1,4 @@
-import {
-    measureExecutionTime
-} from "./src/utils";
+import { measureExecutionTime } from "./src/utils/general";
 
 // Define the SPARQL endpoint
 const endpoint = 'https://lod.uba.uva.nl/_api/datasets/ATM/ATM-KG/services/ATM-KG/sparql';

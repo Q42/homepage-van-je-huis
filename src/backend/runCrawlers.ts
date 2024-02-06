@@ -3,16 +3,15 @@ import {
     createDirectory,
     generateSessionName,
     getIngestFilePathsFromSources,
-    measureExecutionTime,
-    writeObjectToJsonFile
+    measureExecutionTime
 } from "./src/utils/general";
 import { crawlerConfigs as cc, pipelineConfig as pc } from "./pipelineConfig";
-import { DuckDBService } from "./src/duckDBService";
 import { AbstractCrawler } from "./src/crawlers/abstractCrawler";
 import { ImageArchiveCrawler } from "./src/crawlers/archiveImageCrawler";
 import pRetry from "p-retry";
-import { appendObjectToFile } from "./src/failureLog";
-import cliProgress from "cli-progress";
+import cliProgress from "cli-progress"  ;
+import { appendObjectToFile } from "./src/lib/failureLog";
+import { DuckDBService } from "./src/lib/duckDBService";
 
 const duckDBService = new DuckDBService();
 

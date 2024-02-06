@@ -1,5 +1,5 @@
-import { AbstractCrawler } from "./crawlers/abstractCrawler";
 import { Options as PRetryOptions } from "p-retry";
+import { AbstractCrawler } from "../crawlers/abstractCrawler";
 
 export type CsvIngestSource = {
     ingestSourcePath: string;
@@ -8,9 +8,7 @@ export type CsvIngestSource = {
     outputColumns: string[];
 };
 
-export type CsvIngestSources = {
-    [key: string]: CsvIngestSource;
-};
+export type CsvIngestSources = Record<string, CsvIngestSource>;
 
 type AnyCrawler = new (crawlerConfig: CrawlerConfig, ...args: any[]) => AbstractCrawler<any, any>;
 
@@ -56,4 +54,21 @@ export type BaseApiResponse = Record<string, any>;
 
 export type ImageUrlRepsonse = {
     url: string;
+};
+
+export type EnrichedDBAddress = {
+    "ligtIn:BAG.PND.identificatie": string;
+    "huisnummerHoofdadres": number;
+    "huisletterHoofdadres": string | undefined;
+    "huisnummertoevoegingHoofdadres": string | undefined;
+    "postcodeHoofdadres": string;
+    "ligtAan:BAG.ORE.identificatieHoofdadres": string;
+    "ligtAan:BAG.ORE.naamHoofdadres": string;
+    "gebruiksdoel": string | undefined;
+    "ligtIn:GBD.BRT.code": string;
+    "ligtIn:GBD.WIJK.code": string;
+    "ligtIn:GBD.GGW.code": string;
+    "ligtIn:GBD.SDL.code": string;
+    "geometrie": string;
+    "straatnaamBeschrijving": string;
 };

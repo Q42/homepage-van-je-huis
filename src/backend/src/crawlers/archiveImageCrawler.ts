@@ -1,11 +1,11 @@
 import { RowData } from "duckdb";
 import { BaseRecord } from "../models/baseRecord";
 import { ImageRecord } from "../models/imageRecord";
-import { BaseApiResponse, CrawlerConfig } from "../types";
+import { BaseApiResponse, CrawlerConfig } from "../lib/types";
 import { AbstractCrawler } from "./abstractCrawler";
 
 import Parser from "rss-parser";
-import { DuckDBService } from "../duckDBService";
+import { DuckDBService } from "../lib/duckDBService";
 
 type ArchiveImageApiResponse = BaseApiResponse[];
 
