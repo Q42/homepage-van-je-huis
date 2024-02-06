@@ -16,11 +16,12 @@
   },
   "dependencies": {
     "nuxt": "^3.10.1",
-    "plop": "^4.0.1",
     "vue": "^3.4.15",
     "vue-router": "^4.2.5"
   },
   "devDependencies": {
+    "plop": "^4.0.1",
+    "less": "^4.2.0",
     "@nuxtjs/eslint-config-typescript": "^12.1.0",
     "@storybook/addon-essentials": "^7.6.12",
     "@storybook/addon-interactions": "^7.6.12",
@@ -37,6 +38,7 @@
     "eslint-plugin-storybook": "^0.6.15",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "storybook": "^7.6.12"
+    "storybook": "^7.6.12",
+    "vite-svg-loader": "^5.1.0"
   }
 }
