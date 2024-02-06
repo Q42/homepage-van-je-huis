@@ -41,8 +41,14 @@ async function runCrawlers() {
         publicArt: new cc.publicArt.crawler(cc.publicArt, { headless: false }) as PublicArtCrawler
     };
 
+    for (const crawler of Object.values(instantiatedCrawlers)) {
+        if (crawler.crawlerConfig.skip) {
+            console.log(`Skipping ${crawler.crawlerConfig.crawler.name} as specified in pipelineConfig`);
+            continue;
+        }
+        await runCrawler(crawler, duckDBService, sessionName);
+    }
     // await runCrawler(instantiatedCrawlers.imageArchive, duckDBService, sessionName);
-    await runCrawler(instantiatedCrawlers.publicArt, duckDBService, sessionName);
 }
 
 async function runCrawler(
