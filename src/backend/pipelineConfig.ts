@@ -1,5 +1,5 @@
-import { ImageArchiveCrawler } from "./src/scrapers/archiveImageCrawler";
-import pRetry, { AbortError, Options as PRetryOptions } from "p-retry";
+import { SparqlImageArchiveCrawler } from "./src/crawlers/sparqlImageCrawler";
+import { Options as PRetryOptions } from "p-retry";
 
 import { CrawlerConfigs, CsvIngestSources, IntermediateOutputFormats } from "./src/lib/types";
 
@@ -126,8 +126,26 @@ export const defaultCrawlerRetryConfig: PRetryOptions = {
 };
 
 export const crawlerConfigs: CrawlerConfigs = {
+    /*
     imageArchive: {
         crawler: ImageArchiveCrawler,
+        outputTableName: "archief_afbeeldingen",
+        guideFile: "./intermediate_output/adressen.parquet",
+        outputColumns: {
+            id: "VARCHAR",
+            idTo: "VARCHAR",
+            title: "VARCHAR",
+            description: "VARCHAR",
+            imgUrl: "VARCHAR",
+            visitUrl: "VARCHAR",
+            date: "INTEGER",
+            copyright: "VARCHAR"
+        },
+        retryConfig: defaultCrawlerRetryConfig
+    },*/
+
+    imageArchive: {
+        crawler: SparqlImageArchiveCrawler,
         outputTableName: "archief_afbeeldingen",
         guideFile: "./intermediate_output/adressen.parquet",
         outputColumns: {
