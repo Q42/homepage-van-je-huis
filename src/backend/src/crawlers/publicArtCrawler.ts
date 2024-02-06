@@ -53,7 +53,7 @@ export class PublicArtCrawler extends AbstractCrawler<PublicArtRecord, string> {
     }
 
     protected async getArtUrls(): Promise<string[]> {
-        const numberOfPages = 1;
+        const numberOfPages = 108;
         const baseArtUrl = "https://amsterdam.kunstwacht.nl";
         const outputUrls: string[] = [];
 

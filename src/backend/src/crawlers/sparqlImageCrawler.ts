@@ -55,6 +55,9 @@ export class SparqlImageArchiveCrawler extends AbstractCrawler<ImageRecord, RowD
     }
 
     public async loadGuideData(): Promise<RowData[]> {
+        if (this.crawlerConfig.guideFile === undefined) {
+            throw new Error("Guide file is not defined");
+        }
         await this.duckDbService.loadParquetIntoTable(this.tempTableName, this.crawlerConfig.guideFile, true);
 
         return await this.duckDbService.runQuery(
