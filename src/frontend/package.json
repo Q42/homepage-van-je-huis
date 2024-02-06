@@ -9,12 +9,14 @@
     "preview": "nuxt preview",
     "lint": "nuxt prepare && eslint --ext \".js,.ts,.vue\" --ignore-path .eslintignore .",
     "lint:fix": "nuxt prepare && eslint --ext \".js,.ts,.vue\" --ignore-path .eslintignore . --fix",
+    "plop": "plop",
     "postinstall": "nuxt prepare",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build"
   },
   "dependencies": {
     "nuxt": "^3.10.1",
+    "plop": "^4.0.1",
     "vue": "^3.4.15",
     "vue-router": "^4.2.5"
   },

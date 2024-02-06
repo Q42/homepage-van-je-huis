@@ -1,0 +1,19 @@
+import type { Meta, StoryFn } from '@storybook/vue3'
+
+import {{pascalCase name}}, { {{pascalCase name}}Props } from './index.vue'
+
+export default {
+  title: '{{category}}/{{#if folder}}{{pascalCase folder}}/{{/if}}{{pascalCase name}}',
+  component: {{pascalCase name}},
+} as Meta<typeof {{pascalCase name}}>
+
+const Template: StoryFn<typeof {{pascalCase name}}> = (args: {{pascalCase name}}Props) => ({
+  components: { {{pascalCase name}} },
+  setup() {
+    return { args }
+  },
+  template: '<{{pascalCase name}} v-bind="args" />',
+})
+
+export const {{pascalCase name}}Story = Template.bind({})
+{{pascalCase name}}Story.args = {}
