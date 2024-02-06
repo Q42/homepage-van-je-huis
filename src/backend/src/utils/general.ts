@@ -1,5 +1,5 @@
 import fs from "fs";
-import { CsvIngestSource, CsvIngestSources, IntermediateTableRef, CrawlerConfigs } from "../types";
+import { CsvIngestSource, CsvIngestSources, IntermediateTableRef, CrawlerConfigs } from "../lib/types";
 import { PipelineConfig } from "../../pipelineConfig";
 
 export function checkFilePaths(paths: string[]) {
@@ -26,8 +26,8 @@ export function createDirectory(directoryName: string): void {
     }
 }
 
-export function writeObjectToJsonFile(object: Record<any, any>, filePath: string): void {
-    const json = JSON.stringify(object, null);
+export function writeObjectToJsonFile(object: Record<any, any>, filePath: string, prettyJson?: boolean): void {
+    const json = JSON.stringify(object, null, prettyJson ? 2 : undefined);
     return fs.writeFileSync(filePath, json);
 }
 
@@ -68,16 +68,6 @@ export function getIntermediateTableRefsFromSource(sources: CsvIngestSources, pi
             });
     });
     return intermediateDirs;
-}
-
-export function generateShortId(): string {
-    const characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-    let id = "";
-    for (let i = 0; i < 6; i++) {
-        const randomIndex = Math.floor(Math.random() * characters.length);
-        id += characters[randomIndex];
-    }
-    return id;
 }
 
 export function parseValueForDbInsert(value: any): string {
