@@ -6,8 +6,8 @@ import {
     IntermediateOutputFormats,
     IntermediateTableRef
 } from "./types";
-import { parseValueForDbInsert } from "./utils/general";
-import { devMode } from "../pipelineConfig";
+import { parseValueForDbInsert } from "../utils/general";
+import { devMode } from "../../pipelineConfig";
 
 type DuckDBConfig = {
     dbLocation?: string;
@@ -41,16 +41,19 @@ export class DuckDBService {
         if (!this.db) {
             throw dbNotInitializedError;
         }
-        if (devMode.enabled && querystring.toLowerCase().includes("select")) {
+        if (
+            devMode.enabled &&
+            querystring.toLowerCase().includes("select") &&
+            !querystring.toLowerCase().includes("limit") &&
+            !querystring.toLowerCase().includes("copy")
+        ) {
             if (querystring.trim().endsWith(";")) {
                 querystring = querystring.trim().slice(0, -1);
-                querystring += ` LIMIT ${devMode.limit};`;
             }
+            querystring += ` LIMIT ${devMode.limit};`;
         }
-
         return await this.db.all(querystring);
     }
-
     public async ingestCSV(source: CsvIngestSource) {
         const ingestArgs = [`'${source.ingestSourcePath}'`, "header=true", "delim=';'"];
         if (!this.db) {

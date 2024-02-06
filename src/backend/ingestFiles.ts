@@ -6,39 +6,35 @@ import {
     getIngestFilePathsFromSources,
     measureExecutionTime
 } from "./src/utils/general";
-import { DuckDBService } from "./src/duckDBService";
+import { loadFileToParquet } from "./src/utils/db";
+import { DuckDBService } from "./src/lib/duckDBService";
 import { csvIngestSources, pipelineConfig as pc } from "./pipelineConfig";
 
 const duckDBService = new DuckDBService();
 
 async function ingestFileSources() {
     const sessionName = generateSessionName("csv-ingest-run");
+    const dbDir = `${pc.intermediateOutputDirectory}/db`;
 
     console.log("starting");
     // system initialization
 
     checkFilePaths(getIngestFilePathsFromSources(csvIngestSources));
     createDirectory(pc.intermediateOutputDirectory);
-    await duckDBService.initDb({ dbLocation: `${pc.intermediateOutputDirectory}/${sessionName}.duckdb` });
+    createDirectory(dbDir);
+
+    await duckDBService.initDb({ dbLocation: `${dbDir}/${sessionName}.duckdb` });
     await duckDBService.enableSpatialExtension();
 
     // create intermediary table files
-    await duckDBService.ingestCSV(csvIngestSources.adressen);
-    await duckDBService.exportTable(
-        csvIngestSources.adressen.tableName,
-        `${pc.intermediateOutputDirectory}/${csvIngestSources.adressen.tableName}`,
-        getColumnKeysFromSourceDef(csvIngestSources.adressen),
-        pc.intermediateOutputFormat
-    );
+    await loadFileToParquet(duckDBService, csvIngestSources.adressen, pc);
 
-    await duckDBService.ingestCSV(csvIngestSources.straatOmschrijving);
-    await duckDBService.exportTable(
-        csvIngestSources.straatOmschrijving.tableName,
-        `${pc.intermediateOutputDirectory}/${csvIngestSources.straatOmschrijving.tableName}`,
-        getColumnKeysFromSourceDef(csvIngestSources.straatOmschrijving),
-        pc.intermediateOutputFormat
-    );
+    await loadFileToParquet(duckDBService, csvIngestSources.straatOmschrijving, pc);
+
+    await loadFileToParquet(duckDBService, csvIngestSources.artPlaceholder, pc);
+    await loadFileToParquet(duckDBService, csvIngestSources.eventsPlaceholder, pc);
 }
+
 async function dbProcessRunner() {
     try {
         return ingestFileSources();
