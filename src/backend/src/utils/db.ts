@@ -6,13 +6,17 @@ import { getColumnKeysFromSourceDef } from "./general";
 export async function loadFileToParquet(
     dbService: DuckDBService,
     csvIngestSource: CsvIngestSource,
-    pc: PipelineConfig
+    pc: PipelineConfig,
+    dropTableAfterExport?: boolean
 ) {
     await dbService.ingestCSV(csvIngestSource);
-    return await dbService.exportTable(
+    await dbService.exportTable(
         csvIngestSource.tableName,
         `${pc.intermediateOutputDirectory}/${csvIngestSource.tableName}`,
         getColumnKeysFromSourceDef(csvIngestSource),
         pc.intermediateOutputFormat
     );
+    if (dropTableAfterExport) {
+        await dbService.dropTable(csvIngestSource.tableName);
+    }
 }
