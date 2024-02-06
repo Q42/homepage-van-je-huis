@@ -1,4 +1,4 @@
-import { AbstractCrawler } from "../scrapers/abstractCrawler";
+import { AbstractApiCrawler, AbstractWebsiteCrawler } from "../scrapers/abstractCrawler";
 import { Options as PRetryOptions } from "p-retry";
 
 export type CsvIngestSource = {
@@ -10,18 +10,25 @@ export type CsvIngestSource = {
 
 export type CsvIngestSources = Record<string, CsvIngestSource>;
 
-type AnyCrawler = new (crawlerConfig: CrawlerConfig, ...args: any[]) => AbstractCrawler<any, any>;
+type AnyApiCrawler = new (crawlerConfig: ApiCrawlerConfig, ...args: any[]) => AbstractApiCrawler<any, any>;
+type AnyWebsiteCrawler = new (crawlerConfig: WebsiteCrawlerConfig, ...args: any[]) => AbstractWebsiteCrawler<any>;
 
-export type CrawlerConfig = {
-    crawler: AnyCrawler;
+type BaseCrawlerConfig = {
     outputTableName: string;
-    guideFile: string;
     outputColumns: ColumnDefenitions;
-    retryConfig: PRetryOptions;
 };
 
-export type CrawlerConfigs = {
-    [key: string]: CrawlerConfig;
+export interface ApiCrawlerConfig extends BaseCrawlerConfig {
+    crawler: AnyApiCrawler;
+    guideFile: string;
+    retryConfig: PRetryOptions;
+}
+
+export interface WebsiteCrawlerConfig extends BaseCrawlerConfig {
+    crawler: AnyWebsiteCrawler;
+}
+export type ApiCrawlerConfigs = {
+    [key: string]: ApiCrawlerConfig;
 };
 
 // there are more types, but these are the main ones

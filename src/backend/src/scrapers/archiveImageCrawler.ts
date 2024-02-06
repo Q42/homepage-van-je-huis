@@ -1,22 +1,22 @@
 import { RowData } from "duckdb";
 import { BaseRecord } from "../models/baseRecord";
 import { ImageRecord } from "../models/imageRecord";
-import { BaseApiResponse, CrawlerConfig } from "../lib/types";
-import { AbstractCrawler } from "./abstractCrawler";
+import { BaseApiResponse, ApiCrawlerConfig } from "../lib/types";
+import { AbstractApiCrawler } from "./abstractCrawler";
 
 import Parser from "rss-parser";
 import { DuckDBService } from "../lib/duckDBService";
 
 type ArchiveImageApiResponse = BaseApiResponse[];
 
-export class ImageArchiveCrawler extends AbstractCrawler<ImageRecord, RowData> {
+export class ImageArchiveCrawler extends AbstractApiCrawler<ImageRecord, RowData> {
     protected duckDbService: DuckDBService;
     protected tempTableName = "TempImgGuide";
     protected rssParser = new Parser({
         customFields: { item: ["dc_date", "dc_description", "dc_title", "sr_rechthebbende"] }
     });
 
-    public constructor(crawlerConfig: CrawlerConfig, duckDbService: DuckDBService) {
+    public constructor(crawlerConfig: ApiCrawlerConfig, duckDbService: DuckDBService) {
         super(crawlerConfig);
         this.duckDbService = duckDbService;
     }

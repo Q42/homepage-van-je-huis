@@ -1,7 +1,7 @@
 import { ImageArchiveCrawler } from "./src/scrapers/archiveImageCrawler";
 import pRetry, { AbortError, Options as PRetryOptions } from "p-retry";
 
-import { CrawlerConfigs, CsvIngestSources, IntermediateOutputFormats } from "./src/lib/types";
+import { ApiCrawlerConfigs, CsvIngestSources, IntermediateOutputFormats } from "./src/lib/types";
 
 // devMode limits all select queries to a specified max number of rows
 export const devMode = { enabled: true, limit: 15 };
@@ -125,7 +125,7 @@ export const defaultCrawlerRetryConfig: PRetryOptions = {
     randomize: true
 };
 
-export const crawlerConfigs: CrawlerConfigs = {
+export const crawlerConfigs: ApiCrawlerConfigs = {
     imageArchive: {
         crawler: ImageArchiveCrawler,
         outputTableName: "archief_afbeeldingen",

@@ -8,7 +8,7 @@ import {
 } from "./src/utils/general";
 import { crawlerConfigs as cc, pipelineConfig as pc } from "./pipelineConfig";
 import { DuckDBService } from "./src/lib/duckDBService";
-import { AbstractCrawler } from "./src/scrapers/abstractCrawler";
+import { AbstractApiCrawler } from "./src/scrapers/abstractCrawler";
 import { ImageArchiveCrawler } from "./src/scrapers/archiveImageCrawler";
 import pRetry from "p-retry";
 import { appendObjectToFile } from "./src/lib/failureLog";
@@ -40,7 +40,7 @@ async function runCrawlers() {
 }
 
 async function runCrawler(
-    instantiatedCrawler: AbstractCrawler<any, any>,
+    instantiatedCrawler: AbstractApiCrawler<any, any>,
     dbService: DuckDBService,
     sessionName: string
 ) {
