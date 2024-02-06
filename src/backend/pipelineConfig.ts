@@ -1,5 +1,5 @@
-import { ImageArchiveCrawler } from "./src/scrapers/archiveImageCrawler";
-import pRetry, { AbortError, Options as PRetryOptions } from "p-retry";
+import { SparqlImageArchiveCrawler } from "./src/crawlers/sparqlImageCrawler";
+import { Options as PRetryOptions } from "p-retry";
 
 import { ApiCrawlerConfigs as CrawlerConfigs, CsvIngestSources, IntermediateOutputFormats } from "./src/lib/types";
 import { PublicArtCrawler } from "./src/scrapers/publicArtCrawler";
@@ -129,18 +129,35 @@ export const defaultCrawlerRetryConfig: PRetryOptions = {
 };
 
 export const crawlerConfigs: CrawlerConfigs = {
+    /*
     imageArchive: {
         crawler: ImageArchiveCrawler,
         outputTableName: "archief_afbeeldingen",
         guideFile: "./intermediate_output/adressen.parquet",
         outputColumns: imageRecordOutputColumns,
         retryConfig: defaultCrawlerRetryConfig
-    },
+    }, },*/
     publicArt: {
         crawler: PublicArtCrawler,
         retryConfig: { ...defaultCrawlerRetryConfig, retries: 1 },
         outputTableName: "buitenkunst",
         outputColumns: publicArtRecordOutputColumns
+    },
+    imageArchive: {
+        crawler: SparqlImageArchiveCrawler,
+        outputTableName: "archief_afbeeldingen",
+        guideFile: "./intermediate_output/adressen.parquet",
+        outputColumns: {
+            id: "VARCHAR",
+            idTo: "VARCHAR",
+            title: "VARCHAR",
+            description: "VARCHAR",
+            imgUrl: "VARCHAR",
+            visitUrl: "VARCHAR",
+            date: "INTEGER",
+            copyright: "VARCHAR"
+        },
+        retryConfig: defaultCrawlerRetryConfig
     }
 };
 

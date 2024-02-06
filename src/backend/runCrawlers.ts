@@ -3,16 +3,17 @@ import {
     createDirectory,
     generateSessionName,
     getIngestFilePathsFromSources,
-    measureExecutionTime,
-    writeObjectToJsonFile
+    measureExecutionTime
 } from "./src/utils/general";
 import { crawlerConfigs as cc, pipelineConfig as pc } from "./pipelineConfig";
-import { DuckDBService } from "./src/lib/duckDBService";
-import { AbstractCrawler } from "./src/scrapers/abstractCrawler";
-import { ImageArchiveCrawler } from "./src/scrapers/archiveImageCrawler";
+
+import { AbstractCrawler } from "./src/crawlers/abstractCrawler";
+import { ImageArchiveCrawler } from "./src/crawlers/archiveImageCrawler";
 import pRetry, { AbortError } from "p-retry";
+import cliProgress from "cli-progress";
 import { appendObjectToFile } from "./src/lib/failureLog";
-import { PublicArtCrawler } from "./src/scrapers/publicArtCrawler";
+import { DuckDBService } from "./src/lib/duckDBService";
+import { PublicArtCrawler } from "./src/crawlers/publicArtCrawler";
 
 const duckDBService = new DuckDBService();
 
@@ -48,6 +49,8 @@ async function runCrawler(
     dbService: DuckDBService,
     sessionName: string
 ) {
+    const statusBar = new cliProgress.SingleBar({}, cliProgress.Presets.shades_classic);
+
     const insertBatch = [];
 
     let consecutiveFailures = 0;
@@ -59,6 +62,8 @@ async function runCrawler(
         instantiatedCrawler.crawlerConfig.outputColumns
     );
 
+    statusBar.start(guideData.length, 0);
+
     for (const row of guideData) {
         const crawlResult: any[] = [];
 
@@ -69,6 +74,7 @@ async function runCrawler(
             );
             crawlResult.push(...intermediateResult);
             consecutiveFailures = 0;
+            statusBar.increment();
         } catch (e) {
             if (!(e instanceof AbortError)) {
                 consecutiveFailures++;
@@ -100,6 +106,7 @@ async function runCrawler(
         await dbService.insertIntoTable(instantiatedCrawler.crawlerConfig.outputTableName, insertBatch);
         insertBatch.length = 0;
     }
+    statusBar.stop();
     await instantiatedCrawler.teardown();
     dbService.exportTable(
         instantiatedCrawler.crawlerConfig.outputTableName,

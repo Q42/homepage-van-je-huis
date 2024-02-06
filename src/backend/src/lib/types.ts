@@ -1,5 +1,5 @@
-import { AbstractCrawler } from "../scrapers/abstractCrawler";
 import { Options as PRetryOptions } from "p-retry";
+import { AbstractCrawler } from "../crawlers/abstractCrawler";
 
 export type CsvIngestSource = {
     ingestSourcePath: string;
@@ -56,6 +56,10 @@ export type IntermediateOutputFormats = "json" | "parquet";
 export type IntermediateTableRef = { fileLocation: string; tableName: string };
 
 export type BaseApiResponse = Record<string, any>;
+
+export type ImageUrlRepsonse = {
+    url: string;
+};
 
 export type EnrichedDBAddress = {
     "ligtIn:BAG.PND.identificatie": string;
