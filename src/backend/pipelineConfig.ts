@@ -130,6 +130,12 @@ export const defaultCrawlerRetryConfig: PRetryOptions = {
 };
 
 export const crawlerConfigs: CrawlerConfigs = {
+    publicArt: {
+        crawler: PublicArtCrawler,
+        retryConfig: { ...defaultCrawlerRetryConfig, retries: 1 },
+        outputTableName: "buitenkunst",
+        outputColumns: publicArtRecordOutputColumns
+    },
     /*
     imageArchive: {
         crawler: ImageArchiveCrawler,
@@ -137,14 +143,9 @@ export const crawlerConfigs: CrawlerConfigs = {
         guideFile: "./intermediate_output/adressen.parquet",
         outputColumns: imageRecordOutputColumns,
         retryConfig: defaultCrawlerRetryConfig
-    }, },*/
-    publicArt: {
-        crawler: PublicArtCrawler,
-        retryConfig: { ...defaultCrawlerRetryConfig, retries: 1 },
-        outputTableName: "buitenkunst",
-        outputColumns: publicArtRecordOutputColumns
-    },
+    },*/
     imageArchive: {
+        skip: true, // remove this flag to also run this crawler
         crawler: SparqlImageArchiveCrawler,
         outputTableName: "archief_afbeeldingen",
         guideFile: "./intermediate_output/adressen.parquet",

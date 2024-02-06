@@ -31,6 +31,7 @@ async function runCrawlers() {
     // system initialization
     checkFilePaths(getIngestFilePathsFromSources(cc));
     createDirectory(pc.crawlerOutputDirectory);
+    createDirectory(`${pc.crawlerOutputDirectory}/failureLogs`);
 
     await duckDBService.initDb({ dbLocation: `${pc.crawlerOutputDirectory}/${sessionName}.duckdb` });
     await duckDBService.enableSpatialExtension();
@@ -54,13 +55,14 @@ async function runCrawler(
     const insertBatch = [];
 
     let consecutiveFailures = 0;
-
+    console.log("Loading guide data for:", instantiatedCrawler.crawlerConfig.crawler);
     const guideData = await instantiatedCrawler.loadGuideData();
-
-    dbService.createTableFromDefinition(
+    await dbService.createTableFromDefinition(
         instantiatedCrawler.crawlerConfig.outputTableName,
         instantiatedCrawler.crawlerConfig.outputColumns
     );
+
+    console.log("Starting crawler:", instantiatedCrawler.crawlerConfig.crawler);
 
     statusBar.start(guideData.length, 0);
 
@@ -80,14 +82,10 @@ async function runCrawler(
                 consecutiveFailures++;
             }
 
-            createDirectory(`${pc.crawlerOutputDirectory}/failureLogs`);
             appendObjectToFile(
                 row,
                 `${pc.crawlerOutputDirectory}/failureLogs/${sessionName}_${instantiatedCrawler.crawlerConfig.outputTableName}-failed.json`
             );
-
-            console.log(e);
-            console.log("error crawling row:", row);
         }
 
         if (crawlResult.length > 0) {

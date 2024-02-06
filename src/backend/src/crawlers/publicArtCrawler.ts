@@ -3,6 +3,7 @@ import { AbstractCrawler } from "./abstractCrawler";
 import { CrawlerConfig } from "../lib/types";
 import { geoLocationToRDGeometryString } from "../utils/rijksdriehoek";
 import { PublicArtRecord } from "../models/publicArtRecord";
+import cliProgress from "cli-progress";
 import { AbortError } from "p-retry";
 
 export class PublicArtCrawler extends AbstractCrawler<PublicArtRecord, string> {
@@ -52,8 +53,7 @@ export class PublicArtCrawler extends AbstractCrawler<PublicArtRecord, string> {
     }
 
     protected async getArtUrls(): Promise<string[]> {
-        const numberOfPages = 2;
-        // const numberOfPages = 108;
+        const numberOfPages = 1;
         const baseArtUrl = "https://amsterdam.kunstwacht.nl";
         const outputUrls: string[] = [];
 
@@ -62,6 +62,8 @@ export class PublicArtCrawler extends AbstractCrawler<PublicArtRecord, string> {
         }
 
         const page = await this.browser.newPage();
+        const statusBar = new cliProgress.SingleBar({}, cliProgress.Presets.shades_classic);
+        statusBar.start(numberOfPages, 0);
         for (let currentPage = 1; currentPage <= numberOfPages; currentPage++) {
             await page.goto(`https://amsterdam.kunstwacht.nl/kunstwerken/page/${currentPage}`, {
                 waitUntil: "domcontentloaded"
@@ -79,7 +81,9 @@ export class PublicArtCrawler extends AbstractCrawler<PublicArtRecord, string> {
                 return artUrls;
             });
             outputUrls.push(...urlsFromPage.map((url) => `${baseArtUrl}${url}`));
+            statusBar.increment();
         }
+        statusBar.stop();
         await page.close();
         return outputUrls;
     }

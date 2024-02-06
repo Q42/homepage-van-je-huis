@@ -20,6 +20,7 @@ type BaseCrawlerConfig = {
 export interface CrawlerConfig extends BaseCrawlerConfig {
     crawler: AnyApiCrawler;
     guideFile?: string;
+    skip?: boolean;
     retryConfig: PRetryOptions;
 }
 
