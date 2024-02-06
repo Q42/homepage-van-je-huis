@@ -1,150 +1,71 @@
-# Nuxt 3 Minimal Starter
+# Homepage van je Huis
 
-Look at the [Nuxt 3 documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+**What is Homepage van je Huis?**
 
-## Setup
+Coming soon
 
-Make sure to install the dependencies:
+<details>
+<summary>Table of contents</summary>
 
-```bash
-# npm
-npm install
+- [Stack](#stack)
+- [🚀 Getting started](#-getting-started)
+- [API](#api)
+- [🤚 Good to know](#-good-to-know)
+</details>
 
-# pnpm
-pnpm install
+## Stack
 
-# yarn
-yarn install
-
-# bun
-bun install
-```
-
-## Development Server
-
-Start the development server on `http://localhost:3000`:
-
-```bash
-# npm
-npm run dev
-
-# pnpm
-pnpm run dev
-
-# yarn
-yarn dev
-
-# bun
-bun run dev
-```
-
-## Production
-
-Build the application for production:
-
-```bash
-# npm
-npm run build
-
-# pnpm
-pnpm run build
-
-# yarn
-yarn build
-
-# bun
-bun run build
-```
-
-Locally preview production build:
-
-```bash
-# npm
-npm run preview
-
-# pnpm
-pnpm run preview
-
-# yarn
-yarn preview
-
-# bun
-bun run preview
-```
-
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
-
----
-
-<!--
-
-Hi developer!
-
-You can fill this readme for your own project.
-Try to keep the root readme as short as possible.
-Link to separate markdown files in /documentation for extensive information about a topic.
-
-Good luck!
-
--->
-
-# Homepage van je huis frontend
-
-This project doesn't have a frontend yet.
-
-## ✨ See it in action ✨
-
-| Environment | ...      |
-| ----------- | -------- |
-| `...`       | 🚧 / ... |
-
-## 🧰 External tooling
-
-<!-- Provide links to external used tooling, like a Sketch, Jira, etc. -->
-
-- ...
+- [Nuxt3](https://nuxt.com/)
+- Typescript
+- [Vite](https://vitejs.dev/)
+- [Storybook](https://storybook.js.org/)
+- Less
 
 ## 🚀 Getting started
 
-### Prerequisites
+1. Install [Node Version Manager](https://github.com/nvm-sh/nvm)
+2. Run `nvm i` to install/use the correct node version as described in .nvmrc
+3. Run `npm i` to install all dependencies
+4. Configure and use prettier and editor config in your IDE of choice to conform to the project formatting rules
+5. Run `npm run dev` to start development server and navigate to `localhost:[PORT]/nl/collectie/zoeken` in your browser as we don't have a homepage and `localhost:[PORT]/` will give a `404`
+6. Run `npm run storybook` to start Storybook, here you can find all the components. See [Storybook](#storybook)
 
-<!--
-   Which software or library's are needed to be able to install this project?
- -->
+To run a production build:
 
-- ...
+- Run `npm run build`
+- Run `npm run preview`
 
-### Installation
+### Storybook
 
-<!-- How to install this project (after having the prerequisites)? -->
+We use [Storybook](https://storybook.js.org/) to build all the components and pages. This way we can built isolated and create a nice overview of all the components we have.
+Run `npm run storybook` to open Storybook. Documentation of the components can be found here as well.
 
-- ...
+Creating a new component:
 
-### Development
+1. Create your component: `npm run plop [name of your component]`
+2. Run Storybook: `npm run storybook`
+3. Now you can see your component in Storybook
+4. Start building!
 
-<!-- How to actually start developing? -->
+### Browser & device support
 
-- ...
+\_Last updated: 06/02/2024
+| Browser | Supported version |
+| :--- | ---: |
+| Safari | 14 and up |
+| Chrome | 108 and up |
+| Edge | 112 and up |
+| Samsung Internet | 19 and up |
+| Firefox | 78 and up |
+| Android webview | 112 and up |
 
-### Deployment / Release process
+We use the following breakpoints to cover all screen sizes:
+| Breakpoint | Pixels |
+| :--- | ---: |
+| Mobile | 320 |
+| Tablet | 600 |
+| Desktop-md | 1024 |
+| Desktop-lg | 1360 |
+| Desktop-xl | 1920 |
 
-<!-- How to deploy it to an environment or release it to an environment / store? -->
-
-- ...
-
-## 🤚 Good to know
-
-<!--
-  A place to provide extra information (or links to it) about the project.
--->
-
-- ...
-
-<!--
-
-or use headings (when having lots of information)
-
-## ...
-...
-
--->
+See the [browser & device list docs](./docs/BrowserDeviceList.md) for a full report of the researched Analytics data to determine the browser and device support.
