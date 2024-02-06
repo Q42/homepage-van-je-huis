@@ -2,9 +2,10 @@ import { SparqlImageArchiveCrawler } from "./src/crawlers/sparqlImageCrawler";
 import { Options as PRetryOptions } from "p-retry";
 
 import { ApiCrawlerConfigs as CrawlerConfigs, CsvIngestSources, IntermediateOutputFormats } from "./src/lib/types";
-import { PublicArtCrawler } from "./src/scrapers/publicArtCrawler";
+
 import { imageRecordOutputColumns } from "./src/models/imageRecord";
 import { publicArtRecordOutputColumns } from "./src/models/publicArtRecord";
+import { PublicArtCrawler } from "./src/crawlers/publicArtCrawler";
 
 // devMode limits all select queries to a specified max number of rows
 export const devMode = { enabled: true, limit: 15 };
