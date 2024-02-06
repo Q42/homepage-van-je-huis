@@ -17,6 +17,7 @@ const dbNotInitializedError = new Error("Database has not been initialized");
 
 export class DuckDBService {
     public db: Database | undefined;
+    public spatialEnabled: boolean = false;
 
     constructor() {
         this.db = undefined;
@@ -30,7 +31,8 @@ export class DuckDBService {
             throw dbNotInitializedError;
         }
 
-        return await this.db.exec("INSTALL spatial; LOAD spatial;");
+        await this.db.exec("INSTALL spatial; LOAD spatial;");
+        this.spatialEnabled = true;
     }
 
     public async teardown(): Promise<void> {

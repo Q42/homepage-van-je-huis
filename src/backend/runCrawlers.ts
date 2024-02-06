@@ -10,8 +10,9 @@ import { crawlerConfigs as cc, pipelineConfig as pc } from "./pipelineConfig";
 import { DuckDBService } from "./src/lib/duckDBService";
 import { AbstractCrawler } from "./src/scrapers/abstractCrawler";
 import { ImageArchiveCrawler } from "./src/scrapers/archiveImageCrawler";
-import pRetry from "p-retry";
+import pRetry, { AbortError } from "p-retry";
 import { appendObjectToFile } from "./src/lib/failureLog";
+import { PublicArtCrawler } from "./src/scrapers/publicArtCrawler";
 
 const duckDBService = new DuckDBService();
 
@@ -31,12 +32,15 @@ async function runCrawlers() {
     createDirectory(pc.crawlerOutputDirectory);
 
     await duckDBService.initDb({ dbLocation: `${pc.crawlerOutputDirectory}/${sessionName}.duckdb` });
+    await duckDBService.enableSpatialExtension();
 
     const instantiatedCrawlers = {
-        imageArchive: new cc.imageArchive.crawler(cc.imageArchive, duckDBService) as ImageArchiveCrawler
+        imageArchive: new cc.imageArchive.crawler(cc.imageArchive, duckDBService) as ImageArchiveCrawler,
+        publicArt: new cc.publicArt.crawler(cc.publicArt, { headless: false }) as PublicArtCrawler
     };
 
-    await runCrawler(instantiatedCrawlers.imageArchive, duckDBService, sessionName);
+    // await runCrawler(instantiatedCrawlers.imageArchive, duckDBService, sessionName);
+    await runCrawler(instantiatedCrawlers.publicArt, duckDBService, sessionName);
 }
 
 async function runCrawler(
@@ -66,10 +70,14 @@ async function runCrawler(
             crawlResult.push(...intermediateResult);
             consecutiveFailures = 0;
         } catch (e) {
-            consecutiveFailures++;
+            if (!(e instanceof AbortError)) {
+                consecutiveFailures++;
+            }
+
+            createDirectory(`${pc.crawlerOutputDirectory}/failureLogs`);
             appendObjectToFile(
                 row,
-                `${pc.crawlerOutputDirectory}/${sessionName}_${instantiatedCrawler.crawlerConfig.outputTableName}-failed.json`
+                `${pc.crawlerOutputDirectory}/failureLogs/${sessionName}_${instantiatedCrawler.crawlerConfig.outputTableName}-failed.json`
             );
 
             console.log(e);

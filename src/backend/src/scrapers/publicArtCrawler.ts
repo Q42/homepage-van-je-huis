@@ -3,6 +3,7 @@ import { AbstractCrawler } from "./abstractCrawler";
 import { CrawlerConfig } from "../lib/types";
 import { geoLocationToRDGeometryString } from "../utils/rijksdriehoek";
 import { PublicArtRecord } from "../models/publicArtRecord";
+import { AbortError } from "p-retry";
 
 export class PublicArtCrawler extends AbstractCrawler<PublicArtRecord, string> {
     browser: Browser | null;
@@ -51,9 +52,10 @@ export class PublicArtCrawler extends AbstractCrawler<PublicArtRecord, string> {
     }
 
     protected async getArtUrls(): Promise<string[]> {
-        const numberOfPages = 108;
+        const numberOfPages = 2;
+        // const numberOfPages = 108;
         const baseArtUrl = "https://amsterdam.kunstwacht.nl";
-        const artUrls: string[] = [];
+        const outputUrls: string[] = [];
 
         if (!this.browser) {
             this.browser = await puppeteer.launch({});
@@ -65,20 +67,21 @@ export class PublicArtCrawler extends AbstractCrawler<PublicArtRecord, string> {
                 waitUntil: "domcontentloaded"
             });
 
-            const urls = await page.evaluate(() => {
-                return document.body.querySelectorAll(".entry-image");
+            const urlsFromPage = await page.evaluate(() => {
+                const artUrls: string[] = [];
+                document.body.querySelectorAll(".entry-image").forEach((url) => {
+                    const artworkUrl = url.getAttribute("href");
+                    console.log("artwork url:", artworkUrl);
+                    if (artworkUrl) {
+                        artUrls.push(artworkUrl);
+                    }
+                });
+                return artUrls;
             });
-
-            urls.forEach((link) => {
-                const artworkUrl = link.getAttribute("href");
-                if (artworkUrl) {
-                    artUrls.push(baseArtUrl + artworkUrl);
-                }
-            });
+            outputUrls.push(...urlsFromPage.map((url) => `${baseArtUrl}${url}`));
         }
-
         await page.close();
-        return artUrls;
+        return outputUrls;
     }
 
     protected async extractArtCoordinates(page: Page) {
@@ -122,7 +125,9 @@ export class PublicArtCrawler extends AbstractCrawler<PublicArtRecord, string> {
         const image = await this.extractArtImage(page);
 
         if (!title || !image || !location) {
-            throw new Error("Failed to extract all required data");
+            // This means that the page was found, but did simply not contain the required data for homepage van je huis, and as such, should not be retried.
+            // Some artworks, for example, don't contain a location.
+            throw new AbortError("Failed to extract all required data");
         }
 
         return {

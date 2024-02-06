@@ -52,8 +52,10 @@ export async function measureExecutionTime(fn: () => Promise<any>) {
 
 export function getIngestFilePathsFromSources(sources: CsvIngestSources | ApiCrawlerConfigs) {
     const filePaths: string[] = [];
-    Object.entries(sources).forEach(([key, source]) => {
-        filePaths.push(source.ingestSourcePath ?? source.guideFile);
+    Object.values(sources).forEach((source) => {
+        if (source.ingestSourcePath !== undefined) {
+            filePaths.push(source.ingestSourcePath ?? source.guideFile);
+        }
     });
     return filePaths;
 }

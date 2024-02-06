@@ -26,6 +26,13 @@ The most important file for the pipelines is the `pipelineConfig.ts`. This is wh
 
 In its current form, there are three separate scripts: ingestFiles, runCrawlers and generateApi. Make sure to look at the [architecture](https://miro.com/app/board/uXjVN4O0Egs=/) before trying to run the system, so you know which scripts depend on the output of which other scripts.
 
+#### Developing duckdb queries & reading parquet files
+
+When doing an ingest, crawler or api generation run, the scripts will also output .duckdb files and, sometimes, parquet files. These can both be opened and queried on using a tool called dbeaver. The [duckDB docs](https://duckdb.org/docs/guides/sql_editors/dbeaver.html) contain info on how to get this up and running.
+
+For reading parquet files, don't open a .duckdb file, but load an in memory db and then run queries against the parquet file.
+Example: `SELECGT * FROM "/Users/thomas/Projects/homepage-van-je-huis/src/backend/crawler_output/buitenkunst_crawler-run-2024-02-06T12:49:07.parquet"`
+
 ### Deployment / Release process
 
 Currently, everything is run locally, there is no deployment process (yet)
