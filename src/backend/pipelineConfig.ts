@@ -109,7 +109,7 @@ export const csvIngestSources: CsvIngestSources = {
         outputColumns: ["id", "naam", "afbeelding", "geometrie"]
     },
     eventsPlaceholder: {
-        ingestSourcePath: "./data_input/AMS750_events_csv.csv",
+        ingestSourcePath: "./placeholder_data/AMS750_events_csv.csv",
         tableName: "events",
         inputColumns: {
             Name_event: "VARCHAR",
