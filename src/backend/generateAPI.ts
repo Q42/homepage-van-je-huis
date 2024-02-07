@@ -16,7 +16,6 @@ import {
     writeObjectToJsonFile
 } from "./src/utils/general";
 import { stringLibrary } from "./src/lib/strings";
-import { DBAddress } from "./src/models/adresses";
 import { EnrichedDBAddress } from "./src/lib/types";
 
 const duckDBService = new DuckDBService();

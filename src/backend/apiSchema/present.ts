@@ -2,6 +2,23 @@ import { BaseDataEntity, ImageRef } from "./shared";
 
 export type GeoLevel = "straat" | "buurt" | "wijk" | "stadsdeel";
 
+export type PresentEntityTypes =
+    | "outdoorArt"
+    | "cultureMulti"
+    | "musicVenue"
+    | "heritage"
+    | "dance"
+    | "visualArts"
+    | "photography"
+    | "cinema"
+    | "literary"
+    | "creativeIndustries"
+    | "theatre"
+    | "TVandRadio"
+    | "architecture"
+    | "newMedia"
+    | "debate";
+
 export type PresentData = {
     distanceRangeStart: number; // Meters at which the slider starts
     distanceRangeEnd: number; // Meters at which the slider starts
@@ -15,6 +32,7 @@ interface SliderEntry extends BaseDataEntity {
     image?: ImageRef;
     title: string; // Title of the entry
     visitUrl: string; // URL to the source where people can find out more info about the image
+    type: PresentEntityTypes; // The type of the entry
 }
 
 export interface AgendaItem extends BaseDataEntity {

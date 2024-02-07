@@ -114,7 +114,7 @@ async function runCrawler(
     await instantiatedCrawler.teardown();
     dbService.exportTable({
         tableName: instantiatedCrawler.crawlerConfig.outputTableName,
-        outputFile: `${pc.crawlerOutputDirectory}/${instantiatedCrawler.crawlerConfig.outputTableName}.parquet`,
+        outputFile: `${pc.crawlerOutputDirectory}/${instantiatedCrawler.crawlerConfig.outputTableName}`,
         columnDefenitions: instantiatedCrawler.crawlerConfig.outputColumns,
         outputColumns: undefined,
         outputFormat: "parquet"
