@@ -3,9 +3,10 @@ import { Options as PRetryOptions } from "p-retry";
 
 import { ApiCrawlerConfigs as CrawlerConfigs, CsvIngestSources, IntermediateOutputFormats } from "./src/lib/types";
 
-import { imageRecordOutputColumns } from "./src/models/imageRecord";
 import { publicArtRecordOutputColumns } from "./src/models/publicArtRecord";
 import { PublicArtCrawler } from "./src/crawlers/publicArtCrawler";
+import { adresInputColumns, adresOutputColumns } from "./src/models/adresses";
+import { straatOmschrijvingInputColumns, straatnaamOmschrijvingOutputColumns } from "./src/models/straatOmschrijving";
 
 // devMode limits all select queries to a specified max number of rows
 export const devMode = { enabled: true, limit: 15 };
@@ -14,89 +15,16 @@ export const csvIngestSources: CsvIngestSources = {
     adressen: {
         ingestSourcePath: "./data_input/BAG_verblijfsobject_Actueel.csv",
         tableName: "adressen",
-        inputColumns: {
-            "identificatie": "VARCHAR",
-            "aanduidingInOnderzoek": "VARCHAR",
-            "geconstateerd": "VARCHAR",
-            "heeftIn:BAG.NAG.identificatieHoofdadres": "VARCHAR",
-            "huisnummerHoofdadres": "INTEGER",
-            "huisletterHoofdadres": "VARCHAR",
-            "huisnummertoevoegingHoofdadres": "VARCHAR",
-            "postcodeHoofdadres": "VARCHAR",
-            "ligtAan:BAG.ORE.identificatieHoofdadres": "VARCHAR",
-            "ligtAan:BAG.ORE.naamHoofdadres": "VARCHAR",
-            "ligtIn:BAG.WPS.identificatieHoofdadres": "VARCHAR",
-            "ligtIn:BAG.WPS.naamHoofdadres": "VARCHAR",
-            "ligtIn:BRK.GME.identificatie": "VARCHAR",
-            "ligtIn:BRK.GME.naam": "VARCHAR",
-            "heeftIn:BAG.NAG.identificatieNevenadres": "VARCHAR",
-            "gebruiksdoel": "VARCHAR",
-            "gebruiksdoelWoonfunctie": "VARCHAR",
-            "gebruiksdoelGezondheidszorgfunctie": "VARCHAR",
-            "aantalEenhedenComplex": "INTEGER",
-            "is:WOZ.WOB.soortObject": "VARCHAR",
-            "oppervlakte": "VARCHAR",
-            "status": "VARCHAR",
-            "beginGeldigheid": "VARCHAR",
-            "eindGeldigheid": "VARCHAR",
-            "documentdatum": "VARCHAR",
-            "documentnummer": "VARCHAR",
-            "verdiepingToegang": "VARCHAR",
-            "toegang": "VARCHAR",
-            "aantalBouwlagen": "INTEGER",
-            "hoogsteBouwlaag": "INTEGER",
-            "laagsteBouwlaag": "INTEGER",
-            "aantalKamers": "INTEGER",
-            "eigendomsverhouding": "VARCHAR",
-            "redenopvoer": "VARCHAR",
-            "redenafvoer": "VARCHAR",
-            "ligtIn:BAG.PND.identificatie": "VARCHAR",
-            "ligtIn:GBD.BBK.identificatie": "VARCHAR",
-            "ligtIn:GBD.BBK.code": "VARCHAR",
-            "ligtIn:GBD.BRT.identificatie": "VARCHAR",
-            "ligtIn:GBD.BRT.code": "VARCHAR",
-            "ligtIn:GBD.BRT.naam": "VARCHAR",
-            "ligtIn:GBD.WIJK.identificatie": "VARCHAR",
-            "ligtIn:GBD.WIJK.code": "VARCHAR",
-            "ligtIn:GBD.WIJK.naam": "VARCHAR",
-            "ligtIn:GBD.GGW.identificatie": "VARCHAR",
-            "ligtIn:GBD.GGW.code": "VARCHAR",
-            "ligtIn:GBD.GGW.naam": "VARCHAR",
-            "ligtIn:GBD.GGP.identificatie": "VARCHAR",
-            "ligtIn:GBD.GGP.code": "VARCHAR",
-            "ligtIn:GBD.GGP.naam": "VARCHAR",
-            "ligtIn:GBD.SDL.identificatie": "VARCHAR",
-            "ligtIn:GBD.SDL.code": "VARCHAR",
-            "ligtIn:GBD.SDL.naam": "VARCHAR",
-            "geometrie": "GEOMETRY"
-        },
-        outputColumns: [
-            "identificatie",
-            "huisnummerHoofdadres",
-            "huisletterHoofdadres",
-            "huisnummertoevoegingHoofdadres",
-            "postcodeHoofdadres",
-            "ligtAan:BAG.ORE.identificatieHoofdadres",
-            "ligtAan:BAG.ORE.naamHoofdadres",
-            "ligtIn:BAG.PND.identificatie",
-            "gebruiksdoel",
-            "ligtIn:GBD.BRT.code",
-            "ligtIn:GBD.WIJK.code",
-            "ligtIn:GBD.GGW.code",
-            "ligtIn:GBD.SDL.code",
-            "geometrie"
-        ]
+        inputColumns: adresInputColumns,
+        outputColumns: adresOutputColumns
     },
     straatOmschrijving: {
         ingestSourcePath: "./data_input/BAG_openbare_ruimte_beschrijving_Actueel.csv",
         tableName: "straatNaamOmschrijving",
-        inputColumns: {
-            identificatie: "VARCHAR",
-            naam: "VARCHAR",
-            beschrijving: "VARCHAR"
-        },
-        outputColumns: ["identificatie", "naam", "beschrijving"]
+        inputColumns: straatOmschrijvingInputColumns,
+        outputColumns: straatnaamOmschrijvingOutputColumns
     },
+    // these two are just placeholders for now and need to be replaced with the actual data once its available
     artPlaceholder: {
         ingestSourcePath: "./data_input/art_placeholder.csv",
         tableName: "buitenkunst",
@@ -179,6 +107,6 @@ export const pipelineConfig: PipelineConfig = {
     intermediateOutputFormat: "parquet",
     apiOutputDirectory: "./api_generated",
     scraperGuideFileDirectory: "./crawler_guide_files",
-    batchInsertMinThreshold: 1000,
+    batchInsertMinThreshold: 500,
     maxConsecutiveCrawlFailures: 25
 };

@@ -8,13 +8,12 @@ import { AbortError } from "p-retry";
 
 export class PublicArtCrawler extends AbstractCrawler<PublicArtRecord, string> {
     browser: Browser | null;
-    fetcherPage: Page | null;
+
     puppeteerOptions: PuppeteerLaunchOptions;
 
     constructor(crawlerConfig: CrawlerConfig, puppeteerOptions?: PuppeteerLaunchOptions) {
         super(crawlerConfig);
         this.browser = null;
-        this.fetcherPage = null;
         this.puppeteerOptions = puppeteerOptions ?? {};
     }
 
@@ -23,16 +22,17 @@ export class PublicArtCrawler extends AbstractCrawler<PublicArtRecord, string> {
     }
     public async crawl(guideRecord: string): Promise<PublicArtRecord[]> {
         if (!this.browser) {
-            this.browser = await puppeteer.launch();
-        }
-        if (!this.fetcherPage) {
-            this.fetcherPage = await this.browser.newPage();
+            this.browser = await puppeteer.launch(this.puppeteerOptions);
         }
 
-        await this.fetcherPage.goto(guideRecord, {
+        const fetcherPage = await this.browser.newPage();
+
+        await fetcherPage.goto(guideRecord, {
             waitUntil: "domcontentloaded"
         });
-        const record = await this.extractArtDetails(this.fetcherPage);
+        const record = await this.extractArtDetails(fetcherPage);
+        fetcherPage.close();
+
         return [
             {
                 ...record,
@@ -42,10 +42,6 @@ export class PublicArtCrawler extends AbstractCrawler<PublicArtRecord, string> {
     }
 
     public async teardown(): Promise<void> {
-        if (this.fetcherPage) {
-            await this.fetcherPage.close();
-            this.fetcherPage = null;
-        }
         if (this.browser) {
             await this.browser.close();
             this.browser = null;
@@ -53,7 +49,7 @@ export class PublicArtCrawler extends AbstractCrawler<PublicArtRecord, string> {
     }
 
     protected async getArtUrls(): Promise<string[]> {
-        const numberOfPages = 108;
+        const numberOfPages = 3;
         const baseArtUrl = "https://amsterdam.kunstwacht.nl";
         const outputUrls: string[] = [];
 

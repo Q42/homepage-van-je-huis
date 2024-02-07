@@ -9,6 +9,7 @@ export type AddresDescription = {
 };
 
 export type AddressRecord = {
+    "id": string;
     "ligtIn:BAG.PND.identificatie": string;
     "address": AddresDescription;
     "presentData": PresentData;

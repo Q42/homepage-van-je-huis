@@ -94,5 +94,5 @@ export const projectRdWgs84 = projectionBetweenRdWgs84();
 
 export function geoLocationToRDGeometryString(geoLocation: GeoLocation): GeoString {
     const { x, y } = projectRdWgs84.wgs84ToRd(geoLocation.latitude, geoLocation.longitude);
-    return `POINT(${x} ${y})`;
+    return `POINT(${Math.round(x)} ${Math.round(y)})`;
 }

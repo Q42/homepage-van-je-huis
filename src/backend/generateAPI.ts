@@ -5,7 +5,7 @@ import { csvIngestSources, devMode, pipelineConfig as pc } from "./pipelineConfi
 import { DuckDBService } from "./src/lib/duckDBService";
 import { calendarEvent } from "./src/models/eventCalendar";
 import { queries } from "./src/lib/queries";
-import { EnrichedDBAddress } from "./src/lib/types";
+
 import { generateAddressID, assembleApiRecord, getMinMaxRangeFromPastData } from "./src/utils/api";
 
 import {
@@ -16,6 +16,8 @@ import {
     writeObjectToJsonFile
 } from "./src/utils/general";
 import { stringLibrary } from "./src/lib/strings";
+import { DBAddress } from "./src/models/adresses";
+import { EnrichedDBAddress } from "./src/lib/types";
 
 const duckDBService = new DuckDBService();
 

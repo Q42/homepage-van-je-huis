@@ -112,12 +112,13 @@ async function runCrawler(
     }
     statusBar.stop();
     await instantiatedCrawler.teardown();
-    dbService.exportTable(
-        instantiatedCrawler.crawlerConfig.outputTableName,
-        `${pc.crawlerOutputDirectory}/${instantiatedCrawler.crawlerConfig.outputTableName}_${sessionName}`,
-        undefined,
-        "parquet"
-    );
+    dbService.exportTable({
+        tableName: instantiatedCrawler.crawlerConfig.outputTableName,
+        outputFile: `${pc.crawlerOutputDirectory}/${instantiatedCrawler.crawlerConfig.outputTableName}.parquet`,
+        columnDefenitions: instantiatedCrawler.crawlerConfig.outputColumns,
+        outputColumns: undefined,
+        outputFormat: "parquet"
+    });
 }
 
 measureExecutionTime(manageDbProcess);

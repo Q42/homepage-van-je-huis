@@ -8,9 +8,18 @@ import {
 } from "./types";
 import { parseValueForDbInsert } from "../utils/general";
 import { devMode } from "../../pipelineConfig";
+import { getExportSelectQuery } from "../utils/db";
 
 type DuckDBConfig = {
     dbLocation?: string;
+};
+
+type ExportTableOptions = {
+    tableName: string;
+    outputFile: string;
+    columnDefenitions: ColumnDefenitions;
+    outputColumns?: string[];
+    outputFormat?: IntermediateOutputFormats;
 };
 
 const dbNotInitializedError = new Error("Database has not been initialized");
@@ -71,21 +80,20 @@ export class DuckDBService {
         await this.runQuery(querystring);
     }
 
-    public async exportTable(
-        tableName: string,
-        outputFile: string,
-        columns?: string[],
-        outputFormat?: IntermediateOutputFormats
-    ) {
+    public async exportTable({
+        tableName,
+        outputFile,
+        outputColumns,
+        columnDefenitions: inputColumns,
+        outputFormat = "parquet"
+    }: ExportTableOptions) {
         if (!this.db) {
             throw dbNotInitializedError;
         }
 
         let selectStatement = tableName;
 
-        if (columns && columns.length > 0) {
-            selectStatement = `(SELECT ${columns.join(", ")} FROM ${tableName})`;
-        }
+        selectStatement = getExportSelectQuery(tableName, inputColumns, outputColumns);
 
         let exportSuffix = "";
         switch (outputFormat) {

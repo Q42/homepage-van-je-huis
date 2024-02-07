@@ -28,7 +28,7 @@ async function ingestFileSources() {
     // create intermediary table files
     for (const source of Object.values(csvIngestSources)) {
         console.log(`Ingesting ${source.ingestSourcePath}`);
-        loadFileToParquet(duckDBService, source, pc);
+        await loadFileToParquet(duckDBService, source, pc);
     }
 }
 

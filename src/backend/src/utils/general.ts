@@ -31,11 +31,6 @@ export function writeObjectToJsonFile(object: Record<any, any>, filePath: string
     return fs.writeFileSync(filePath, json);
 }
 
-export function getColumnKeysFromSourceDef(source: CsvIngestSource): string[] {
-    // This is to ensure the SQL query doesn't trip over any special characters in the column names
-    return source.outputColumns.map((key) => `"${key}"`);
-}
-
 /**
  * Runs a given asynchronous function and logs its duration.
  * @param fn - The function to be measured.
@@ -77,7 +72,7 @@ export function parseValueForDbInsert(value: any): string {
         return "NULL";
     }
     if (typeof value === "string") {
-        return `'${value.replace("'", '"')}'`;
+        return `'${value.replace(/'/g, '"')}'`.trim();
     }
     return value.toString();
 }
