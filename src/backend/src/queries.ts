@@ -1,9 +1,7 @@
-type Query = string | ((...args: any[]) => string);
-
 export const queries = {
     sqlSelectDistinct: (tableName: string, column: string, columnAs?: string) =>
         `SELECT DISTINCT ${column} ${columnAs ? "AS " + columnAs : ""} FROM ${tableName}`,
-    
+
     sparqlSearchByAddress: (street: string, houseNumber: number) => `
         PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
         PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
@@ -21,5 +19,13 @@ export const queries = {
         ?address daa:houseNumberBegin ?houseNumberSmall.
         ?address daa:houseNumberEnd ?houseNumberBig.
         filter(xsd:integer(?houseNumberSmall) <= ${houseNumber} && xsd:integer(?houseNumberBig) >= ${houseNumber})
-        } LIMIT 1000`
+        } LIMIT 1000`,
+
+    sqlSelectPublicArt: (addresTableName: string, artTableName: string, addressId: string, range: number) => `
+        SELECT A.title , A.image , A.visitUrl , round(ST_Distance(A.location, B.geometrie),0) as distance_from_address
+        FROM ${artTableName}  A
+        JOIN ${addresTableName} B ON ST_Distance(A.location, B.geometrie) < ${range}
+        WHERE B.identificatie = '${addressId}'
+        ORDER BY distance_from_address ASC;
+        `
 };

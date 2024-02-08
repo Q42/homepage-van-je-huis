@@ -11,6 +11,8 @@ import { generateAddressID, assembleApiRecord, getMinMaxRangeFromPastData } from
 import { checkFilePaths, createDirectory, measureExecutionTime, writeObjectToJsonFile } from "./src/utils/general";
 import { stringLibrary } from "./src/lib/strings";
 import { CrawlerConfig, CsvIngestSource, EnrichedDBAddress } from "./src/lib/types";
+import { get } from "http";
+import { getPublicArt } from "./src/apiGenerators.ts/getPublicArt";
 
 const duckDBService = new DuckDBService();
 
@@ -69,7 +71,8 @@ async function generateAPI() {
                 contents: address.straatnaamBeschrijving.trim()
             });
         }
-
+        const publicArt = await getPublicArt(duckDBService, address.identificatie);
+        addressPresent.slider.push(...publicArt);
         // This is where the record gets finalized
         if (addressPast.timeline.length > 0) {
             const pastStartEnd = getMinMaxRangeFromPastData(addressPast);

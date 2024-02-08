@@ -11,3 +11,7 @@ export const publicArtRecordOutputColumns: ColumnDefenitions = {
     visitUrl: "VARCHAR",
     location: "GEOMETRY"
 };
+
+export interface CustomizedPublicArtRecord extends Omit<PublicArtRecord, "location"> {
+    distance_from_address: number;
+}
