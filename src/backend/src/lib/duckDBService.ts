@@ -81,19 +81,14 @@ export class DuckDBService {
         await this.runQuery(querystring);
     }
 
-    public async exportTable({
-        tableName,
-        outputFile,
-        outputColumns,
-        columnDefenitions: inputColumns
-    }: ExportTableOptions) {
+    public async exportTable({ tableName, outputFile, outputColumns, columnDefenitions }: ExportTableOptions) {
         if (!this.db) {
             throw dbNotInitializedError;
         }
 
         let selectStatement = tableName;
 
-        selectStatement = getExportSelectQuery(tableName, inputColumns, outputColumns);
+        selectStatement = getExportSelectQuery(tableName, columnDefenitions, outputColumns);
 
         outputFile += ".parquet";
 
