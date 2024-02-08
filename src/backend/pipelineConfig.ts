@@ -94,6 +94,7 @@ export type PipelineConfig = {
     apiOutputDirectory: string;
     dbBatchInsertMinThreshold: number;
     maxConsecutiveCrawlFailuresBeforeAbort: number;
+    sortSliders: boolean;
     presentViewRangeMax: number; // the maximum distance in meters to show in the present view
 };
 
@@ -102,5 +103,6 @@ export const pipelineConfig: PipelineConfig = {
     apiOutputDirectory: "./api_generated",
     dbBatchInsertMinThreshold: 500,
     maxConsecutiveCrawlFailuresBeforeAbort: 25,
+    sortSliders: true,
     presentViewRangeMax: 1000
 };

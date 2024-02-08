@@ -2,7 +2,7 @@ import { BaseDataEntity, ImageRef } from "./shared";
 
 export type GeoLevel = "straat" | "buurt" | "wijk" | "stadsdeel";
 
-export type PresentEntityTypes =
+export type PresentEntityType =
     | "outdoorArt"
     | "cultureMulti"
     | "musicVenue"
@@ -32,7 +32,7 @@ export interface DistanceViewEntry extends BaseDataEntity {
     image?: ImageRef;
     title: string; // Title of the entry
     visitUrl?: string; // URL to the source where people can find out more info about the image
-    type: PresentEntityTypes; // The type of the entry
+    type: PresentEntityType; // The type of the entry
 }
 
 export interface AgendaItem extends BaseDataEntity {

@@ -113,6 +113,11 @@ async function generateAPI() {
             addressPresent.distanceRangeEnd = presentStartEnd.distanceRangeEnd;
         }
 
+        if (pipelineConfig.sortSliders) {
+            addressPresent.slider.sort((a, b) => a.distanceToAddress - b.distanceToAddress);
+            addressPast.timeline.sort((a, b) => a.year - b.year);
+        }
+
         const addressRecord: AddressRecord = assembleApiRecord(address, addressPresent, addressPast);
         writeObjectToJsonFile(
             addressRecord,
