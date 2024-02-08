@@ -16,6 +16,7 @@ export const csvIngestSources: CsvIngestSources = {
         ingestSourcePath: "./data_input/BAG_verblijfsobject_Actueel.csv",
         outputTableName: "adressen",
         inputColumns: adresInputColumns,
+        // The names of the output columns must be present in the input columns as well.
         outputColumns: adresOutputColumns
     },
     straatOmschrijving: {
@@ -83,18 +84,14 @@ export const crawlerConfigs: CrawlerConfigs = {
 
 export type PipelineConfig = {
     intermediateOutputDirectory: string;
-    scraperGuideFileDirectory: string;
-    intermediateOutputFormat: IntermediateOutputFormats;
     apiOutputDirectory: string;
-    batchInsertMinThreshold: number;
-    maxConsecutiveCrawlFailures: number;
+    dbBatchInsertMinThreshold: number;
+    maxConsecutiveCrawlFailuresBeforeAbort: number;
 };
 
 export const pipelineConfig: PipelineConfig = {
     intermediateOutputDirectory: "./intermediate_output",
-    intermediateOutputFormat: "parquet",
     apiOutputDirectory: "./api_generated",
-    scraperGuideFileDirectory: "./crawler_guide_files",
-    batchInsertMinThreshold: 500,
-    maxConsecutiveCrawlFailures: 25
+    dbBatchInsertMinThreshold: 500,
+    maxConsecutiveCrawlFailuresBeforeAbort: 25
 };

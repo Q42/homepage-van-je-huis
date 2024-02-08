@@ -48,7 +48,6 @@ async function runCrawlers() {
         }
         await runCrawler(crawler, duckDBService, sessionName);
     }
-    // await runCrawler(instantiatedCrawlers.imageArchive, duckDBService, sessionName);
 }
 
 async function runCrawler(
@@ -98,11 +97,11 @@ async function runCrawler(
             insertBatch.push(...crawlResult);
         }
 
-        if (insertBatch.length >= pc.batchInsertMinThreshold) {
+        if (insertBatch.length >= pc.dbBatchInsertMinThreshold) {
             await dbService.insertIntoTable(instantiatedCrawler.crawlerConfig.outputTableName, insertBatch);
             insertBatch.length = 0;
         }
-        if (consecutiveFailures >= pc.maxConsecutiveCrawlFailures) {
+        if (consecutiveFailures >= pc.maxConsecutiveCrawlFailuresBeforeAbort) {
             throw new Error("max consecutive failures reached, aborting crawl");
         }
     }
