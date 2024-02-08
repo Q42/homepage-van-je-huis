@@ -34,6 +34,10 @@ For the CSV sources, you need to specify the schema that needs to be used to map
 
 In its current form, there are three separate scripts: ingestFiles, runCrawlers and generateApi. Make sure to look at the [architecture](https://miro.com/app/board/uXjVN4O0Egs=/) before trying to run the system, so you know which scripts depend on the output of which other scripts.
 
+#### 🚨 IMPORTANT 🚨
+
+Don't change the pipeline config inbetween ingests, crawlers and generation runs. This will lead to the generation and crawler steps not being able to find the correct files.
+
 #### Developing duckdb queries & reading parquet files
 
 When doing an ingest, crawler or api generation run, the scripts will also output .duckdb files. Parquet and duckdb files can both be opened and queried on using [dbeaver](https://dbeaver.io/). The [duckDB docs](https://duckdb.org/docs/guides/sql_editors/dbeaver.html) contain info on how to get this up and running.

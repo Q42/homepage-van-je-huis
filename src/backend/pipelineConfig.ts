@@ -12,12 +12,12 @@ import { cultureFacilitiesInputColumns, cultureFacilitiesOutputColumns } from ".
 // devMode limits all select queries to a specified max number of rows
 export const devMode = { enabled: true, limit: 50 };
 
+// See the type defenition for more info on what all these parameters do.
 export const csvIngestSources: CsvIngestSources = {
     adressen: {
         ingestSourcePath: "./data_input/BAG_verblijfsobject_Actueel.csv",
         outputTableName: "adressen",
         inputColumns: adresInputColumns,
-        // The names of the output columns must be present in the input columns as well.
         outputColumns: adresOutputColumns
     },
     straatOmschrijving: {

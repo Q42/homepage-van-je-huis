@@ -9,6 +9,7 @@ export type CsvIngestSource = {
     outputColumns: string[]; // the columns that need to be exported
     // optinally, the name of a column that contains a lat long POINT that needs to be converted to RD
     // this will create a new column with the name of "rd_geometrie_[tableName]"
+    // this column shouldn't manually be added to the in- and output columns, as it will be added automatically.
     geoTransformColumn?: string;
 };
 
