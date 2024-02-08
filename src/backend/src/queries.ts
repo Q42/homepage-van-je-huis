@@ -41,7 +41,7 @@ export const queries = {
         locationColumn: string;
         range: number;
     }) => `
-        SELECT A.title , A.image , A.visitUrl , round(ST_Distance(A.${locationColumn}, B.geometrie),0) as distance_from_address
+        SELECT A.* , round(ST_Distance(A.${locationColumn}, B.geometrie),0) as distance_from_address
         FROM ${facilitiesTableName} A
         JOIN ${addresTableName} B ON ST_Distance(A.${locationColumn}, B.geometrie) < ${range}
         WHERE B.identificatie = '${addressId}'

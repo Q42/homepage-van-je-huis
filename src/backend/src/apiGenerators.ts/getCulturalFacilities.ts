@@ -7,17 +7,9 @@ import { duckDBTransformLatLongGeoToRD } from "../utils/rijksdriehoek";
 
 export async function getCulturalFacilities(
     duckDBService: DuckDBService,
-    addressId: string
+    addressId: string,
+    rdGeoColumn: string
 ): Promise<DistanceViewEntry[]> {
-    const rdGeoColumn = "rd_location";
-
-    await duckDBTransformLatLongGeoToRD({
-        duckDBService: duckDBService,
-        tableName: cs.culturalFacilities.outputTableName,
-        latLongColumnName: "WKT_LAT_LNG",
-        newRdColumnName: rdGeoColumn
-    });
-
     const customArtRecords = (await duckDBService.runQuery(
         queries.sqlSelectCulturalFacilities({
             addresTableName: "adressen",

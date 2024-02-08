@@ -8,7 +8,6 @@ export function getExportSelectQuery(
     outputColumns?: string[]
 ): string {
     const parsedColumns = (outputColumns ?? Object.keys(inputColumns)).map((column) => {
-        console.log(column);
         if (inputColumns[column] && inputColumns[column].toLowerCase() === "geometry") {
             // also enclose the column name in double quotes to avoid issues with special characters in the column name
             return `ST_AsText("${column}") as "${column}"`;

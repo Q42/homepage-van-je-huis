@@ -1,7 +1,13 @@
 import { AddressRecord } from "./apiSchema/addressRecord";
 import { PastData } from "./apiSchema/past";
 import { AgendaItem, PresentData } from "./apiSchema/present";
-import { crawlerConfigs, csvIngestSources, devMode, pipelineConfig as pc, pipelineConfig } from "./pipelineConfig";
+import {
+    crawlerConfigs,
+    csvIngestSources as cs,
+    devMode,
+    pipelineConfig as pc,
+    pipelineConfig
+} from "./pipelineConfig";
 import { DuckDBService } from "./src/lib/duckDBService";
 import { calendarEvent } from "./src/models/eventCalendar";
 import { queries } from "./src/lib/queries";
@@ -19,16 +25,14 @@ import { stringLibrary } from "./src/lib/strings";
 import { CrawlerConfig, CsvIngestSource, EnrichedDBAddress } from "./src/lib/types";
 import { getPublicArt } from "./src/apiGenerators.ts/getPublicArt";
 import { getCulturalFacilities } from "./src/apiGenerators.ts/getCulturalFacilities";
+import { duckDBTransformLatLongGeoToRD } from "./src/utils/rijksdriehoek";
 
 const duckDBService = new DuckDBService();
 
 async function generateAPI() {
     await duckDBService.initDb({ dbLocation: ":memory:" });
 
-    const sources: (CsvIngestSource | CrawlerConfig)[] = [
-        ...Object.values(csvIngestSources),
-        ...Object.values(crawlerConfigs)
-    ];
+    const sources: (CsvIngestSource | CrawlerConfig)[] = [...Object.values(cs), ...Object.values(crawlerConfigs)];
 
     const sourcePaths = sources.map(
         (source) => `${pipelineConfig.intermediateOutputDirectory}/${source.outputTableName}.parquet`
@@ -79,12 +83,22 @@ async function generateAPI() {
             });
         }
 
+        // Add the public artworks
         const publicArt = await getPublicArt(duckDBService, address.identificatie);
         addressPresent.slider.push(...publicArt);
 
-        const culturalFacilities = await getCulturalFacilities(duckDBService, address.identificatie);
-        console.log(culturalFacilities);
-        return;
+        // Add the cultural facilities
+        const rdGeoColumn = "rd_location";
+
+        await duckDBTransformLatLongGeoToRD({
+            duckDBService: duckDBService,
+            tableName: cs.culturalFacilities.outputTableName,
+            latLongColumnName: "WKT_LAT_LNG",
+            newRdColumnName: rdGeoColumn
+        });
+
+        const culturalFacilities = await getCulturalFacilities(duckDBService, address.identificatie, rdGeoColumn);
+        addressPresent.slider.push(...culturalFacilities);
 
         // This is where the record gets finalized
         if (addressPast.timeline.length > 0) {

@@ -122,12 +122,12 @@ export async function duckDBTransformLatLongGeoToRD({
         throw new Error("This operation requires that the spatial extension is enabled in the DuckDB instance.");
     }
 
-    if (!duckDBService.columnExists(tableName, latLongColumnName)) {
+    if (!(await duckDBService.columnExists(tableName, newRdColumnName))) {
         return await duckDBService.runQuery(
-            `UPDATE ${tableName} 
+            `
+        ALTER TABLE ${tableName} ADD COLUMN ${newRdColumnName} GEOMETRY;    
+        UPDATE ${tableName} 
         SET ${newRdColumnName} = ST_Transform(ST_GeomFromText(${latLongColumnName}), 'EPSG:4326', 'EPSG:28992');`
         );
-    } else {
-        console.log("Skipping rd transformation, column already exists");
     }
 }
