@@ -5,13 +5,18 @@ import { crawlerConfigs, csvIngestSources, devMode, pipelineConfig as pc, pipeli
 import { DuckDBService } from "./src/lib/duckDBService";
 import { calendarEvent } from "./src/models/eventCalendar";
 import { queries } from "./src/lib/queries";
+import cliProgress from "cli-progress";
 
-import { generateAddressID, assembleApiRecord, getMinMaxRangeFromPastData } from "./src/utils/api";
+import {
+    generateAddressID,
+    assembleApiRecord,
+    getMinMaxRangeFromPastData,
+    getMinMaxRangeFromPresentData
+} from "./src/utils/api";
 
 import { checkFilePaths, createDirectory, measureExecutionTime, writeObjectToJsonFile } from "./src/utils/general";
 import { stringLibrary } from "./src/lib/strings";
 import { CrawlerConfig, CsvIngestSource, EnrichedDBAddress } from "./src/lib/types";
-import { get } from "http";
 import { getPublicArt } from "./src/apiGenerators.ts/getPublicArt";
 
 const duckDBService = new DuckDBService();
@@ -48,7 +53,9 @@ async function generateAPI() {
                 ? event.Date_end
                 : undefined
     }));
-
+    const statusBar = new cliProgress.SingleBar({}, cliProgress.Presets.shades_classic);
+    console.log("starting api generation");
+    statusBar.start(baseAdressList.length, 0);
     for (const address of baseAdressList) {
         const addressPresent: PresentData = {
             distanceRangeStart: 0,
@@ -73,11 +80,18 @@ async function generateAPI() {
         }
         const publicArt = await getPublicArt(duckDBService, address.identificatie);
         addressPresent.slider.push(...publicArt);
+
         // This is where the record gets finalized
         if (addressPast.timeline.length > 0) {
             const pastStartEnd = getMinMaxRangeFromPastData(addressPast);
             addressPast.timeRangeStart = pastStartEnd.timeRangeStart;
             addressPast.timeRangeEnd = pastStartEnd.timeRangeEnd;
+        }
+
+        if (addressPresent.slider.length > 0) {
+            const presentStartEnd = getMinMaxRangeFromPresentData(addressPresent);
+            addressPresent.distanceRangeStart = presentStartEnd.distanceRangeStart;
+            addressPresent.distanceRangeEnd = presentStartEnd.distanceRangeEnd;
         }
 
         const addressRecord: AddressRecord = assembleApiRecord(address, addressPresent, addressPast);
@@ -86,7 +100,9 @@ async function generateAPI() {
             `${pc.apiOutputDirectory}/${generateAddressID(addressRecord.address)}.json`,
             devMode.enabled
         );
+        statusBar.increment();
     }
+    statusBar.stop();
 }
 
 async function dbProcessRunner() {

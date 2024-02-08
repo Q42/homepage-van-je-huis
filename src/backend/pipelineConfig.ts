@@ -9,7 +9,7 @@ import { adresInputColumns, adresOutputColumns } from "./src/models/adresses";
 import { straatOmschrijvingInputColumns, straatnaamOmschrijvingOutputColumns } from "./src/models/straatOmschrijving";
 
 // devMode limits all select queries to a specified max number of rows
-export const devMode = { enabled: true, limit: 15 };
+export const devMode = { enabled: true, limit: 50 };
 
 export const csvIngestSources: CsvIngestSources = {
     adressen: {
@@ -87,11 +87,13 @@ export type PipelineConfig = {
     apiOutputDirectory: string;
     dbBatchInsertMinThreshold: number;
     maxConsecutiveCrawlFailuresBeforeAbort: number;
+    presentViewRangeMax: number; // the maximum distance in meters to show in the present view
 };
 
 export const pipelineConfig: PipelineConfig = {
     intermediateOutputDirectory: "./intermediate_output",
     apiOutputDirectory: "./api_generated",
     dbBatchInsertMinThreshold: 500,
-    maxConsecutiveCrawlFailuresBeforeAbort: 25
+    maxConsecutiveCrawlFailuresBeforeAbort: 25,
+    presentViewRangeMax: 1000
 };
