@@ -18,12 +18,12 @@ import { checkFilePaths, createDirectory, measureExecutionTime, writeObjectToJso
 import { stringLibrary } from "./src/lib/strings";
 import { CrawlerConfig, CsvIngestSource, EnrichedDBAddress } from "./src/lib/types";
 import { getPublicArt } from "./src/apiGenerators.ts/getPublicArt";
+import { getCulturalFacilities } from "./src/apiGenerators.ts/getCulturalFacilities";
 
 const duckDBService = new DuckDBService();
 
 async function generateAPI() {
     await duckDBService.initDb({ dbLocation: ":memory:" });
-    await duckDBService.enableSpatialExtension();
 
     const sources: (CsvIngestSource | CrawlerConfig)[] = [
         ...Object.values(csvIngestSources),
@@ -78,8 +78,13 @@ async function generateAPI() {
                 contents: address.straatnaamBeschrijving.trim()
             });
         }
+
         const publicArt = await getPublicArt(duckDBService, address.identificatie);
         addressPresent.slider.push(...publicArt);
+
+        const culturalFacilities = await getCulturalFacilities(duckDBService, address.identificatie);
+        console.log(culturalFacilities);
+        return;
 
         // This is where the record gets finalized
         if (addressPast.timeline.length > 0) {

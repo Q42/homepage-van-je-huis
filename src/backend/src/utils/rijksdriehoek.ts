@@ -1,5 +1,6 @@
 // from https://gist.github.com/erikvullings/a2c58cecc3f0a27b043deba90089af57
 
+import { DuckDBService } from "../lib/duckDBService";
 import { GeoString } from "../lib/types";
 import { GeoLocation } from "../models/shared";
 
@@ -95,4 +96,38 @@ export const projectRdWgs84 = projectionBetweenRdWgs84();
 export function geoLocationToRDGeometryString(geoLocation: GeoLocation): GeoString {
     const { x, y } = projectRdWgs84.wgs84ToRd(geoLocation.latitude, geoLocation.longitude);
     return `POINT(${Math.round(x)} ${Math.round(y)})`;
+}
+
+/**
+ * Transforms a column latitude and longitude coordinates to Rijksdriehoek coordinates using DuckDB.
+ *
+ * @param duckDBService - The DuckDB service used for executing queries.
+ * @param tableName - The name of the table containing the data.
+ * @param latLongColumnName - The name of the column containing the latitude and longitude coordinates.
+ * @param newRdColumnName - The name of the column to store the transformed Rijksdriehoek coordinates.
+ * @returns A promise that resolves when the transformation is complete.
+ */
+export async function duckDBTransformLatLongGeoToRD({
+    duckDBService,
+    tableName,
+    latLongColumnName,
+    newRdColumnName
+}: {
+    duckDBService: DuckDBService;
+    tableName: string;
+    latLongColumnName: string;
+    newRdColumnName: string;
+}) {
+    if (!duckDBService.spatialEnabled) {
+        throw new Error("This operation requires that the spatial extension is enabled in the DuckDB instance.");
+    }
+
+    if (!duckDBService.columnExists(tableName, latLongColumnName)) {
+        return await duckDBService.runQuery(
+            `UPDATE ${tableName} 
+        SET ${newRdColumnName} = ST_Transform(ST_GeomFromText(${latLongColumnName}), 'EPSG:4326', 'EPSG:28992');`
+        );
+    } else {
+        console.log("Skipping rd transformation, column already exists");
+    }
 }

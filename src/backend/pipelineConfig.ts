@@ -7,6 +7,7 @@ import { publicArtRecordOutputColumns } from "./src/models/publicArtRecord";
 import { PublicArtCrawler } from "./src/crawlers/publicArtCrawler";
 import { adresInputColumns, adresOutputColumns } from "./src/models/adresses";
 import { straatOmschrijvingInputColumns, straatnaamOmschrijvingOutputColumns } from "./src/models/straatOmschrijving";
+import { cultureFacilitiesInputColumns, cultureFacilitiesOutputColumns } from "./src/models/culturalFacility";
 
 // devMode limits all select queries to a specified max number of rows
 export const devMode = { enabled: true, limit: 50 };
@@ -24,6 +25,12 @@ export const csvIngestSources: CsvIngestSources = {
         outputTableName: "straatNaamOmschrijving",
         inputColumns: straatOmschrijvingInputColumns,
         outputColumns: straatnaamOmschrijvingOutputColumns
+    },
+    culturalFacilities: {
+        ingestSourcePath: "./data_input/CULTUURVOORZIENINGEN.csv",
+        outputTableName: "cultuurvoorzieningen",
+        inputColumns: cultureFacilitiesInputColumns,
+        outputColumns: cultureFacilitiesOutputColumns
     },
     // these are just placeholders for now and need to be replaced with the actual data once its available
     eventsPlaceholder: {

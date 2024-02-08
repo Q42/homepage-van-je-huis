@@ -34,7 +34,6 @@ async function runCrawlers() {
     createDirectory(`${pc.intermediateOutputDirectory}/failureLogs`);
 
     await duckDBService.initDb({ dbLocation: `${pc.intermediateOutputDirectory}/${sessionName}.duckdb` });
-    await duckDBService.enableSpatialExtension();
 
     const instantiatedCrawlers = {
         imageArchive: new cc.imageArchive.crawler(cc.imageArchive, duckDBService) as ImageArchiveCrawler,

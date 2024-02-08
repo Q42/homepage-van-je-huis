@@ -31,7 +31,7 @@ export interface DistanceViewEntry extends BaseDataEntity {
     geoLevel?: GeoLevel; // The geo level of the entry
     image?: ImageRef;
     title: string; // Title of the entry
-    visitUrl: string; // URL to the source where people can find out more info about the image
+    visitUrl?: string; // URL to the source where people can find out more info about the image
     type: PresentEntityTypes; // The type of the entry
 }
 

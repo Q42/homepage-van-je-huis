@@ -23,7 +23,6 @@ async function ingestFileSources() {
     createDirectory(dbDir);
 
     await duckDBService.initDb({ dbLocation: `${dbDir}/${sessionName}.duckdb` });
-    await duckDBService.enableSpatialExtension();
 
     // create intermediary table files
     for (const source of Object.values(csvIngestSources)) {

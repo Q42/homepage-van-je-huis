@@ -23,8 +23,27 @@ export const queries = {
 
     sqlSelectPublicArt: (addresTableName: string, artTableName: string, addressId: string, range: number) => `
         SELECT A.title , A.image , A.visitUrl , round(ST_Distance(A.location, B.geometrie),0) as distance_from_address
-        FROM ${artTableName}  A
+        FROM ${artTableName} A
         JOIN ${addresTableName} B ON ST_Distance(A.location, B.geometrie) < ${range}
+        WHERE B.identificatie = '${addressId}'
+        ORDER BY distance_from_address ASC;
+        `,
+    sqlSelectCulturalFacilities: ({
+        addresTableName,
+        facilitiesTableName,
+        addressId,
+        locationColumn,
+        range
+    }: {
+        addresTableName: string;
+        facilitiesTableName: string;
+        addressId: string;
+        locationColumn: string;
+        range: number;
+    }) => `
+        SELECT A.title , A.image , A.visitUrl , round(ST_Distance(A.${locationColumn}, B.geometrie),0) as distance_from_address
+        FROM ${facilitiesTableName} A
+        JOIN ${addresTableName} B ON ST_Distance(A.${locationColumn}, B.geometrie) < ${range}
         WHERE B.identificatie = '${addressId}'
         ORDER BY distance_from_address ASC;
         `
