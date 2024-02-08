@@ -88,16 +88,8 @@ async function generateAPI() {
         addressPresent.slider.push(...publicArt);
 
         // Add the cultural facilities
-        const rdGeoColumn = "rd_location";
 
-        await duckDBTransformLatLongGeoToRD({
-            duckDBService: duckDBService,
-            tableName: cs.culturalFacilities.outputTableName,
-            latLongColumnName: "WKT_LAT_LNG",
-            newRdColumnName: rdGeoColumn
-        });
-
-        const culturalFacilities = await getCulturalFacilities(duckDBService, address.identificatie, rdGeoColumn);
+        const culturalFacilities = await getCulturalFacilities(duckDBService, address.identificatie);
         addressPresent.slider.push(...culturalFacilities);
 
         // This is where the record gets finalized

@@ -29,15 +29,14 @@ function mapFacilityType(term: string): PresentEntityType | undefined {
 
 export async function getCulturalFacilities(
     duckDBService: DuckDBService,
-    addressId: string,
-    rdGeoColumn: string
+    addressId: string
 ): Promise<DistanceViewEntry[]> {
     const customArtRecords = (await duckDBService.runQuery(
         queries.sqlSelectCulturalFacilities({
             addresTableName: "adressen",
             facilitiesTableName: cs.culturalFacilities.outputTableName,
             addressId: addressId,
-            locationColumn: rdGeoColumn,
+            locationColumn: pc.rdColumnPrefix + cs.culturalFacilities.outputTableName,
             range: pc.presentViewRangeMax
         })
     )) as CustomizedCulturalFacilityRecord[];

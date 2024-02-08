@@ -118,6 +118,11 @@ export class DuckDBService {
             // it's a CsvIngestSource
             columnNames = source.outputColumns;
             columnDefenitions = source.inputColumns;
+
+            if (source.geoTransformColumn) {
+                columnNames.push(pc.rdColumnPrefix + source.outputTableName);
+                columnDefenitions[pc.rdColumnPrefix + source.outputTableName] = "GEOMETRY";
+            }
         }
 
         if (!("inputColumns" in source)) {

@@ -30,7 +30,8 @@ export const csvIngestSources: CsvIngestSources = {
         ingestSourcePath: "./data_input/CULTUURVOORZIENINGEN.csv",
         outputTableName: "cultuurvoorzieningen",
         inputColumns: cultureFacilitiesInputColumns,
-        outputColumns: cultureFacilitiesOutputColumns
+        outputColumns: cultureFacilitiesOutputColumns,
+        geoTransformColumn: "WKT_LAT_LNG"
     },
     // these are just placeholders for now and need to be replaced with the actual data once its available
     eventsPlaceholder: {
@@ -96,6 +97,7 @@ export type PipelineConfig = {
     maxConsecutiveCrawlFailuresBeforeAbort: number;
     sortSliders: boolean;
     presentViewRangeMax: number; // the maximum distance in meters to show in the present view
+    rdColumnPrefix: string;
 };
 
 export const pipelineConfig: PipelineConfig = {
@@ -104,7 +106,8 @@ export const pipelineConfig: PipelineConfig = {
     dbBatchInsertMinThreshold: 500,
     maxConsecutiveCrawlFailuresBeforeAbort: 25,
     sortSliders: true,
-    presentViewRangeMax: 1000
+    presentViewRangeMax: 1000,
+    rdColumnPrefix: "rd_geometrie_"
 };
 
 type PublicArtCrawlerConfig = {
@@ -113,7 +116,7 @@ type PublicArtCrawlerConfig = {
     baseListPage: string;
 };
 
-export const publicArtCrawlerConfig = {
+export const publicArtCrawlerConfig: PublicArtCrawlerConfig = {
     totalPages: 108,
     baseUrl: "https://amsterdam.kunstwacht.nl",
     baseListPage: "https://amsterdam.kunstwacht.nl/kunstwerken/page"

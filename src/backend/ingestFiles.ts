@@ -8,6 +8,7 @@ import {
 import { loadFileToParquet } from "./src/utils/db";
 import { DuckDBService } from "./src/lib/duckDBService";
 import { csvIngestSources, pipelineConfig as pc } from "./pipelineConfig";
+import { duckDBTransformLatLongGeoToRD } from "./src/utils/rijksdriehoek";
 
 const duckDBService = new DuckDBService();
 
