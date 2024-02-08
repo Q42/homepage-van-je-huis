@@ -5,11 +5,18 @@ import { geoLocationToRDGeometryString } from "../utils/rijksdriehoek";
 import { PublicArtRecord } from "../models/publicArtRecord";
 import cliProgress from "cli-progress";
 import { AbortError } from "p-retry";
+import { publicArtCrawlerConfig as pAc } from "../../pipelineConfig";
 
 export class PublicArtCrawler extends AbstractCrawler<PublicArtRecord, string> {
     browser: Browser | null;
 
     puppeteerOptions: PuppeteerLaunchOptions;
+
+    elementSelectors = {
+        artListingHref: ".entry-image",
+        artLocationMap: "#object_map",
+        artHeroImage: ".basis_afbeelding"
+    };
 
     constructor(crawlerConfig: CrawlerConfig, puppeteerOptions?: PuppeteerLaunchOptions) {
         super(crawlerConfig);
@@ -49,8 +56,6 @@ export class PublicArtCrawler extends AbstractCrawler<PublicArtRecord, string> {
     }
 
     protected async getArtUrls(): Promise<string[]> {
-        const numberOfPages = 108;
-        const baseArtUrl = "https://amsterdam.kunstwacht.nl";
         const outputUrls: string[] = [];
 
         if (!this.browser) {
@@ -59,24 +64,23 @@ export class PublicArtCrawler extends AbstractCrawler<PublicArtRecord, string> {
 
         const page = await this.browser.newPage();
         const statusBar = new cliProgress.SingleBar({}, cliProgress.Presets.shades_classic);
-        statusBar.start(numberOfPages, 0);
-        for (let currentPage = 1; currentPage <= numberOfPages; currentPage++) {
-            await page.goto(`https://amsterdam.kunstwacht.nl/kunstwerken/page/${currentPage}`, {
+        statusBar.start(pAc.totalPages, 0);
+        for (let currentPage = 1; currentPage <= pAc.totalPages; currentPage++) {
+            await page.goto(`${pAc.baseListPage}/${currentPage}`, {
                 waitUntil: "domcontentloaded"
             });
 
             const urlsFromPage = await page.evaluate(() => {
                 const artUrls: string[] = [];
-                document.body.querySelectorAll(".entry-image").forEach((url) => {
+                document.body.querySelectorAll(this.elementSelectors.artListingHref).forEach((url) => {
                     const artworkUrl = url.getAttribute("href");
-                    console.log("artwork url:", artworkUrl);
                     if (artworkUrl) {
                         artUrls.push(artworkUrl);
                     }
                 });
                 return artUrls;
             });
-            outputUrls.push(...urlsFromPage.map((url) => `${baseArtUrl}${url}`));
+            outputUrls.push(...urlsFromPage.map((url) => `${pAc.baseUrl}${url}`));
             statusBar.increment();
         }
         statusBar.stop();
@@ -86,7 +90,9 @@ export class PublicArtCrawler extends AbstractCrawler<PublicArtRecord, string> {
 
     protected async extractArtCoordinates(page: Page) {
         const markerScriptString = await page.evaluate(() => {
-            const scriptString = document.body.querySelector("#object_map")?.querySelector("script")?.textContent;
+            const scriptString = document.body
+                .querySelector(this.elementSelectors.artLocationMap)
+                ?.querySelector("script")?.textContent;
             return scriptString;
         });
 
@@ -112,7 +118,10 @@ export class PublicArtCrawler extends AbstractCrawler<PublicArtRecord, string> {
 
     protected async extractArtImage(page: Page) {
         const img = await page.evaluate(() => {
-            return document.body.querySelector(".basis_afbeelding")?.querySelector("img")?.getAttribute("src");
+            return document.body
+                .querySelector(this.elementSelectors.artHeroImage)
+                ?.querySelector("img")
+                ?.getAttribute("src");
         });
         if (img) {
             return img;

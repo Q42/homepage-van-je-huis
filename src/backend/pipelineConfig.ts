@@ -95,3 +95,15 @@ export const pipelineConfig: PipelineConfig = {
     dbBatchInsertMinThreshold: 500,
     maxConsecutiveCrawlFailuresBeforeAbort: 25
 };
+
+type PublicArtCrawlerConfig = {
+    totalPages: number;
+    baseUrl: string;
+    baseListPage: string;
+};
+
+export const publicArtCrawlerConfig = {
+    totalPages: 108,
+    baseUrl: "https://amsterdam.kunstwacht.nl",
+    baseListPage: "https://amsterdam.kunstwacht.nl/kunstwerken/page"
+};
