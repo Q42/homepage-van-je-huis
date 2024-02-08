@@ -2,12 +2,13 @@ import { Database } from "duckdb-async";
 import {
     BaseApiResponse,
     ColumnDefenitions,
+    CrawlerConfig,
     CsvIngestSource,
     IntermediateOutputFormats,
     IntermediateTableRef
 } from "./types";
 import { parseValueForDbInsert } from "../utils/general";
-import { devMode } from "../../pipelineConfig";
+import { devMode, pipelineConfig as pc } from "../../pipelineConfig";
 import { getExportSelectQuery } from "../utils/db";
 
 type DuckDBConfig = {
@@ -76,7 +77,7 @@ export class DuckDBService {
             ingestArgs.push(columnTypesArg);
         }
 
-        const querystring = `CREATE TABLE ${source.tableName} AS FROM read_csv(${ingestArgs.join(", ")})`;
+        const querystring = `CREATE TABLE ${source.outputTableName} AS FROM read_csv(${ingestArgs.join(", ")})`;
         await this.runQuery(querystring);
     }
 
@@ -84,8 +85,7 @@ export class DuckDBService {
         tableName,
         outputFile,
         outputColumns,
-        columnDefenitions: inputColumns,
-        outputFormat = "parquet"
+        columnDefenitions: inputColumns
     }: ExportTableOptions) {
         if (!this.db) {
             throw dbNotInitializedError;
@@ -95,18 +95,9 @@ export class DuckDBService {
 
         selectStatement = getExportSelectQuery(tableName, inputColumns, outputColumns);
 
-        let exportSuffix = "";
-        switch (outputFormat) {
-            case "parquet":
-                exportSuffix = "(FORMAT PARQUET)";
-                outputFile += ".parquet";
-                break;
-            default: // JSON doesn't need an export suffix
-                exportSuffix = "";
-                outputFile += ".json";
-        }
+        outputFile += ".parquet";
 
-        const queryToRun = `COPY ${selectStatement} TO '${outputFile}' ${exportSuffix}`;
+        const queryToRun = `COPY ${selectStatement} TO '${outputFile}' (FORMAT PARQUET)`;
 
         return this.runQuery(queryToRun);
     }
@@ -119,13 +110,40 @@ export class DuckDBService {
         return this.runQuery(`DROP TABLE ${tableName}`);
     }
 
-    public async loadParquetIntoTable(tableName: string, parquetFile: string, tempTable?: boolean) {
-        if (!parquetFile.endsWith(".parquet")) {
-            throw new Error("Invalid file format. Expected .parquet file.");
+    public async loadIntermediateSource(source: CsvIngestSource | CrawlerConfig, tempTable?: boolean) {
+        if (!this.db) {
+            throw dbNotInitializedError;
         }
 
-        const querystring = `CREATE ${tempTable ? "TEMP " : ""}TABLE ${tableName} AS FROM read_parquet('${parquetFile}')`;
-        return await this.runQuery(querystring);
+        const parquetFile = `${pc.intermediateOutputDirectory}/${source.outputTableName}.parquet`;
+        console.log(`loading intermediate source: ${parquetFile} into table ${source.outputTableName}`);
+
+        const querystring = `CREATE ${tempTable ? "TEMP " : ""}TABLE ${source.outputTableName} AS FROM read_parquet('${parquetFile}')`;
+
+        await this.runQuery(querystring);
+
+        let columnNames: string[] = [];
+        let columnDefenitions: ColumnDefenitions = {};
+
+        if ("inputColumns" in source) {
+            // it's a CsvIngestSource
+            columnNames = source.outputColumns;
+            columnDefenitions = source.inputColumns;
+        }
+
+        if (!("inputColumns" in source)) {
+            // it's a CrawlerConfig
+            columnNames = Object.keys(source.outputColumns);
+            columnDefenitions = source.outputColumns;
+        }
+
+        const geometryColumns = columnNames.filter((column) => columnDefenitions[column].toLowerCase() === "geometry");
+
+        for (const geometryColumn of geometryColumns) {
+            console.log(`parsing geometry colum ${geometryColumn} from table ${source.outputTableName}`);
+            const querystring = `ALTER TABLE ${source.outputTableName} alter "${geometryColumn}" type GEOMETRY USING ST_GeomFromText("${geometryColumn}")`;
+            await this.runQuery(querystring);
+        }
     }
 
     public async createTableFromDefinition(
@@ -142,31 +160,6 @@ export class DuckDBService {
         });
         querystring = querystring += ");";
         return await this.runQuery(querystring);
-    }
-
-    public async loadTablesFromIntermediateRefs(intermediateRefs: IntermediateTableRef[]) {
-        if (!this.db) {
-            throw dbNotInitializedError;
-        }
-
-        for (const intermediateRef of intermediateRefs) {
-            let intermediateReader = "";
-
-            switch (intermediateRef.fileLocation.split(".").pop()) {
-                case "json":
-                    intermediateReader = "read_json_auto";
-                    break;
-                case "parquet":
-                    intermediateReader = "read_parquet";
-                    break;
-                default:
-                    throw new Error("Unsupported file format");
-            }
-
-            const querystring = `CREATE TABLE ${intermediateRef.tableName} AS FROM ${intermediateReader}('${intermediateRef.fileLocation}')`;
-            await this.runQuery(querystring);
-            console.log(`Ingested ${intermediateRef.fileLocation}`);
-        }
     }
 
     public async insertIntoTable<T extends BaseApiResponse>(tableName: string, records: T[]) {

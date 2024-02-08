@@ -13,7 +13,6 @@ type ArchiveImageApiResponse = ImageUrlRepsonse[];
 
 export class SparqlImageArchiveCrawler extends AbstractCrawler<ImageRecord, RowData> {
     protected duckDbService: DuckDBService;
-    protected tempTableName = "TempImgGuide";
 
     public constructor(crawlerConfig: CrawlerConfig, duckDbService: DuckDBService) {
         super(crawlerConfig);
@@ -55,13 +54,13 @@ export class SparqlImageArchiveCrawler extends AbstractCrawler<ImageRecord, RowD
     }
 
     public async loadGuideData(): Promise<RowData[]> {
-        if (this.crawlerConfig.guideFile === undefined) {
-            throw new Error("Guide file is not defined");
+        if (this.crawlerConfig.guideSource === undefined) {
+            throw new Error("Guide source is not defined whilst this crawler does need it");
         }
-        await this.duckDbService.loadParquetIntoTable(this.tempTableName, this.crawlerConfig.guideFile, true);
+        await this.duckDbService.loadIntermediateSource(this.crawlerConfig.guideSource, true);
 
         return await this.duckDbService.runQuery(
-            `SELECT "identificatie", "huisnummerHoofdadres", "ligtAan:BAG.ORE.naamHoofdadres" FROM ${this.tempTableName}`
+            `SELECT "identificatie", "huisnummerHoofdadres", "ligtAan:BAG.ORE.naamHoofdadres" FROM ${this.crawlerConfig.guideSource.outputTableName}`
         );
     }
 
@@ -80,6 +79,8 @@ export class SparqlImageArchiveCrawler extends AbstractCrawler<ImageRecord, RowD
     }
 
     public async teardown(): Promise<void> {
-        await this.duckDbService.dropTable(this.tempTableName);
+        if (this.crawlerConfig.guideSource?.outputTableName) {
+            await this.duckDbService.dropTable(this.crawlerConfig.guideSource.outputTableName);
+        }
     }
 }

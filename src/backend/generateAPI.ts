@@ -1,32 +1,36 @@
 import { AddressRecord } from "./apiSchema/addressRecord";
 import { PastData } from "./apiSchema/past";
 import { AgendaItem, PresentData } from "./apiSchema/present";
-import { csvIngestSources, devMode, pipelineConfig as pc } from "./pipelineConfig";
+import { crawlerConfigs, csvIngestSources, devMode, pipelineConfig as pc, pipelineConfig } from "./pipelineConfig";
 import { DuckDBService } from "./src/lib/duckDBService";
 import { calendarEvent } from "./src/models/eventCalendar";
 import { queries } from "./src/lib/queries";
 
 import { generateAddressID, assembleApiRecord, getMinMaxRangeFromPastData } from "./src/utils/api";
 
-import {
-    checkFilePaths,
-    createDirectory,
-    getIntermediateTableRefsFromSource,
-    measureExecutionTime,
-    writeObjectToJsonFile
-} from "./src/utils/general";
+import { checkFilePaths, createDirectory, measureExecutionTime, writeObjectToJsonFile } from "./src/utils/general";
 import { stringLibrary } from "./src/lib/strings";
-import { EnrichedDBAddress } from "./src/lib/types";
+import { CrawlerConfig, CsvIngestSource, EnrichedDBAddress } from "./src/lib/types";
 
 const duckDBService = new DuckDBService();
 
 async function generateAPI() {
     await duckDBService.initDb({ dbLocation: ":memory:" });
+    await duckDBService.enableSpatialExtension();
 
-    const intermediateRefs = getIntermediateTableRefsFromSource(csvIngestSources, pc);
-    checkFilePaths(intermediateRefs.map((ref) => ref.fileLocation));
+    const sources: (CsvIngestSource | CrawlerConfig)[] = [
+        ...Object.values(csvIngestSources),
+        ...Object.values(crawlerConfigs)
+    ];
 
-    await duckDBService.loadTablesFromIntermediateRefs(intermediateRefs);
+    const sourcePaths = sources.map(
+        (source) => `${pipelineConfig.intermediateOutputDirectory}/${source.outputTableName}.parquet`
+    );
+    checkFilePaths(sourcePaths);
+
+    for (const source of sources) {
+        await duckDBService.loadIntermediateSource(source, true);
+    }
 
     const baseAdressList = (await duckDBService.runQuery(queries.getBaseTable)) as EnrichedDBAddress[];
 

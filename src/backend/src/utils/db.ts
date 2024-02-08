@@ -28,14 +28,14 @@ export async function loadFileToParquet(
     await dbService.ingestCSV(csvIngestSource);
 
     await dbService.exportTable({
-        tableName: csvIngestSource.tableName,
-        outputFile: `${pc.intermediateOutputDirectory}/${csvIngestSource.tableName}`,
+        tableName: csvIngestSource.outputTableName,
+        outputFile: `${pc.intermediateOutputDirectory}/${csvIngestSource.outputTableName}`,
         outputColumns: csvIngestSource.outputColumns,
         columnDefenitions: csvIngestSource.inputColumns,
         outputFormat: "parquet"
     });
 
     if (dropTableAfterExport) {
-        await dbService.dropTable(csvIngestSource.tableName);
+        await dbService.dropTable(csvIngestSource.outputTableName);
     }
 }

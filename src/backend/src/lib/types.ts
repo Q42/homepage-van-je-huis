@@ -4,7 +4,7 @@ import { DBAddress } from "../models/adresses";
 
 export type CsvIngestSource = {
     ingestSourcePath: string;
-    tableName: string;
+    outputTableName: string;
     inputColumns: ColumnDefenitions;
     outputColumns: string[];
 };
@@ -20,7 +20,7 @@ type BaseCrawlerConfig = {
 
 export interface CrawlerConfig extends BaseCrawlerConfig {
     crawler: AnyApiCrawler;
-    guideFile?: string;
+    guideSource?: CsvIngestSource;
     skip?: boolean;
     retryConfig: PRetryOptions;
 }

@@ -55,18 +55,6 @@ export function getIngestFilePathsFromSources(sources: CsvIngestSources | ApiCra
     return filePaths;
 }
 
-export function getIntermediateTableRefsFromSource(sources: CsvIngestSources, pipelineConfig: PipelineConfig) {
-    const intermediateDirs: IntermediateTableRef[] = [];
-    Object.entries(sources).forEach(([key, value]) => {
-        value.tableName !== undefined &&
-            intermediateDirs.push({
-                fileLocation: `${pipelineConfig.intermediateOutputDirectory}/${value.tableName}.${pipelineConfig.intermediateOutputFormat}`,
-                tableName: value.tableName
-            });
-    });
-    return intermediateDirs;
-}
-
 export function parseValueForDbInsert(value: any): string {
     if (!value) {
         return "NULL";

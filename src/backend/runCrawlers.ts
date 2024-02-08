@@ -30,10 +30,10 @@ async function runCrawlers() {
     const sessionName = generateSessionName("crawler-run");
     // system initialization
     checkFilePaths(getIngestFilePathsFromSources(cc));
-    createDirectory(pc.crawlerOutputDirectory);
-    createDirectory(`${pc.crawlerOutputDirectory}/failureLogs`);
+    createDirectory(pc.intermediateOutputDirectory);
+    createDirectory(`${pc.intermediateOutputDirectory}/failureLogs`);
 
-    await duckDBService.initDb({ dbLocation: `${pc.crawlerOutputDirectory}/${sessionName}.duckdb` });
+    await duckDBService.initDb({ dbLocation: `${pc.intermediateOutputDirectory}/${sessionName}.duckdb` });
     await duckDBService.enableSpatialExtension();
 
     const instantiatedCrawlers = {
@@ -90,7 +90,7 @@ async function runCrawler(
 
             appendObjectToFile(
                 row,
-                `${pc.crawlerOutputDirectory}/failureLogs/${sessionName}_${instantiatedCrawler.crawlerConfig.outputTableName}-failed.json`
+                `${pc.intermediateOutputDirectory}/failureLogs/${sessionName}_${instantiatedCrawler.crawlerConfig.outputTableName}-failed.json`
             );
         }
 
@@ -114,7 +114,7 @@ async function runCrawler(
     await instantiatedCrawler.teardown();
     dbService.exportTable({
         tableName: instantiatedCrawler.crawlerConfig.outputTableName,
-        outputFile: `${pc.crawlerOutputDirectory}/${instantiatedCrawler.crawlerConfig.outputTableName}`,
+        outputFile: `${pc.intermediateOutputDirectory}/${instantiatedCrawler.crawlerConfig.outputTableName}`,
         columnDefenitions: instantiatedCrawler.crawlerConfig.outputColumns,
         outputColumns: undefined,
         outputFormat: "parquet"
