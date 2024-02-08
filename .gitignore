@@ -2,7 +2,7 @@ src/backend/api_generated
 src/backend/node_modules/
 src/backend/data_input/
 src/backend/data_output/
-src/backend/intermediate_output/db
+src/backend/intermediate_output/
 src/backend/api_generated/
 **/*.duckdb
 **/*.parquet

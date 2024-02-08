@@ -106,3 +106,15 @@ export const pipelineConfig: PipelineConfig = {
     sortSliders: true,
     presentViewRangeMax: 1000
 };
+
+type PublicArtCrawlerConfig = {
+    totalPages: number;
+    baseUrl: string;
+    baseListPage: string;
+};
+
+export const publicArtCrawlerConfig = {
+    totalPages: 108,
+    baseUrl: "https://amsterdam.kunstwacht.nl",
+    baseListPage: "https://amsterdam.kunstwacht.nl/kunstwerken/page"
+};
