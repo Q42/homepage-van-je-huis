@@ -46,7 +46,11 @@ async function runCrawlers() {
             console.log(`Skipping ${crawler.crawlerConfig.crawler.name} as specified in pipelineConfig`);
             continue;
         }
-        await runCrawler(crawler, duckDBService, sessionName);
+        try {
+            await runCrawler(crawler, duckDBService, sessionName);
+        } catch (e) {
+            console.error(`Crawler ${crawler} has encoutered a critical error and was unable to finish the crawl`, e);
+        }
     }
 }
 
