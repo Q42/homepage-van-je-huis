@@ -21,7 +21,17 @@ export const queries = {
         filter(xsd:integer(?houseNumberSmall) <= ${houseNumber} && xsd:integer(?houseNumberBig) >= ${houseNumber})
         } LIMIT 1000`,
 
-    sqlSelectPublicArt: (addresTableName: string, artTableName: string, addressId: string, range: number) => `
+    sqlSelectPublicArt: ({
+        addresTableName,
+        artTableName,
+        addressId,
+        range
+    }: {
+        addresTableName: string;
+        artTableName: string;
+        addressId: string;
+        range: number;
+    }) => `
         SELECT A.title , A.image , A.visitUrl , round(ST_Distance(A.location, B.geometrie),0) as distance_from_address
         FROM ${artTableName} A
         JOIN ${addresTableName} B ON ST_Distance(A.location, B.geometrie) < ${range}

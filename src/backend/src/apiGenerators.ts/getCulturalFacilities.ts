@@ -1,5 +1,5 @@
 import { DistanceViewEntry, PresentEntityType } from "../../apiSchema/present";
-import { crawlerConfigs as cc, csvIngestSources as cs } from "../../pipelineConfig";
+import { crawlerConfigs as cc, csvIngestSources as cs, pipelineConfig as pc } from "../../pipelineConfig";
 import { DuckDBService } from "../lib/duckDBService";
 import { CustomizedCulturalFacilityRecord } from "../models/culturalFacility";
 import { queries } from "../queries";
@@ -38,7 +38,7 @@ export async function getCulturalFacilities(
             facilitiesTableName: cs.culturalFacilities.outputTableName,
             addressId: addressId,
             locationColumn: rdGeoColumn,
-            range: 1000
+            range: pc.presentViewRangeMax
         })
     )) as CustomizedCulturalFacilityRecord[];
 
