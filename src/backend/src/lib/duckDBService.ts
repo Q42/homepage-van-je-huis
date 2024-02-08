@@ -119,7 +119,7 @@ export class DuckDBService {
             columnNames = source.outputColumns;
             columnDefenitions = source.inputColumns;
 
-            if (source.geoTransformColumn) {
+            if (source.geoTransformColumn !== undefined) {
                 columnNames.push(pc.rdColumnPrefix + source.outputTableName);
                 columnDefenitions[pc.rdColumnPrefix + source.outputTableName] = "GEOMETRY";
             }

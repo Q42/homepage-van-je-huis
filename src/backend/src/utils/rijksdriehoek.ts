@@ -99,12 +99,13 @@ export function geoLocationToRDGeometryString(geoLocation: GeoLocation): GeoStri
 }
 
 /**
- * Transforms a column latitude and longitude coordinates to Rijksdriehoek coordinates using DuckDB.
+ * Transforms latitude and longitude coordinates to Rijksdriehoek coordinates using DuckDB and inserts them into a new column.
  *
- * @param duckDBService - The DuckDB service used for executing queries.
- * @param tableName - The name of the table containing the data.
- * @param latLongColumnName - The name of the column containing the latitude and longitude coordinates.
- * @param newRdColumnName - The name of the column to store the transformed Rijksdriehoek coordinates.
+ * @param duckDBService - The DuckDB service instance.
+ * @param tableName - The name of the table.
+ * @param latLongColumnName - The name of the column containing latitude and longitude coordinates.
+ * @param newRdColumnName - The name of the new column to store the transformed Rijksdriehoek coordinates.
+ * @throws Error if the spatial extension is not enabled in the DuckDB instance or if incompatible data is entered.
  * @returns A promise that resolves when the transformation is complete.
  */
 export async function duckDBTransformLatLongGeoToRD({
@@ -122,12 +123,18 @@ export async function duckDBTransformLatLongGeoToRD({
         throw new Error("This operation requires that the spatial extension is enabled in the DuckDB instance.");
     }
 
-    if (!(await duckDBService.columnExists(tableName, newRdColumnName))) {
-        return await duckDBService.runQuery(
-            `
+    if (!(await duckDBService.columnExists(tableName, latLongColumnName))) {
+        throw new Error(`The column ${latLongColumnName} does not exist in the table ${tableName}.`);
+    }
+
+    if (await duckDBService.columnExists(tableName, newRdColumnName)) {
+        throw new Error(`The column ${newRdColumnName} already exists in the table ${tableName}.`);
+    }
+
+    return await duckDBService.runQuery(
+        `
         ALTER TABLE ${tableName} ADD COLUMN ${newRdColumnName} GEOMETRY;    
         UPDATE ${tableName} 
         SET ${newRdColumnName} = ST_Transform(ST_GeomFromText(${latLongColumnName}), 'EPSG:4326', 'EPSG:28992');`
-        );
-    }
+    );
 }

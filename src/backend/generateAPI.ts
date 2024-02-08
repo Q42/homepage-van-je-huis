@@ -88,7 +88,6 @@ async function generateAPI() {
         addressPresent.slider.push(...publicArt);
 
         // Add the cultural facilities
-
         const culturalFacilities = await getCulturalFacilities(duckDBService, address.identificatie);
         addressPresent.slider.push(...culturalFacilities);
 
@@ -103,11 +102,11 @@ async function generateAPI() {
             const presentStartEnd = getMinMaxRangeFromPresentData(addressPresent);
             addressPresent.distanceRangeStart = presentStartEnd.distanceRangeStart;
             addressPresent.distanceRangeEnd = presentStartEnd.distanceRangeEnd;
-        }
 
-        if (pipelineConfig.sortSliders) {
-            addressPresent.slider.sort((a, b) => a.distanceToAddress - b.distanceToAddress);
-            addressPast.timeline.sort((a, b) => a.year - b.year);
+            if (pipelineConfig.sortSliders) {
+                addressPresent.slider.sort((a, b) => a.distanceToAddress - b.distanceToAddress);
+                addressPast.timeline.sort((a, b) => a.year - b.year);
+            }
         }
 
         const addressRecord: AddressRecord = assembleApiRecord(address, addressPresent, addressPast);
