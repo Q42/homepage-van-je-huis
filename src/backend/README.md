@@ -22,9 +22,24 @@ The backend doesn't require any special prerequisites, but it does rely on a bun
 
 ### Development
 
-The most important file for the pipelines is the `pipelineConfig.ts`. This is where a lot of the parameters for the ingest and output are defined. When adding a new datasource, it needs to be added to the config, and in some cases, also to the dedicated processing script.
+The system works by ingesting a bunch of csv files to an intermediate database format (parquet), some of these intermediate files are then used to run api crawlers\*. The outputs of these api crawlers are then also written to intermediate parquet files. In the api generation step, the various parquet files are loaded into one big database, which is then used to query against to generate the api.
+
+\*Not all crawlers need a guide.
+
+The most important file for the pipelines is the `pipelineConfig.ts`. This is where a lot of the parameters for the ingest and output are defined. When you want to add a new CSV input source, you only have to add it to the `pipelineConfig.ts` file and the system will automatically pick it up. The crawlers are a bit more complex. These need to be added to the config as well, but since there is not one generic crawler, you will also have to write a crawler class and instantiate it in the `runCrawlers.ts` file.
+
+For the CSV sources, you need to specify the schema that needs to be used to map the csv columns to the correct data types in the intermediate database. You need to specify all the columnst that are present in the csv.
+
+**Tip: don't write this schema yourself. Just dump the csv header, along with an example of the schema into ChatGPT and let it write the schema. Then you just need to check if it's correct.**
 
 In its current form, there are three separate scripts: ingestFiles, runCrawlers and generateApi. Make sure to look at the [architecture](https://miro.com/app/board/uXjVN4O0Egs=/) before trying to run the system, so you know which scripts depend on the output of which other scripts.
+
+#### Developing duckdb queries & reading parquet files
+
+When doing an ingest, crawler or api generation run, the scripts will also output .duckdb files. Parquet and duckdb files can both be opened and queried on using [dbeaver](https://dbeaver.io/). The [duckDB docs](https://duckdb.org/docs/guides/sql_editors/dbeaver.html) contain info on how to get this up and running.
+
+For reading parquet files, don't open a .duckdb file, but load an in memory db and then run queries against the parquet file.
+Example: `SELECGT * FROM "/Users/thomas/Projects/homepage-van-je-huis/src/backend/crawler_output/buitenkunst_crawler-run-2024-02-06T12:49:07.parquet"`
 
 ### Deployment / Release process
 
@@ -33,4 +48,6 @@ Currently, everything is run locally, there is no deployment process (yet)
 ## 🤚 Good to know
 
 -   The system uses duckDB to wrangle, join and transform the data. In the nodeJS api, this means writing a lot of SQL queries as strings. Beware, these queries do distinquish between single and double quotes, so make sure to use the right one for the right context and regularly test, since there is absolutely no type checking or intellisense.
+-   Some of the datasets also contain geometry data. This data is stored in special geometry type columns, which allow for spatial querying. When a spatial column is written to a parquet file, it first gets turned into a special kind of string, which is then transformed back into a geometry type when the parquet file is read. This is due to a limitation of the duckDB geometry implementation.
+-   The coordinate system which is used in the various datasets is called [Rijksdriehoek](https://nl.wikipedia.org/wiki/Rijksdriehoeksco%C3%B6rdinaten). The system contains a util that translates lat/long to Rijksdriehoek.
 -   Questions? Ask [Wouter](https://arc.enterprise.slack.com/user/@U02KFD7J3) or [Thomas](https://arc.enterprise.slack.com/user/@U041JE72HF1).

@@ -6,12 +6,14 @@ import {
     measureExecutionTime
 } from "./src/utils/general";
 import { crawlerConfigs as cc, pipelineConfig as pc } from "./pipelineConfig";
+
 import { AbstractCrawler } from "./src/crawlers/abstractCrawler";
 import { ImageArchiveCrawler } from "./src/crawlers/archiveImageCrawler";
-import pRetry from "p-retry";
-import cliProgress from "cli-progress"  ;
+import pRetry, { AbortError } from "p-retry";
+import cliProgress from "cli-progress";
 import { appendObjectToFile } from "./src/lib/failureLog";
 import { DuckDBService } from "./src/lib/duckDBService";
+import { PublicArtCrawler } from "./src/crawlers/publicArtCrawler";
 
 const duckDBService = new DuckDBService();
 
@@ -28,15 +30,28 @@ async function runCrawlers() {
     const sessionName = generateSessionName("crawler-run");
     // system initialization
     checkFilePaths(getIngestFilePathsFromSources(cc));
-    createDirectory(pc.crawlerOutputDirectory);
+    createDirectory(pc.intermediateOutputDirectory);
+    createDirectory(`${pc.intermediateOutputDirectory}/failureLogs`);
 
-    await duckDBService.initDb({ dbLocation: `${pc.crawlerOutputDirectory}/${sessionName}.duckdb` });
+    await duckDBService.initDb({ dbLocation: `${pc.intermediateOutputDirectory}/${sessionName}.duckdb` });
+    await duckDBService.enableSpatialExtension();
 
     const instantiatedCrawlers = {
-        imageArchive: new cc.imageArchive.crawler(cc.imageArchive, duckDBService) as ImageArchiveCrawler
+        imageArchive: new cc.imageArchive.crawler(cc.imageArchive, duckDBService) as ImageArchiveCrawler,
+        publicArt: new cc.publicArt.crawler(cc.publicArt, { headless: false }) as PublicArtCrawler
     };
 
-    await runCrawler(instantiatedCrawlers.imageArchive, duckDBService, sessionName);
+    for (const crawler of Object.values(instantiatedCrawlers)) {
+        if (crawler.crawlerConfig.skip) {
+            console.log(`Skipping ${crawler.crawlerConfig.crawler.name} as specified in pipelineConfig`);
+            continue;
+        }
+        try {
+            await runCrawler(crawler, duckDBService, sessionName);
+        } catch (e) {
+            console.error(`Crawler ${crawler} has encoutered a critical error and was unable to finish the crawl`, e);
+        }
+    }
 }
 
 async function runCrawler(
@@ -49,13 +64,14 @@ async function runCrawler(
     const insertBatch = [];
 
     let consecutiveFailures = 0;
-
+    console.log("Loading guide data for:", instantiatedCrawler.crawlerConfig.crawler);
     const guideData = await instantiatedCrawler.loadGuideData();
-
-    dbService.createTableFromDefinition(
+    await dbService.createTableFromDefinition(
         instantiatedCrawler.crawlerConfig.outputTableName,
         instantiatedCrawler.crawlerConfig.outputColumns
     );
+
+    console.log("Starting crawler:", instantiatedCrawler.crawlerConfig.crawler);
 
     statusBar.start(guideData.length, 0);
 
@@ -71,25 +87,25 @@ async function runCrawler(
             consecutiveFailures = 0;
             statusBar.increment();
         } catch (e) {
-            consecutiveFailures++;
+            if (!(e instanceof AbortError)) {
+                consecutiveFailures++;
+            }
+
             appendObjectToFile(
                 row,
-                `${pc.crawlerOutputDirectory}/${sessionName}_${instantiatedCrawler.crawlerConfig.outputTableName}-failed.json`
+                `${pc.intermediateOutputDirectory}/failureLogs/${sessionName}_${instantiatedCrawler.crawlerConfig.outputTableName}-failed.json`
             );
-
-            console.log(e);
-            console.log("error crawling row:", row);
         }
 
         if (crawlResult.length > 0) {
             insertBatch.push(...crawlResult);
         }
 
-        if (insertBatch.length >= pc.batchInsertMinThreshold) {
+        if (insertBatch.length >= pc.dbBatchInsertMinThreshold) {
             await dbService.insertIntoTable(instantiatedCrawler.crawlerConfig.outputTableName, insertBatch);
             insertBatch.length = 0;
         }
-        if (consecutiveFailures >= pc.maxConsecutiveCrawlFailures) {
+        if (consecutiveFailures >= pc.maxConsecutiveCrawlFailuresBeforeAbort) {
             throw new Error("max consecutive failures reached, aborting crawl");
         }
     }
@@ -99,12 +115,13 @@ async function runCrawler(
     }
     statusBar.stop();
     await instantiatedCrawler.teardown();
-    dbService.exportTable(
-        instantiatedCrawler.crawlerConfig.outputTableName,
-        `${pc.crawlerOutputDirectory}/${instantiatedCrawler.crawlerConfig.outputTableName}_${sessionName}`,
-        undefined,
-        "parquet"
-    );
+    dbService.exportTable({
+        tableName: instantiatedCrawler.crawlerConfig.outputTableName,
+        outputFile: `${pc.intermediateOutputDirectory}/${instantiatedCrawler.crawlerConfig.outputTableName}`,
+        columnDefenitions: instantiatedCrawler.crawlerConfig.outputColumns,
+        outputColumns: undefined,
+        outputFormat: "parquet"
+    });
 }
 
 measureExecutionTime(manageDbProcess);

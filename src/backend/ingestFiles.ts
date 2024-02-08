@@ -2,7 +2,6 @@ import {
     checkFilePaths,
     createDirectory,
     generateSessionName,
-    getColumnKeysFromSourceDef,
     getIngestFilePathsFromSources,
     measureExecutionTime
 } from "./src/utils/general";
@@ -27,12 +26,10 @@ async function ingestFileSources() {
     await duckDBService.enableSpatialExtension();
 
     // create intermediary table files
-    await loadFileToParquet(duckDBService, csvIngestSources.adressen, pc);
-
-    await loadFileToParquet(duckDBService, csvIngestSources.straatOmschrijving, pc);
-
-    await loadFileToParquet(duckDBService, csvIngestSources.artPlaceholder, pc);
-    await loadFileToParquet(duckDBService, csvIngestSources.eventsPlaceholder, pc);
+    for (const source of Object.values(csvIngestSources)) {
+        console.log(`Ingesting ${source.ingestSourcePath}`);
+        await loadFileToParquet(duckDBService, source, pc);
+    }
 }
 
 async function dbProcessRunner() {

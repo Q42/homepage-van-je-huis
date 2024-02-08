@@ -1,5 +1,5 @@
 import fs from "fs";
-import { CsvIngestSource, CsvIngestSources, IntermediateTableRef, CrawlerConfigs } from "../lib/types";
+import { CsvIngestSource, CsvIngestSources, IntermediateTableRef, ApiCrawlerConfigs } from "../lib/types";
 import { PipelineConfig } from "../../pipelineConfig";
 
 export function checkFilePaths(paths: string[]) {
@@ -31,11 +31,6 @@ export function writeObjectToJsonFile(object: Record<any, any>, filePath: string
     return fs.writeFileSync(filePath, json);
 }
 
-export function getColumnKeysFromSourceDef(source: CsvIngestSource): string[] {
-    // This is to ensure the SQL query doesn't trip over any special characters in the column names
-    return source.outputColumns.map((key) => `"${key}"`);
-}
-
 /**
  * Runs a given asynchronous function and logs its duration.
  * @param fn - The function to be measured.
@@ -50,24 +45,14 @@ export async function measureExecutionTime(fn: () => Promise<any>) {
     return;
 }
 
-export function getIngestFilePathsFromSources(sources: CsvIngestSources | CrawlerConfigs) {
+export function getIngestFilePathsFromSources(sources: CsvIngestSources | ApiCrawlerConfigs) {
     const filePaths: string[] = [];
-    Object.entries(sources).forEach(([key, source]) => {
-        filePaths.push(source.ingestSourcePath ?? source.guideFile);
+    Object.values(sources).forEach((source) => {
+        if (source.ingestSourcePath !== undefined) {
+            filePaths.push(source.ingestSourcePath ?? source.guideFile);
+        }
     });
     return filePaths;
-}
-
-export function getIntermediateTableRefsFromSource(sources: CsvIngestSources, pipelineConfig: PipelineConfig) {
-    const intermediateDirs: IntermediateTableRef[] = [];
-    Object.entries(sources).forEach(([key, value]) => {
-        value.tableName !== undefined &&
-            intermediateDirs.push({
-                fileLocation: `${pipelineConfig.intermediateOutputDirectory}/${value.tableName}.${pipelineConfig.intermediateOutputFormat}`,
-                tableName: value.tableName
-            });
-    });
-    return intermediateDirs;
 }
 
 export function parseValueForDbInsert(value: any): string {
@@ -75,7 +60,7 @@ export function parseValueForDbInsert(value: any): string {
         return "NULL";
     }
     if (typeof value === "string") {
-        return `'${value.replace("'", '"')}'`;
+        return `'${value.replace(/'/g, '"')}'`.trim();
     }
     return value.toString();
 }

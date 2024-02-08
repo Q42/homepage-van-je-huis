@@ -1,26 +1,31 @@
 import { Options as PRetryOptions } from "p-retry";
 import { AbstractCrawler } from "../crawlers/abstractCrawler";
+import { DBAddress } from "../models/adresses";
 
 export type CsvIngestSource = {
     ingestSourcePath: string;
-    tableName: string;
+    outputTableName: string;
     inputColumns: ColumnDefenitions;
     outputColumns: string[];
 };
 
 export type CsvIngestSources = Record<string, CsvIngestSource>;
 
-type AnyCrawler = new (crawlerConfig: CrawlerConfig, ...args: any[]) => AbstractCrawler<any, any>;
+type AnyApiCrawler = new (crawlerConfig: CrawlerConfig, ...args: any[]) => AbstractCrawler<any, any>;
 
-export type CrawlerConfig = {
-    crawler: AnyCrawler;
+type BaseCrawlerConfig = {
     outputTableName: string;
-    guideFile: string;
     outputColumns: ColumnDefenitions;
-    retryConfig: PRetryOptions;
 };
 
-export type CrawlerConfigs = {
+export interface CrawlerConfig extends BaseCrawlerConfig {
+    crawler: AnyApiCrawler;
+    guideSource?: CsvIngestSource;
+    skip?: boolean;
+    retryConfig: PRetryOptions;
+}
+
+export type ApiCrawlerConfigs = {
     [key: string]: CrawlerConfig;
 };
 
@@ -44,6 +49,8 @@ type ColumnTypes =
     | "BLOB"
     | "GEOMETRY";
 
+export type GeoString = `POINT(${number} ${number})`;
+
 export type ColumnDefenitions = Record<string, ColumnTypes>;
 
 export type IntermediateOutputFormats = "json" | "parquet";
@@ -56,19 +63,6 @@ export type ImageUrlRepsonse = {
     url: string;
 };
 
-export type EnrichedDBAddress = {
-    "ligtIn:BAG.PND.identificatie": string;
-    "huisnummerHoofdadres": number;
-    "huisletterHoofdadres": string | undefined;
-    "huisnummertoevoegingHoofdadres": string | undefined;
-    "postcodeHoofdadres": string;
-    "ligtAan:BAG.ORE.identificatieHoofdadres": string;
-    "ligtAan:BAG.ORE.naamHoofdadres": string;
-    "gebruiksdoel": string | undefined;
-    "ligtIn:GBD.BRT.code": string;
-    "ligtIn:GBD.WIJK.code": string;
-    "ligtIn:GBD.GGW.code": string;
-    "ligtIn:GBD.SDL.code": string;
-    "geometrie": string;
-    "straatnaamBeschrijving": string;
-};
+export interface EnrichedDBAddress extends DBAddress {
+    straatnaamBeschrijving: string;
+}

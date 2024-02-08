@@ -1,10 +1,9 @@
 import slugify from "slugify";
-
 import crypto from "crypto";
 import { AddresDescription, AddressRecord } from "../../apiSchema/addressRecord";
-import { EnrichedDBAddress } from "../lib/types";
 import { PastData } from "../../apiSchema/past";
 import { PresentData } from "../../apiSchema/present";
+import { EnrichedDBAddress } from "../lib/types";
 
 export function generateAddressID(address: AddresDescription): string {
     const slugifyOptions = {
@@ -29,6 +28,7 @@ export function assembleApiRecord(
     pastData: PastData
 ): AddressRecord {
     return {
+        "id": baseAddress.identificatie,
         "ligtIn:BAG.PND.identificatie": baseAddress["ligtIn:BAG.PND.identificatie"],
         "address": {
             streetName: baseAddress["ligtAan:BAG.ORE.naamHoofdadres"],
