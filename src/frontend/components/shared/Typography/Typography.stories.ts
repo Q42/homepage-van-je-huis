@@ -12,6 +12,7 @@ const variantsArray = [
   'body',
   'body-small',
   'quote',
+  'intro',
 ]
 
 export default {
@@ -75,18 +76,6 @@ Heading6.args = {
   default: 'Heading 6',
 }
 
-export const BodySmall = Template.bind({})
-BodySmall.args = {
-  variant: 'body-small',
-  default: 'Body small',
-}
-
-export const Body = Template.bind({})
-Body.args = {
-  variant: 'body',
-  default: 'Body',
-}
-
 export const Quote = Template.bind({})
 Quote.args = {
   variant: 'quote',
@@ -96,5 +85,19 @@ Quote.args = {
 export const Intro = Template.bind({})
 Intro.args = {
   variant: 'intro',
-  default: 'Intro',
+  default:
+    'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla nec purus feugiat, vestibulum mi nec, ultrices ipsum.',
+}
+
+export const Body = Template.bind({})
+Body.args = {
+  variant: 'body',
+  default:
+    'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla nec purus feugiat, vestibulum mi nec, ultrices ipsum.',
+}
+
+export const BodySmall = Template.bind({})
+BodySmall.args = {
+  variant: 'body-small',
+  default: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
 }
