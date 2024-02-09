@@ -29,6 +29,7 @@ const config = {
           less: {
             additionalData: `
               @import "${path.resolve(__dirname, '../assets/css/vars.less')}";
+              @import "${path.resolve(__dirname, '../assets/css/typography.less')}";
             `,
             math: 'always',
           },

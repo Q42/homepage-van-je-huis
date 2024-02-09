@@ -82,6 +82,7 @@ const classes = computed(() => {
 
 <style lang="less" scoped>
 .heading-1 {
+  .heading-1();
 }
 
 .heading-2 {

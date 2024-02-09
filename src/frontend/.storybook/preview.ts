@@ -1,3 +1,6 @@
+import '@/assets/css/main.less'
+import './main.less'
+
 /** @type { import('@storybook/vue3').Preview } */
 const preview = {
   parameters: {
