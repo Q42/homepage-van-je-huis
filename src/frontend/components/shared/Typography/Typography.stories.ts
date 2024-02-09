@@ -92,3 +92,9 @@ Quote.args = {
   variant: 'quote',
   default: 'Quote',
 }
+
+export const Intro = Template.bind({})
+Intro.args = {
+  variant: 'intro',
+  default: 'Intro',
+}

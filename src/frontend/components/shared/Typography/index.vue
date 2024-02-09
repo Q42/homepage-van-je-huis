@@ -15,6 +15,7 @@ type TypographyVariant =
   | 'body'
   | 'body-small'
   | 'quote'
+  | 'intro'
 
 type Tag = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'p' | 'span' | 'blockquote'
 
@@ -42,6 +43,7 @@ const variantClasses: VariantClasses = {
   body: 'body',
   'body-small': 'body-small',
   quote: 'quote',
+  intro: 'intro',
 }
 
 const tag = computed(() => {
@@ -63,6 +65,7 @@ const tag = computed(() => {
       return 'h6'
     case 'body':
     case 'body-small':
+    case 'intro':
       return 'p'
     case 'quote':
       return 'blockquote'
@@ -71,6 +74,7 @@ const tag = computed(() => {
 
 const classes = computed(() => {
   return [
+    'generic',
     variantClasses[props.variant as keyof VariantClasses],
     props.classes,
   ].join(' ')
@@ -78,6 +82,10 @@ const classes = computed(() => {
 </script>
 
 <style lang="less" scoped>
+.generic {
+  color: @primary-black;
+}
+
 .heading-1 {
   .heading-1();
 }
@@ -111,5 +119,9 @@ const classes = computed(() => {
 
 .body-small {
   .body-small();
+}
+
+.intro {
+  .intro();
 }
 </style>

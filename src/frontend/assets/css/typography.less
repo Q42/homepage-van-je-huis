@@ -1,30 +1,52 @@
 .heading-1 {
   font-size: clamp(2.084rem, calc(1.973vw + 1.69rem), 3.662rem);
-  line-height: 1.15;
+  line-height: 1.2;
+  font-weight: 800;
 }
 
 .heading-2 {
-  color: blue;
+  font-size: clamp(1.786rem, calc(1.43vw + 1.5rem), 2.93rem);
+  line-height: 1.25;
+  font-weight: 800;
 }
 
 .heading-3 {
-  color: green;
+  font-size: clamp(1.531rem, calc(1.016vw + 1.328rem), 2.344rem);
+  line-height: 1.3;
+  font-weight: 800;
 }
 
 .heading-4 {
-  color: red;
+  font-size: clamp(1.313rem, calc(0.703vw + 1.173rem), 1.875rem);
+  line-height: 1.5;
+  font-weight: 800;
 }
 
 .heading-5 {
-  color: purple;
+  font-size: clamp(1.125rem, calc(0.469vw + 1.031rem), 1.5rem);
+  line-height: 1.6;
+  font-weight: 700;
 }
 
 .heading-6 {
-  color: yellow;
+  font-size: clamp(0.964rem, calc(0.295vw + 0.905rem), 1.2rem);
+  line-height: 1.6;
+  font-weight: 800;
 }
 
 .quote {
-  color: orange;
+  font-size: clamp(1.531rem, calc(1.016vw + 1.328rem), 2.344rem);
+  line-height: 1.3;
+  font-weight: bold;
+  &::before {
+    content: open-quote;
+  }
+  &::after {
+    content: close-quote;
+  }
+}
+
+.intro {
 }
 
 .body {
@@ -33,4 +55,8 @@
 
 .body-small {
   color: brown;
+}
+
+.intro {
+  color: green;
 }
