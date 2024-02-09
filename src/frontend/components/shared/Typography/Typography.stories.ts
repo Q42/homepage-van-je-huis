@@ -2,7 +2,17 @@ import type { Meta, StoryFn } from '@storybook/vue3'
 
 import Typography from './index.vue'
 
-const variantsArray = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'body', 'body-large']
+const variantsArray = [
+  'h1',
+  'h2',
+  'h3',
+  'h4',
+  'h5',
+  'h6',
+  'body',
+  'body-small',
+  'quote',
+]
 
 export default {
   title: 'Shared/Typography',
@@ -65,10 +75,10 @@ Heading6.args = {
   default: 'Heading 6',
 }
 
-export const BodyLarge = Template.bind({})
-BodyLarge.args = {
-  variant: 'body-large',
-  default: 'Body large',
+export const BodySmall = Template.bind({})
+BodySmall.args = {
+  variant: 'body-small',
+  default: 'Body small',
 }
 
 export const Body = Template.bind({})
@@ -77,14 +87,8 @@ Body.args = {
   default: 'Body',
 }
 
-export const Label = Template.bind({})
-Label.args = {
-  variant: 'label',
-  default: 'Label',
-}
-
-export const LabelBig = Template.bind({})
-LabelBig.args = {
-  variant: 'label-big',
-  default: 'Label Big',
+export const Quote = Template.bind({})
+Quote.args = {
+  variant: 'quote',
+  default: 'Quote',
 }

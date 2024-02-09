@@ -13,11 +13,10 @@ type TypographyVariant =
   | 'h5'
   | 'h6'
   | 'body'
-  | 'body-large'
-  | 'label'
-  | 'label-big'
+  | 'body-small'
+  | 'quote'
 
-type Tag = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'p' | 'span'
+type Tag = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'p' | 'span' | 'blockquote'
 
 type VariantClasses = {
   [key in TypographyVariant]: string
@@ -41,9 +40,8 @@ const variantClasses: VariantClasses = {
   h5: 'heading-5',
   h6: 'heading-6',
   body: 'body',
-  'body-large': 'body-large',
-  label: 'label',
-  'label-big': 'label-big',
+  'body-small': 'body-small',
+  quote: 'quote',
 }
 
 const tag = computed(() => {
@@ -64,11 +62,10 @@ const tag = computed(() => {
     case 'h6':
       return 'h6'
     case 'body':
-    case 'body-large':
+    case 'body-small':
       return 'p'
-    case 'label':
-    case 'label-big':
-      return 'span'
+    case 'quote':
+      return 'blockquote'
   }
 })
 
@@ -86,27 +83,33 @@ const classes = computed(() => {
 }
 
 .heading-2 {
+  .heading-2();
 }
 
 .heading-3 {
+  .heading-3();
 }
 
 .heading-4 {
+  .heading-4();
 }
 
-.heading-5,
+.heading-5 {
+  .heading-5();
+}
 .heading-6 {
+  .heading-6();
+}
+
+.quote {
+  .quote();
 }
 
 .body {
+  .body();
 }
 
-.body-large {
-}
-
-.label {
-}
-
-.label-big {
+.body-small {
+  .body-small();
 }
 </style>
