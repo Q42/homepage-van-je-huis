@@ -1,15 +1,25 @@
 <template>
   <div class="header">
-    <SharedIcon type="logo" class="header__logo" />
+    <SharedIcon :type="IconType" class="header__logo" />
+
+    <SharedTypography
+      v-if="isOnMobile"
+      variant="h1"
+      :compact="true"
+      class="header__title"
+    >
+      <!-- TODO: Hier moet vertaling komen -->
+      Homepage van je Huis
+    </SharedTypography>
   </div>
 </template>
 
 <script setup lang="ts">
-export interface HeaderProps {
-  // TODO
-}
+import { isTablet } from '@/utils/breakpoints'
 
-const props = defineProps<HeaderProps>()
+const screenWidth = useScreenWidth()
+const isOnMobile = computed(() => isTablet(screenWidth.value))
+const IconType = computed(() => (isOnMobile.value ? 'logo--no-text' : 'logo'))
 </script>
 
 <style lang="less" scoped>
@@ -17,5 +27,6 @@ const props = defineProps<HeaderProps>()
   display: flex;
   height: 80px;
   padding: 20px;
+  gap: 10px;
 }
 </style>

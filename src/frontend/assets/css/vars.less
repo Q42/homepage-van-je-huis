@@ -22,8 +22,15 @@
 @neutral-grey2: #bebebe;
 @neutral-grey3: #767676;
 
-// Spacing
-@base-spacing-mobile: 12vw;
-@base-spacing-tablet: 9vw;
-@base-spacing-desktop-md: 4vw;
-@base-spacing-desktop-lg: 60px;
+// Breakpoints
+@bp-mobile: 320px;
+@bp-tablet: 600px;
+@bp-desktop-md: 1024px;
+@bp-desktop-lg: 1360px;
+@bp-desktop-xl: 1920px;
+
+// Media queries
+@mq-from-tablet: ~'only screen and (min-width: @{bp-tablet})';
+@mq-from-desktop-md: ~'only screen and (min-width: @{bp-desktop-md})';
+@mq-from-desktop-lg: ~'only screen and (min-width: @{bp-desktop-lg})';
+@mq-from-desktop-xl: ~'only screen and (min-width: @{bp-desktop-xl})';

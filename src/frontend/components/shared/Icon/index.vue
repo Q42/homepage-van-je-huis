@@ -3,7 +3,7 @@
 </template>
 
 <script setup lang="ts">
-import { Logo } from '@/assets/icons'
+import { Logo, LogoNoText } from '@/assets/icons'
 import { IconType } from '@/models/Icon'
 
 export interface IconProps {
@@ -16,6 +16,8 @@ const iconComponent = computed(() => {
   switch (props.type) {
     case 'logo':
       return Logo
+    case 'logo--no-text':
+      return LogoNoText
   }
 })
 </script>
