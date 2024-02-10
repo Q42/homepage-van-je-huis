@@ -1,5 +1,7 @@
 <template>
-  <h1>Header</h1>
+  <div class="header">
+    <SharedIcon type="logo" class="header__logo" />
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -10,4 +12,10 @@ export interface HeaderProps {
 const props = defineProps<HeaderProps>()
 </script>
 
-<style lang="less" scoped></style>
+<style lang="less" scoped>
+.header {
+  display: flex;
+  height: 80px;
+  padding: 20px;
+}
+</style>
