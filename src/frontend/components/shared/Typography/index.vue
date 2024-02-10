@@ -29,6 +29,7 @@ export interface TypographyProps {
   as?: Tag
   variant: TypographyVariant
   classes?: string
+  compact?: boolean
 }
 
 const props = defineProps<TypographyProps>()
@@ -75,7 +76,8 @@ const tag = computed(() => {
 const classes = computed(() => {
   return [
     'generic',
-    variantClasses[props.variant as keyof VariantClasses],
+    variantClasses[props.variant as keyof VariantClasses] +
+      `${props.compact ? '--compact' : ''}`,
     props.classes,
   ].join(' ')
 })
@@ -84,44 +86,5 @@ const classes = computed(() => {
 <style lang="less" scoped>
 .generic {
   color: @primary-black;
-}
-
-.heading-1 {
-  .heading-1();
-}
-
-.heading-2 {
-  .heading-2();
-}
-
-.heading-3 {
-  .heading-3();
-}
-
-.heading-4 {
-  .heading-4();
-}
-
-.heading-5 {
-  .heading-5();
-}
-.heading-6 {
-  .heading-6();
-}
-
-.quote {
-  .quote();
-}
-
-.body {
-  .body();
-}
-
-.body-small {
-  .body-small();
-}
-
-.intro {
-  .intro();
 }
 </style>
