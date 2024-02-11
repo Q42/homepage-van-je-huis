@@ -15,7 +15,7 @@
 
 <script setup lang="ts">
 import { isTablet } from '@/utils/breakpoints'
-import { getTranslationKey } from '~/translations'
+import { getTranslationKey } from '@/translations'
 
 const screenWidth = useScreenWidth()
 const isOnMobile = computed(() => isTablet(screenWidth.value))
