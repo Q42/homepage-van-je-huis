@@ -8,14 +8,14 @@
       :compact="true"
       class="header__title"
     >
-      <!-- TODO: Hier moet vertaling komen -->
-      Homepage van je Huis
+      {{ $t(getTranslationKey('home.title')) }}
     </SharedTypography>
   </div>
 </template>
 
 <script setup lang="ts">
 import { isTablet } from '@/utils/breakpoints'
+import { getTranslationKey } from '~/translations'
 
 const screenWidth = useScreenWidth()
 const isOnMobile = computed(() => isTablet(screenWidth.value))
