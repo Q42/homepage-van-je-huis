@@ -1,13 +1,13 @@
 import type { Meta, StoryFn } from '@storybook/vue3'
 
-import Header, { HeaderProps } from './index.vue'
+import Header from './index.vue'
 
 export default {
-  title: 'Shared/Header',
+  title: 'UI/Header',
   component: Header,
 } as Meta<typeof Header>
 
-const Template: StoryFn<typeof Header> = (args: HeaderProps) => ({
+const Template: StoryFn<typeof Header> = (args) => ({
   components: { Header },
   setup() {
     return { args }
