@@ -20,3 +20,8 @@ export const Logo = Template.bind({})
 Logo.args = {
   type: 'logo',
 }
+
+export const LogoNoText = Template.bind({})
+LogoNoText.args = {
+  type: 'logo--no-text',
+}
