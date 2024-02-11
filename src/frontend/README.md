@@ -9,8 +9,10 @@ Coming soon
 
 - [Stack](#stack)
 - [🚀 Getting started](#-getting-started)
-- [API](#api)
-- [🤚 Good to know](#-good-to-know)
+- [Adding components](#-adding-components)
+- [Storybook & Plop](#-storybook-&-plop)
+- [Browser & device support](#-browser-&-device-support)
+
 </details>
 
 ## Stack
@@ -41,7 +43,7 @@ We use plop to add new components. This way all new components have an accompany
 
 `npm run plop [name of your component]`
 
-### Storybook
+### Storybook & Plop
 
 We use [Storybook](https://storybook.js.org/) to build all the components and pages. This way we can built isolated and create a nice overview of all the components we have.
 Run `npm run storybook` to open Storybook. Documentation of the components can be found here as well.
