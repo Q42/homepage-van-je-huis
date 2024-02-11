@@ -1,13 +1,6 @@
 <template>
-  <div>
-    <UIHeader />
-  </div>
+  <NuxtLayout>
+    <NuxtLoadingIndicator color="#d55140" />
+    <NuxtPage />
+  </NuxtLayout>
 </template>
-
-<script>
-defineI18nRoute({
-  paths: {
-    nl: '/',
-  },
-})
-</script>
