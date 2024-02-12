@@ -1,10 +1,10 @@
-import { DistanceViewEntry } from "../../apiSchema/present";
+import { DistanceImageViewEntry } from "../../apiSchema/present";
 import { crawlerConfigs as cc, csvIngestSources as cs, pipelineConfig as pc } from "../../pipelineConfig";
 import { DuckDBService } from "../lib/duckDBService";
 import { CustomizedPublicArtRecord } from "../models/publicArtRecord";
 import { queries } from "../lib/queries";
 
-export async function getPublicArt(duckDBService: DuckDBService, addressId: string): Promise<DistanceViewEntry[]> {
+export async function getPublicArt(duckDBService: DuckDBService, addressId: string): Promise<DistanceImageViewEntry[]> {
     const customArtRecords = (await duckDBService.runQuery(
         queries.sqlSelectPublicArt({
             addresTableName: cs.adressen.outputTableName,
@@ -14,7 +14,7 @@ export async function getPublicArt(duckDBService: DuckDBService, addressId: stri
         })
     )) as CustomizedPublicArtRecord[];
     return customArtRecords.map((artRecord) => {
-        const newEntry: DistanceViewEntry = {
+        const newEntry: DistanceImageViewEntry = {
             distanceToAddress: artRecord.distance_from_address,
             title: artRecord.title,
             visitUrl: artRecord.visitUrl,

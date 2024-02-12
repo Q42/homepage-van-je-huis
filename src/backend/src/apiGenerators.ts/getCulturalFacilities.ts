@@ -1,11 +1,11 @@
-import { DistanceViewEntry, PresentEntityType } from "../../apiSchema/present";
+import { DistanceImageViewEntry, PresentImageEntityType } from "../../apiSchema/present";
 import { crawlerConfigs as cc, csvIngestSources as cs, pipelineConfig as pc } from "../../pipelineConfig";
 import { DuckDBService } from "../lib/duckDBService";
 import { CustomizedCulturalFacilityRecord } from "../models/culturalFacility";
 import { queries } from "../lib/queries";
 
-function mapFacilityType(term: string): PresentEntityType | undefined {
-    const termMapping: Record<string, PresentEntityType> = {
+function mapFacilityType(term: string): PresentImageEntityType | undefined {
+    const termMapping: Record<string, PresentImageEntityType> = {
         "Multidisciplinair": "cultureMulti",
         "Muziek": "musicVenue",
         "Theater": "theatre",
@@ -30,7 +30,7 @@ function mapFacilityType(term: string): PresentEntityType | undefined {
 export async function getCulturalFacilities(
     duckDBService: DuckDBService,
     addressId: string
-): Promise<DistanceViewEntry[]> {
+): Promise<DistanceImageViewEntry[]> {
     const customArtRecords = (await duckDBService.runQuery(
         queries.sqlSelectCulturalFacilities({
             addresTableName: "adressen",
@@ -42,7 +42,7 @@ export async function getCulturalFacilities(
     )) as CustomizedCulturalFacilityRecord[];
 
     return customArtRecords.map((artRecord) => {
-        const newEntry: DistanceViewEntry = {
+        const newEntry: DistanceImageViewEntry = {
             distanceToAddress: artRecord.distance_from_address,
             title: artRecord.Naamorganisatie,
             visitUrl: artRecord.Correctie_Website,

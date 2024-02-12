@@ -2,7 +2,7 @@ import { BaseDataEntity, ImageRef } from "./shared";
 
 export type GeoLevel = "straat" | "buurt" | "wijk" | "stadsdeel";
 
-export type PresentEntityType =
+export type PresentImageEntityType =
     | "outdoorArt"
     | "cultureMulti"
     | "musicVenue"
@@ -19,20 +19,27 @@ export type PresentEntityType =
     | "newMedia"
     | "debate";
 
+export type AggregateDataType = "trees" | "treeSpecies" | "honeyBeePopulations" | "bats";
+
 export type PresentData = {
     distanceRangeStart: number; // Meters at which the slider starts
     distanceRangeEnd: number; // Meters at which the slider starts
-    slider: DistanceViewEntry[]; // The entries for on the slider
+    slider: (DistanceImageViewEntry | DistanceDataAggregateEntry)[]; // The entries for on the slider
     agenda: AgendaItem[]; // The events and such
 };
 
-export interface DistanceViewEntry extends BaseDataEntity {
+export interface DistanceImageViewEntry extends BaseDataEntity {
     distanceToAddress: number; // Approximate distance to the address
     geoLevel?: GeoLevel; // The geo level of the entry
     image?: ImageRef;
     title: string; // Title of the entry
     visitUrl?: string; // URL to the source where people can find out more info about the image
-    type: PresentEntityType; // The type of the entry
+    type: PresentImageEntityType; // The type of the entry
+}
+
+export interface DistanceDataAggregateEntry extends BaseDataEntity {
+    distanceToAddress: number; // Approximate distance to the address
+    aggregateData: Record<AggregateDataType, number>;
 }
 
 export interface AgendaItem extends BaseDataEntity {

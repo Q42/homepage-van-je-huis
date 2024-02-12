@@ -1,13 +1,14 @@
 import { SparqlImageArchiveCrawler } from "./src/crawlers/sparqlImageCrawler";
 import { Options as PRetryOptions } from "p-retry";
 
-import { ApiCrawlerConfigs as CrawlerConfigs, CsvIngestSources, IntermediateOutputFormats } from "./src/lib/types";
+import { ApiCrawlerConfigs as CrawlerConfigs, CsvIngestSources } from "./src/lib/types";
 
 import { publicArtRecordOutputColumns } from "./src/models/publicArtRecord";
 import { PublicArtCrawler } from "./src/crawlers/publicArtCrawler";
 import { adresInputColumns, adresOutputColumns } from "./src/models/adresses";
 import { straatOmschrijvingInputColumns, straatnaamOmschrijvingOutputColumns } from "./src/models/straatOmschrijving";
 import { cultureFacilitiesInputColumns, cultureFacilitiesOutputColumns } from "./src/models/culturalFacility";
+import { treesInputColumns, treesOutputColumns } from "./src/models/trees";
 
 // devMode limits all select queries to a specified max number of rows
 export const devMode = { enabled: true, limit: 50 };
@@ -31,6 +32,13 @@ export const csvIngestSources: CsvIngestSources = {
         outputTableName: "cultuurvoorzieningen",
         inputColumns: cultureFacilitiesInputColumns,
         outputColumns: cultureFacilitiesOutputColumns,
+        geoTransformColumn: "WKT_LAT_LNG"
+    },
+    trees: {
+        ingestSourcePath: "./data_input/BOMEN.csv",
+        outputTableName: "bomen",
+        inputColumns: treesInputColumns,
+        outputColumns: treesOutputColumns,
         geoTransformColumn: "WKT_LAT_LNG"
     },
     // these are just placeholders for now and need to be replaced with the actual data once its available
@@ -95,11 +103,12 @@ export type PipelineConfig = {
     apiOutputDirectory: string;
     apiResoliverDirectory: string;
     apiAddressFilesDirectory: string;
+    rdColumnPrefix: string;
     dbBatchInsertMinThreshold: number;
     maxConsecutiveCrawlFailuresBeforeAbort: number;
     sortSliders: boolean;
     presentViewRangeMax: number; // the maximum distance in meters to show in the present view
-    rdColumnPrefix: string;
+    presentAggregateInterval: number;
 };
 
 export const pipelineConfig: PipelineConfig = {
@@ -107,11 +116,12 @@ export const pipelineConfig: PipelineConfig = {
     apiOutputDirectory: "./api_generated",
     apiResoliverDirectory: "/resolve",
     apiAddressFilesDirectory: "/address",
+    rdColumnPrefix: "rd_geometrie_",
     dbBatchInsertMinThreshold: 500,
     maxConsecutiveCrawlFailuresBeforeAbort: 25,
     sortSliders: true,
     presentViewRangeMax: 1000,
-    rdColumnPrefix: "rd_geometrie_"
+    presentAggregateInterval: 100
 };
 
 type PublicArtCrawlerConfig = {
