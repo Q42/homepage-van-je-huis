@@ -1,6 +1,6 @@
 import { AddressRecord } from "./apiSchema/addressRecord";
 import { PastData } from "./apiSchema/past";
-import { AgendaItem, PresentData } from "./apiSchema/present";
+import { AgendaItem, DistanceDataAggregateEntry, PresentData } from "./apiSchema/present";
 import {
     crawlerConfigs,
     csvIngestSources as cs,
@@ -27,6 +27,7 @@ import { getPublicArt } from "./src/apiGenerators.ts/getPublicArt";
 import { getCulturalFacilities } from "./src/apiGenerators.ts/getCulturalFacilities";
 import { queries } from "./src/lib/queries";
 import { generateAddresResolveSchema } from "./src/utils/db";
+import { getAggregates } from "./src/apiGenerators.ts/getAggregates";
 
 const duckDBService = new DuckDBService();
 
@@ -85,6 +86,8 @@ async function generateAPI() {
     console.log("starting api generation");
     statusBar.start(baseAdressList.length, 0);
 
+    const numberOfAggregates = Math.floor(pc.presentViewRangeMax / pc.presentAggregateInterval);
+
     for (const address of baseAdressList) {
         const addressPresent: PresentData = {
             distanceRangeStart: 0,
@@ -107,6 +110,16 @@ async function generateAPI() {
                 contents: address.straatnaamBeschrijving.trim()
             });
         }
+
+        // Add the aggregate data
+        const aggregateDataEntries = await getAggregates({
+            duckDBService: duckDBService,
+            addresId: address.identificatie,
+            numberOfAggregates: numberOfAggregates,
+            interval: pc.presentAggregateInterval
+        });
+
+        addressPresent.slider.push(...aggregateDataEntries);
 
         // Add the public artworks
         const publicArt = await getPublicArt(duckDBService, address.identificatie);

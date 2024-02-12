@@ -121,7 +121,7 @@ export const pipelineConfig: PipelineConfig = {
     maxConsecutiveCrawlFailuresBeforeAbort: 25,
     sortSliders: true,
     presentViewRangeMax: 1000,
-    presentAggregateInterval: 100
+    presentAggregateInterval: 200
 };
 
 type PublicArtCrawlerConfig = {

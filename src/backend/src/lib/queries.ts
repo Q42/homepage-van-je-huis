@@ -89,5 +89,23 @@ export const queries = {
         WHERE B.identificatie = '${addressId}'
         ORDER BY distance_from_address ASC;
         `,
-    sqlTransformGeometry
+    sqlTransformGeometry,
+    countWithinRangeOfAddress: ({
+        addressId,
+        targetTable,
+        targetColumn,
+        targetGeometryColumn,
+        range
+    }: {
+        addressId: string;
+        targetTable: string;
+        targetColumn: string;
+        targetGeometryColumn: string;
+        range: number;
+    }) => `
+    SELECT COUNT(A.${targetColumn})
+    FROM "${targetTable}"  A
+    JOIN adressen B ON ST_Distance(A.${targetGeometryColumn}, B.geometrie) < ${range}
+    WHERE B.identificatie = '${addressId}'
+    `
 };

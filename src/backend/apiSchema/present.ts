@@ -19,7 +19,10 @@ export type PresentImageEntityType =
     | "newMedia"
     | "debate";
 
-export type AggregateDataType = "trees" | "treeSpecies" | "honeyBeePopulations" | "bats";
+type AggregateDataTypes = "trees" | "treeSpecies" | "honeyBeePopulations" | "bats";
+export type AggregateData = {
+    [key in AggregateDataTypes]?: number;
+};
 
 export type PresentData = {
     distanceRangeStart: number; // Meters at which the slider starts
@@ -39,7 +42,7 @@ export interface DistanceImageViewEntry extends BaseDataEntity {
 
 export interface DistanceDataAggregateEntry extends BaseDataEntity {
     distanceToAddress: number; // Approximate distance to the address
-    aggregateData: Record<AggregateDataType, number>;
+    aggregateData: AggregateData;
 }
 
 export interface AgendaItem extends BaseDataEntity {
