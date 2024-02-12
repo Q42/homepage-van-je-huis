@@ -1,4 +1,4 @@
-import { csvIngestSources as cs } from "../pipelineConfig";
+import { csvIngestSources as cs } from "../../pipelineConfig";
 
 /**
  * Transforms the geometry column of a table in the database.

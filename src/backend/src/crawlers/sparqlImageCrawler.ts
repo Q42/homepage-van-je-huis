@@ -2,7 +2,7 @@ import { RowData } from "duckdb";
 import { BaseRecord } from "../models/baseRecord";
 import { ImageRecord } from "../models/imageRecord";
 import SparqlClient from "sparql-http-client";
-import { queries } from "../queries";
+import { queries } from "../lib/queries";
 import { DuckDBService } from "../lib/duckDBService";
 import { AbstractCrawler } from "./abstractCrawler";
 import { CrawlerConfig, ImageUrlRepsonse } from "../lib/types";

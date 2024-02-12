@@ -25,7 +25,7 @@ import { stringLibrary } from "./src/lib/strings";
 import { CrawlerConfig, CsvIngestSource, EnrichedDBAddress } from "./src/lib/types";
 import { getPublicArt } from "./src/apiGenerators.ts/getPublicArt";
 import { getCulturalFacilities } from "./src/apiGenerators.ts/getCulturalFacilities";
-import { queries } from "./src/queries";
+import { queries } from "./src/lib/queries";
 import { generateAddresResolveSchema } from "./src/utils/db";
 
 const duckDBService = new DuckDBService();

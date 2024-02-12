@@ -1,6 +1,5 @@
 // from https://gist.github.com/erikvullings/a2c58cecc3f0a27b043deba90089af57
 
-import { DuckDBService } from "../lib/duckDBService";
 import { GeoString } from "../lib/types";
 import { GeoLocation } from "../models/shared";
 
