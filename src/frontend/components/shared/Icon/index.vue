@@ -1,13 +1,15 @@
 <template>
-  <component :is="iconComponent" class="icon" />
+  <component :height="height" :width="width" :is="iconComponent" class="icon" />
 </template>
 
 <script setup lang="ts">
-import { Logo, LogoNoText } from '@/assets/icons'
+import { Logo, LogoNoText, Search } from '@/assets/icons'
 import { IconType } from '@/models/Icon'
 
 export interface IconProps {
   type: IconType
+  height?: number
+  width?: number
 }
 
 const props = defineProps<IconProps>()
@@ -18,6 +20,8 @@ const iconComponent = computed(() => {
       return Logo
     case 'logo--no-text':
       return LogoNoText
+    case 'search':
+      return Search
   }
 })
 </script>

@@ -25,3 +25,10 @@ export const LogoNoText = Template.bind({})
 LogoNoText.args = {
   type: 'logo--no-text',
 }
+
+export const Search = Template.bind({})
+Search.args = {
+  type: 'search',
+  height: 24,
+  width: 24,
+}
