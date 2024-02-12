@@ -2,7 +2,6 @@ import { PipelineConfig } from "../../pipelineConfig";
 import { DuckDBService } from "../lib/duckDBService";
 import { ColumnDefenitions, CsvIngestSource } from "../lib/types";
 import { DBAddress } from "../models/adresses";
-import { duckDBTransformLatLongGeoToRD } from "./rijksdriehoek";
 
 export function getExportSelectQuery(
     tableName: string,
@@ -30,11 +29,12 @@ export async function loadFileToParquet(
     await dbService.ingestCSV(csvIngestSource);
 
     if (csvIngestSource.geoTransformColumn !== undefined) {
-        await duckDBTransformLatLongGeoToRD({
-            duckDBService: dbService,
+        await dbService.transformGeometryFormat({
             tableName: csvIngestSource.outputTableName,
-            latLongColumnName: csvIngestSource.geoTransformColumn,
-            newRdColumnName: pc.rdColumnPrefix + csvIngestSource.outputTableName
+            sourceColumnName: csvIngestSource.geoTransformColumn,
+            targetColumnName: pc.rdColumnPrefix + csvIngestSource.outputTableName,
+            sourceEpsg: "EPSG:4326",
+            targetEpsg: "EPSG:28992"
         });
 
         // add the newly generated column to the output columns and column defenitions
