@@ -1,3 +1,31 @@
+/**
+ * Transforms the geometry column of a table in the database.
+ * Adds a new geometry column and updates it with transformed geometry values.
+ *
+ * @param {string} tableName - The name of the table.
+ * @param {string} newGeoColumnName - The name of the new geometry column.
+ * @param {string} sourceColumnName - The name of the source geometry column. IMPORTANT: This must be a geometry text (VARCHAR) column, not a geometry column.
+ * @param {string} sourceEpsg - The EPSG code of the source coordinate system.
+ * @param {string} targetEpsg - The EPSG code of the target coordinate system.
+ * @returns {string} The SQL query for adding a new column in the targed coordinate system.
+ */
+const sqlTransformGeometry = ({
+    tableName,
+    newGeoColumnName,
+    sourceColumnName,
+    sourceEpsg,
+    targetEpsg
+}: {
+    tableName: string;
+    newGeoColumnName: string;
+    sourceColumnName: string;
+    sourceEpsg: string;
+    targetEpsg: string;
+}) => `
+ALTER TABLE ${tableName} ADD COLUMN ${newGeoColumnName} GEOMETRY;    
+UPDATE ${tableName} 
+SET ${newGeoColumnName} = ST_Transform(ST_GeomFromText(${sourceColumnName}), '${sourceEpsg}', '${targetEpsg}');`;
+
 export const queries = {
     sqlSelectDistinct: (tableName: string, column: string, columnAs?: string) =>
         `SELECT DISTINCT ${column} ${columnAs ? "AS " + columnAs : ""} FROM ${tableName}`,
@@ -56,5 +84,6 @@ export const queries = {
         JOIN ${addresTableName} B ON ST_Distance(A.${locationColumn}, B.geometrie) < ${range}
         WHERE B.identificatie = '${addressId}'
         ORDER BY distance_from_address ASC;
-        `
+        `,
+    sqlTransformGeometry
 };
