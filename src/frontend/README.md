@@ -1,72 +1,78 @@
-<!--
+# Homepage van je Huis
 
-Hi developer!
+**What is Homepage van je Huis?**
 
-You can fill this readme for your own project.
-Try to keep the root readme as short as possible.
-Link to separate markdown files in /documentation for extensive information about a topic.
+Coming soon
 
-Good luck!
+<details>
+<summary>Table of contents</summary>
 
--->
+- [Stack](#stack)
+- [🚀 Getting started](#-getting-started)
+- [Adding components](#-adding-components)
+- [Storybook & Plop](#-storybook-&-plop)
+- [Browser & device support](#-browser-&-device-support)
 
-# Homepage van je huis frontend
+</details>
 
-This project doesn't have a frontend yet.
+## Stack
 
-## ✨ See it in action ✨
-
-| Environment | ...      |
-| ----------- | -------- |
-| `...`       | 🚧 / ... |
-
-## 🧰 External tooling
-
-<!-- Provide links to external used tooling, like a Sketch, Jira, etc. -->
-
-- ...
+- [Nuxt3](https://nuxt.com/)
+- Typescript
+- [Vite](https://vitejs.dev/)
+- [Storybook](https://storybook.js.org/)
+- Less
 
 ## 🚀 Getting started
 
-### Prerequisites
+1. Install [Node Version Manager](https://github.com/nvm-sh/nvm)
+2. Run `nvm i` to install/use the correct node version as described in .nvmrc
+3. Run `npm i` to install all dependencies
+4. Configure and use prettier and editor config in your IDE of choice to conform to the project formatting rules
+5. Run `npm run dev` to start development server and navigate to `localhost:[PORT]/nl/` in your browser as we don't have a homepage and `localhost:[PORT]/` will give a `404`
+6. Run `npm run storybook` to start Storybook, here you can find all the components. See [Storybook](#storybook)
 
-<!--
-   Which software or library's are needed to be able to install this project?
- -->
+To run a production build:
 
-- ...
+- Run `npm run build`
+- Run `npm run preview`
 
-### Installation
+### Adding components
 
-<!-- How to install this project (after having the prerequisites)? -->
+We use plop to add new components. This way all new components have an accompanying story and are uniform.
 
-- ...
+`npm run plop [name of your component]`
 
-### Development
+### Storybook & Plop
 
-<!-- How to actually start developing? -->
+We use [Storybook](https://storybook.js.org/) to build all the components and pages. This way we can built isolated and create a nice overview of all the components we have.
+Run `npm run storybook` to open Storybook. Documentation of the components can be found here as well.
 
-- ...
+Creating a new component:
 
-### Deployment / Release process
+1. Run Storybook: `npm run storybook`
+2. Now you can see your component in Storybook
+3. Start building!
 
-<!-- How to deploy it to an environment or release it to an environment / store? -->
+### Browser & device support
 
-- ...
+\_Last updated: 06/02/2024
+| Browser | Supported version |
+| :--- | ---: |
+| Safari | 14 and up |
+| Chrome | 108 and up |
+| Edge | 112 and up |
+| Samsung Internet | 19 and up |
+| Firefox | 78 and up |
+| Android webview | 112 and up |
 
-## 🤚 Good to know
+We use the following breakpoints to cover all screen sizes:
+| Breakpoint | Pixels |
+| :--- | ---: |
+| Mobile | 320 |
+| Tablet | 600 |
+| Desktop-md | 1024 |
+| Desktop-lg | 1360 |
+| Desktop-xl | 1920 |
 
-<!--
-  A place to provide extra information (or links to it) about the project.
--->
-
-- ...
-
-<!--
-
-or use headings (when having lots of information)
-
-## ...
-...
-
--->
+See the [browser & device list docs](./docs/BrowserDeviceList.md) for a full report of the researched Analytics data to determine the browser and device support.
