@@ -11,13 +11,10 @@
 
 <style lang="less" scoped>
 .page-wrapper {
-  display: flex;
   min-height: 100vh;
-  flex-direction: column;
 }
 
 main {
-  height: 100%;
-  flex: 1;
+  min-height: 100%;
 }
 </style>

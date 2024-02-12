@@ -14,10 +14,13 @@
         :placeholder="$t(getTranslationKey('home.inputPlaceholder'))"
         icon="search"
       />
+      <TransitionFade>
+        <div v-if="search" class="autocomplete-panel"></div>
+      </TransitionFade>
     </form>
   </div>
 </template>
-import { getTranslationKey } from '~/translations';
+import { getTranslationKey } from '@/translations';
 
 <script setup lang="ts">
 import { getTranslationKey } from '@/translations'
@@ -36,16 +39,24 @@ const handleSubmit = () => {
 
 <style lang="less" scoped>
 .search-block {
-  position: absolute;
-  height: calc(100% - @header-height);
+  position: relative;
+  height: 100%;
   margin: auto;
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
   width: fit-content;
   justify-content: center;
-  left: 50%;
-  transform: translate(-50%, -@header-height);
+  margin-top: calc(25%);
+  transform: translateY(-50%);
+}
+
+.autocomplete-panel {
+  position: absolute;
+  height: 300px;
+  width: 100%;
+  top: 100%;
+  background: gray;
 }
 
 .title {
