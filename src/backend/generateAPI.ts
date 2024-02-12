@@ -26,6 +26,7 @@ import { CrawlerConfig, CsvIngestSource, EnrichedDBAddress } from "./src/lib/typ
 import { getPublicArt } from "./src/apiGenerators.ts/getPublicArt";
 import { getCulturalFacilities } from "./src/apiGenerators.ts/getCulturalFacilities";
 import { queries } from "./src/queries";
+import { generateAddresResolveSchema } from "./src/utils/db";
 
 const duckDBService = new DuckDBService();
 
@@ -77,7 +78,8 @@ async function generateAPI() {
 
     writeObjectToJsonFile({ streets: streetNames }, resolverOutputDir + "/streets.json");
 
-    return;
+    writeObjectToJsonFile(generateAddresResolveSchema(baseAdressList), resolverOutputDir + "/addressFullResolve.json");
+
     // Start generating the individual address API files
     const statusBar = new cliProgress.SingleBar({}, cliProgress.Presets.shades_classic);
     console.log("starting api generation");

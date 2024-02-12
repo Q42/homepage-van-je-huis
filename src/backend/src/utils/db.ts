@@ -1,6 +1,7 @@
 import { PipelineConfig } from "../../pipelineConfig";
 import { DuckDBService } from "../lib/duckDBService";
 import { ColumnDefenitions, CsvIngestSource } from "../lib/types";
+import { DBAddress } from "../models/adresses";
 import { duckDBTransformLatLongGeoToRD } from "./rijksdriehoek";
 
 export function getExportSelectQuery(
@@ -52,4 +53,25 @@ export async function loadFileToParquet(
     if (dropTableAfterExport) {
         await dbService.dropTable(csvIngestSource.outputTableName);
     }
+}
+
+export function generateAddresResolveSchema(addresses: DBAddress[]) {
+    const baseList: Record<string, string[]> = {};
+
+    addresses.forEach((address) => {
+        const streetname = address["ligtAan:BAG.ORE.naamHoofdadres"];
+        if (!streetname) {
+            return;
+        }
+        const houseNumber =
+            address.huisnummerHoofdadres +
+            (address.huisnummertoevoegingHoofdadres ?? "") +
+            (address.huisletterHoofdadres ?? "");
+
+        if (!baseList[streetname]) {
+            baseList[streetname] = [];
+        }
+        baseList[streetname].push(houseNumber);
+    });
+    return baseList;
 }
