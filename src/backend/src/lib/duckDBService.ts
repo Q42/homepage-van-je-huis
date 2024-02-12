@@ -51,7 +51,8 @@ export class DuckDBService {
             devMode.enabled &&
             querystring.toLowerCase().includes("select") &&
             !querystring.toLowerCase().includes("limit") &&
-            !querystring.toLowerCase().includes("copy")
+            !querystring.toLowerCase().includes("copy") &&
+            !querystring.toLowerCase().includes("distinct")
         ) {
             if (querystring.trim().endsWith(";")) {
                 querystring = querystring.trim().slice(0, -1);

@@ -1,6 +1,10 @@
+import { csvIngestSources as cs } from "../pipelineConfig";
+
 export const queries = {
-    sqlSelectDistinct: (tableName: string, column: string, columnAs?: string) =>
-        `SELECT DISTINCT ${column} ${columnAs ? "AS " + columnAs : ""} FROM ${tableName}`,
+    sqlGetBaseTable: `SELECT ${cs.adressen.outputTableName}.*, beschrijving AS straatnaamBeschrijving FROM ${cs.adressen.outputTableName} JOIN ${cs.straatOmschrijving.outputTableName} ON (${cs.adressen.outputTableName}."ligtAan:BAG.ORE.identificatieHoofdadres" = ${cs.straatOmschrijving.outputTableName} .identificatie)`,
+    sqlGetEventCalendar: `SELECT * FROM ${cs.eventsPlaceholder.outputTableName} ORDER BY Date_start ASC`,
+    sqlSelectDistinct: ({ tableName, column, columnAs }: { tableName: string; column: string; columnAs?: string }) =>
+        `SELECT DISTINCT "${column}" ${columnAs ? "AS " + columnAs : ""} FROM ${tableName}`,
 
     sparqlSearchByAddress: (street: string, houseNumber: number) => `
         PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>

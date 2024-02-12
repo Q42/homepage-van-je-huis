@@ -10,7 +10,7 @@ import {
 } from "./pipelineConfig";
 import { DuckDBService } from "./src/lib/duckDBService";
 import { calendarEvent } from "./src/models/eventCalendar";
-import { queries } from "./src/lib/queries";
+
 import cliProgress from "cli-progress";
 
 import {
@@ -25,7 +25,7 @@ import { stringLibrary } from "./src/lib/strings";
 import { CrawlerConfig, CsvIngestSource, EnrichedDBAddress } from "./src/lib/types";
 import { getPublicArt } from "./src/apiGenerators.ts/getPublicArt";
 import { getCulturalFacilities } from "./src/apiGenerators.ts/getCulturalFacilities";
-import { duckDBTransformLatLongGeoToRD } from "./src/utils/rijksdriehoek";
+import { queries } from "./src/queries";
 
 const duckDBService = new DuckDBService();
 
@@ -43,11 +43,16 @@ async function generateAPI() {
         await duckDBService.loadIntermediateSource(source, true);
     }
 
-    const baseAdressList = (await duckDBService.runQuery(queries.getBaseTable)) as EnrichedDBAddress[];
+    const baseAdressList = (await duckDBService.runQuery(queries.sqlGetBaseTable)) as EnrichedDBAddress[];
+
+    const resolverOutputDir = pc.apiOutputDirectory + pc.apiResoliverDirectory;
+    const addressOutputDir = pc.apiOutputDirectory + pc.apiAddressFilesDirectory;
 
     createDirectory(pc.apiOutputDirectory);
+    createDirectory(resolverOutputDir);
+    createDirectory(addressOutputDir);
 
-    const eventCalendar = (await duckDBService.runQuery(queries.getEventCalendar)) as calendarEvent[];
+    const eventCalendar = (await duckDBService.runQuery(queries.sqlGetEventCalendar)) as calendarEvent[];
     const events: AgendaItem[] = eventCalendar.map((event) => ({
         title: event.Name_event,
         description: event.Description ?? stringLibrary.eventNoDescription,
@@ -57,9 +62,27 @@ async function generateAPI() {
                 ? event.Date_end
                 : undefined
     }));
+
+    // Generate the resolver api files
+    console.log("Generating resolver files");
+    const streetNames = (
+        await duckDBService.runQuery(
+            queries.sqlSelectDistinct({
+                tableName: "adressen",
+                column: "ligtAan:BAG.ORE.naamHoofdadres",
+                columnAs: "s"
+            })
+        )
+    ).map((row) => row["s"]) as string[];
+
+    writeObjectToJsonFile({ streets: streetNames }, resolverOutputDir + "/streets.json");
+
+    return;
+    // Start generating the individual address API files
     const statusBar = new cliProgress.SingleBar({}, cliProgress.Presets.shades_classic);
     console.log("starting api generation");
     statusBar.start(baseAdressList.length, 0);
+
     for (const address of baseAdressList) {
         const addressPresent: PresentData = {
             distanceRangeStart: 0,
@@ -112,7 +135,7 @@ async function generateAPI() {
         const addressRecord: AddressRecord = assembleApiRecord(address, addressPresent, addressPast);
         writeObjectToJsonFile(
             addressRecord,
-            `${pc.apiOutputDirectory}/${generateAddressID(addressRecord.address)}.json`,
+            `${addressOutputDir}/${generateAddressID(addressRecord.address)}.json`,
             devMode.enabled
         );
         statusBar.increment();
