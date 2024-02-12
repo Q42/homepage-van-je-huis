@@ -12,12 +12,6 @@ export class PublicArtCrawler extends AbstractCrawler<PublicArtRecord, string> {
 
     puppeteerOptions: PuppeteerLaunchOptions;
 
-    elementSelectors = {
-        artListingHref: ".entry-image",
-        artLocationMap: "#object_map",
-        artHeroImage: ".basis_afbeelding"
-    };
-
     constructor(crawlerConfig: CrawlerConfig, puppeteerOptions?: PuppeteerLaunchOptions) {
         super(crawlerConfig);
         this.browser = null;
@@ -69,10 +63,11 @@ export class PublicArtCrawler extends AbstractCrawler<PublicArtRecord, string> {
             await page.goto(`${pAc.baseListPage}/${currentPage}`, {
                 waitUntil: "domcontentloaded"
             });
-
+            // IMPORTANT: everything that happens within page.evaluate does not have access to any variables outside
+            // of that function's scope, since this code is essentially ran within the chrome browser.
             const urlsFromPage = await page.evaluate(() => {
                 const artUrls: string[] = [];
-                document.body.querySelectorAll(this.elementSelectors.artListingHref).forEach((url) => {
+                document.body.querySelectorAll(".entry-image").forEach((url) => {
                     const artworkUrl = url.getAttribute("href");
                     if (artworkUrl) {
                         artUrls.push(artworkUrl);
@@ -90,9 +85,7 @@ export class PublicArtCrawler extends AbstractCrawler<PublicArtRecord, string> {
 
     protected async extractArtCoordinates(page: Page) {
         const markerScriptString = await page.evaluate(() => {
-            const scriptString = document.body
-                .querySelector(this.elementSelectors.artLocationMap)
-                ?.querySelector("script")?.textContent;
+            const scriptString = document.body.querySelector("#object_map")?.querySelector("script")?.textContent;
             return scriptString;
         });
 
@@ -118,10 +111,7 @@ export class PublicArtCrawler extends AbstractCrawler<PublicArtRecord, string> {
 
     protected async extractArtImage(page: Page) {
         const img = await page.evaluate(() => {
-            return document.body
-                .querySelector(this.elementSelectors.artHeroImage)
-                ?.querySelector("img")
-                ?.getAttribute("src");
+            return document.body.querySelector(".basis_afbeelding")?.querySelector("img")?.getAttribute("src");
         });
         if (img) {
             return img;
