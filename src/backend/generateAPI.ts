@@ -78,7 +78,7 @@ async function generateAPI() {
 
     writeObjectToJsonFile({ streets: streetNames }, resolverOutputDir + "/streets.json");
 
-    writeObjectToJsonFile(generateAddresResolveSchema(baseAdressList), resolverOutputDir + "/addressFullResolve.json");
+    // writeObjectToJsonFile(generateAddresResolveSchema(baseAdressList), resolverOutputDir + "/addressFullResolve.json");
 
     // Start generating the individual address API files
     const statusBar = new cliProgress.SingleBar({}, cliProgress.Presets.shades_classic);
