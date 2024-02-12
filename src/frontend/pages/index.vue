@@ -1,7 +1,5 @@
 <template>
-  <div>
-    <UIHeader />
-  </div>
+  <UISearchBlock />
 </template>
 
 <script>

@@ -25,7 +25,7 @@ const IconType = computed(() => (isOnMobile.value ? 'logo--no-text' : 'logo'))
 <style lang="less" scoped>
 .header {
   display: flex;
-  height: 80px;
+  height: @header-height;
   padding: 20px;
   gap: 10px;
 }

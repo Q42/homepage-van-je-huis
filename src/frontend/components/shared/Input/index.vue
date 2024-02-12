@@ -3,8 +3,9 @@
     <input
       class="input"
       type="text"
-      :v-model="value"
       :placeholder="placeholder"
+      :value="value"
+      @input="$emit('update:value', ($event.target as HTMLInputElement).value)"
     />
     <button v-if="icon" type="submit" class="icon-btn">
       <SharedIcon :height="24" :width="24" :type="icon" />
@@ -16,10 +17,11 @@
 import { IconType } from '~/models/Icon'
 
 export interface InputProps {
-  value: string
   placeholder: string
   icon?: IconType
 }
+
+const value = defineModel('value')
 
 const props = defineProps<InputProps>()
 </script>
@@ -41,5 +43,6 @@ const props = defineProps<InputProps>()
 .icon-btn {
   all: unset;
   padding: 1rem 0;
+  cursor: pointer;
 }
 </style>
