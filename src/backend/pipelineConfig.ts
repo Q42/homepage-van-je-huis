@@ -7,16 +7,17 @@ import { publicArtRecordOutputColumns } from "./src/models/publicArtRecord";
 import { PublicArtCrawler } from "./src/crawlers/publicArtCrawler";
 import { adresInputColumns, adresOutputColumns } from "./src/models/adresses";
 import { straatOmschrijvingInputColumns, straatnaamOmschrijvingOutputColumns } from "./src/models/straatOmschrijving";
+import { cultureFacilitiesInputColumns, cultureFacilitiesOutputColumns } from "./src/models/culturalFacility";
 
 // devMode limits all select queries to a specified max number of rows
-export const devMode = { enabled: true, limit: 15 };
+export const devMode = { enabled: true, limit: 50 };
 
+// See the type defenition for more info on what all these parameters do.
 export const csvIngestSources: CsvIngestSources = {
     adressen: {
         ingestSourcePath: "./data_input/BAG_verblijfsobject_Actueel.csv",
         outputTableName: "adressen",
         inputColumns: adresInputColumns,
-        // The names of the output columns must be present in the input columns as well.
         outputColumns: adresOutputColumns
     },
     straatOmschrijving: {
@@ -24,6 +25,13 @@ export const csvIngestSources: CsvIngestSources = {
         outputTableName: "straatNaamOmschrijving",
         inputColumns: straatOmschrijvingInputColumns,
         outputColumns: straatnaamOmschrijvingOutputColumns
+    },
+    culturalFacilities: {
+        ingestSourcePath: "./data_input/CULTUURVOORZIENINGEN.csv",
+        outputTableName: "cultuurvoorzieningen",
+        inputColumns: cultureFacilitiesInputColumns,
+        outputColumns: cultureFacilitiesOutputColumns,
+        geoTransformColumn: "WKT_LAT_LNG"
     },
     // these are just placeholders for now and need to be replaced with the actual data once its available
     eventsPlaceholder: {
@@ -87,13 +95,19 @@ export type PipelineConfig = {
     apiOutputDirectory: string;
     dbBatchInsertMinThreshold: number;
     maxConsecutiveCrawlFailuresBeforeAbort: number;
+    sortSliders: boolean;
+    presentViewRangeMax: number; // the maximum distance in meters to show in the present view
+    rdColumnPrefix: string;
 };
 
 export const pipelineConfig: PipelineConfig = {
     intermediateOutputDirectory: "./intermediate_output",
     apiOutputDirectory: "./api_generated",
     dbBatchInsertMinThreshold: 500,
-    maxConsecutiveCrawlFailuresBeforeAbort: 25
+    maxConsecutiveCrawlFailuresBeforeAbort: 25,
+    sortSliders: true,
+    presentViewRangeMax: 1000,
+    rdColumnPrefix: "rd_geometrie_"
 };
 
 type PublicArtCrawlerConfig = {
@@ -102,7 +116,7 @@ type PublicArtCrawlerConfig = {
     baseListPage: string;
 };
 
-export const publicArtCrawlerConfig = {
+export const publicArtCrawlerConfig: PublicArtCrawlerConfig = {
     totalPages: 108,
     baseUrl: "https://amsterdam.kunstwacht.nl",
     baseListPage: "https://amsterdam.kunstwacht.nl/kunstwerken/page"

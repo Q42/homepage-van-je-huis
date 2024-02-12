@@ -1,7 +1,9 @@
 // from https://gist.github.com/erikvullings/a2c58cecc3f0a27b043deba90089af57
 
+import { DuckDBService } from "../lib/duckDBService";
 import { GeoString } from "../lib/types";
 import { GeoLocation } from "../models/shared";
+import { queries } from "../queries";
 
 /**
  * Convert RD (Rijksdriehoek) coordinates to WGS84 and vice versa.
@@ -95,4 +97,53 @@ export const projectRdWgs84 = projectionBetweenRdWgs84();
 export function geoLocationToRDGeometryString(geoLocation: GeoLocation): GeoString {
     const { x, y } = projectRdWgs84.wgs84ToRd(geoLocation.latitude, geoLocation.longitude);
     return `POINT(${Math.round(x)} ${Math.round(y)})`;
+}
+
+/**
+ * Transforms latitude and longitude coordinates to Rijksdriehoek coordinates using DuckDB and inserts them into a new column.
+ *
+ * @param duckDBService - The DuckDB service instance.
+ * @param tableName - The name of the table.
+ * @param latLongColumnName - The name of the column containing latitude and longitude coordinates.
+ * @param newRdColumnName - The name of the new column to store the transformed Rijksdriehoek coordinates.
+ * @throws Error if the spatial extension is not enabled in the DuckDB instance or if incompatible data is entered.
+ * @returns A promise that resolves when the transformation is complete.
+ */
+export async function duckDBTransformLatLongGeoToRD({
+    duckDBService,
+    tableName,
+    latLongColumnName,
+    newRdColumnName
+}: {
+    duckDBService: DuckDBService;
+    tableName: string;
+    latLongColumnName: string;
+    newRdColumnName: string;
+}) {
+    // These are the codes for the two different coordinate systems between which we want to convert the geometry.
+    // https://epsg.io/
+    const latLongEpsg = "EPSG:4326";
+    const rdEpsg = "EPSG:28992";
+
+    if (!duckDBService.spatialEnabled) {
+        throw new Error("This operation requires that the spatial extension is enabled in the DuckDB instance.");
+    }
+
+    if (!(await duckDBService.columnExists(tableName, latLongColumnName))) {
+        throw new Error(`The column ${latLongColumnName} does not exist in the table ${tableName}.`);
+    }
+
+    if (await duckDBService.columnExists(tableName, newRdColumnName)) {
+        throw new Error(`The column ${newRdColumnName} already exists in the table ${tableName}.`);
+    }
+
+    return await duckDBService.runQuery(
+        queries.sqlTransformGeometry({
+            tableName,
+            newGeoColumnName: newRdColumnName,
+            sourceColumnName: latLongColumnName,
+            sourceEpsg: latLongEpsg,
+            targetEpsg: rdEpsg
+        })
+    );
 }

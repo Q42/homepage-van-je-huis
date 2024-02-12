@@ -8,6 +8,7 @@ import {
 import { loadFileToParquet } from "./src/utils/db";
 import { DuckDBService } from "./src/lib/duckDBService";
 import { csvIngestSources, pipelineConfig as pc } from "./pipelineConfig";
+import { duckDBTransformLatLongGeoToRD } from "./src/utils/rijksdriehoek";
 
 const duckDBService = new DuckDBService();
 
@@ -23,7 +24,6 @@ async function ingestFileSources() {
     createDirectory(dbDir);
 
     await duckDBService.initDb({ dbLocation: `${dbDir}/${sessionName}.duckdb` });
-    await duckDBService.enableSpatialExtension();
 
     // create intermediary table files
     for (const source of Object.values(csvIngestSources)) {

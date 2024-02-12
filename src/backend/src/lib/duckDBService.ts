@@ -1,12 +1,5 @@
 import { Database } from "duckdb-async";
-import {
-    BaseApiResponse,
-    ColumnDefenitions,
-    CrawlerConfig,
-    CsvIngestSource,
-    IntermediateOutputFormats,
-    IntermediateTableRef
-} from "./types";
+import { BaseApiResponse, ColumnDefenitions, CrawlerConfig, CsvIngestSource, IntermediateOutputFormats } from "./types";
 import { parseValueForDbInsert } from "../utils/general";
 import { devMode, pipelineConfig as pc } from "../../pipelineConfig";
 import { getExportSelectQuery } from "../utils/db";
@@ -34,9 +27,10 @@ export class DuckDBService {
     }
     public async initDb({ dbLocation = ":memory:" }: DuckDBConfig): Promise<void> {
         this.db = await Database.create(dbLocation);
+        await this.enableSpatialExtension();
     }
 
-    public async enableSpatialExtension(): Promise<void> {
+    protected async enableSpatialExtension(): Promise<void> {
         if (!this.db) {
             throw dbNotInitializedError;
         }
@@ -124,6 +118,11 @@ export class DuckDBService {
             // it's a CsvIngestSource
             columnNames = source.outputColumns;
             columnDefenitions = source.inputColumns;
+
+            if (source.geoTransformColumn !== undefined) {
+                columnNames.push(pc.rdColumnPrefix + source.outputTableName);
+                columnDefenitions[pc.rdColumnPrefix + source.outputTableName] = "GEOMETRY";
+            }
         }
 
         if (!("inputColumns" in source)) {
@@ -176,5 +175,17 @@ export class DuckDBService {
         let querystring = `INSERT INTO ${tableName}(${columnNames.join(", ")}) VALUES ${valuesArray.join(", ")} `;
 
         return await this.runQuery(querystring);
+    }
+
+    public async columnExists(tableName: string, columnName: string): Promise<boolean> {
+        if (!this.db) {
+            throw dbNotInitializedError;
+        }
+
+        const querystring = `SELECT column_name FROM information_schema.columns WHERE table_name = '${tableName}' AND column_name = '${columnName}'`;
+
+        const result = await this.runQuery(querystring);
+
+        return result.length > 0;
     }
 }
