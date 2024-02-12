@@ -15,6 +15,7 @@
     "build-storybook": "storybook build"
   },
   "dependencies": {
+    "@nuxtjs/robots": "^3.0.0",
     "nuxt": "^3.10.1",
     "vue": "^3.4.15",
     "vue-router": "^4.2.5"
