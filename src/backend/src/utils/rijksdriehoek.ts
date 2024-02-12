@@ -3,6 +3,7 @@
 import { DuckDBService } from "../lib/duckDBService";
 import { GeoString } from "../lib/types";
 import { GeoLocation } from "../models/shared";
+import { queries } from "../queries";
 
 /**
  * Convert RD (Rijksdriehoek) coordinates to WGS84 and vice versa.
@@ -119,6 +120,11 @@ export async function duckDBTransformLatLongGeoToRD({
     latLongColumnName: string;
     newRdColumnName: string;
 }) {
+    // These are the codes for the two different coordinate systems between which we want to convert the geometry.
+    // https://epsg.io/
+    const latLongEpsg = "EPSG:4326";
+    const rdEpsg = "EPSG:28992";
+
     if (!duckDBService.spatialEnabled) {
         throw new Error("This operation requires that the spatial extension is enabled in the DuckDB instance.");
     }
@@ -132,9 +138,12 @@ export async function duckDBTransformLatLongGeoToRD({
     }
 
     return await duckDBService.runQuery(
-        `
-        ALTER TABLE ${tableName} ADD COLUMN ${newRdColumnName} GEOMETRY;    
-        UPDATE ${tableName} 
-        SET ${newRdColumnName} = ST_Transform(ST_GeomFromText(${latLongColumnName}), 'EPSG:4326', 'EPSG:28992');`
+        queries.sqlTransformGeometry({
+            tableName,
+            newGeoColumnName: newRdColumnName,
+            sourceColumnName: latLongColumnName,
+            sourceEpsg: latLongEpsg,
+            targetEpsg: rdEpsg
+        })
     );
 }
