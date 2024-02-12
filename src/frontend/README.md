@@ -29,7 +29,7 @@ Coming soon
 2. Run `nvm i` to install/use the correct node version as described in .nvmrc
 3. Run `npm i` to install all dependencies
 4. Configure and use prettier and editor config in your IDE of choice to conform to the project formatting rules
-5. Run `npm run dev` to start development server and navigate to `localhost:[PORT]/nl/collectie/zoeken` in your browser as we don't have a homepage and `localhost:[PORT]/` will give a `404`
+5. Run `npm run dev` to start development server and navigate to `localhost:[PORT]/nl/` in your browser as we don't have a homepage and `localhost:[PORT]/` will give a `404`
 6. Run `npm run storybook` to start Storybook, here you can find all the components. See [Storybook](#storybook)
 
 To run a production build:
