@@ -1,6 +1,11 @@
 <template>
   <div class="header">
-    <SharedIcon :type="IconType" class="header__logo" />
+    <SharedIcon
+      :width="12"
+      :height="40"
+      :type="IconType"
+      class="header__logo"
+    />
 
     <SharedTypography
       v-if="isOnMobile"

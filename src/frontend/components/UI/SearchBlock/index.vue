@@ -4,15 +4,17 @@
       <SharedTypography variant="h1">{{
         $t(getTranslationKey('home.title'))
       }}</SharedTypography>
-      <SharedTypography variant="body" :compact="true">{{
+      <SharedTypography variant="body">{{
         $t(getTranslationKey('home.subtitle'))
       }}</SharedTypography>
     </div>
-    <SharedInput
-      v-model:value="search"
-      :placeholder="$t(getTranslationKey('home.inputPlaceholder'))"
-      icon="search"
-    />
+    <form @submit.prevent="handleSubmit">
+      <SharedInput
+        v-model:value="search"
+        :placeholder="$t(getTranslationKey('home.inputPlaceholder'))"
+        icon="search"
+      />
+    </form>
   </div>
 </template>
 import { getTranslationKey } from '~/translations';
@@ -27,9 +29,9 @@ const props = defineProps<SearchBlockProps>()
 
 const search = ref('')
 
-onUpdated(() => {
-  console.log('search', search.value)
-})
+const handleSubmit = () => {
+  console.log('submit', search.value)
+}
 </script>
 
 <style lang="less" scoped>
