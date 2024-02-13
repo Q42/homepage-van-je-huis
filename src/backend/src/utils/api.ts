@@ -1,8 +1,8 @@
 import slugify from "slugify";
 import crypto from "crypto";
-import { AddresDescription, AddressRecord } from "../../apiSchema/addressRecord";
-import { PastData } from "../../apiSchema/past";
-import { PresentData } from "../../apiSchema/present";
+import { AddresDescription, AddressRecord } from "../../../common/apiSchema/addressRecord";
+import { PastData } from "../../../common/apiSchema/past";
+import { PresentData } from "../../../common/apiSchema/present";
 import { EnrichedDBAddress } from "../lib/types";
 
 export function generateAddressID(address: AddresDescription): string {

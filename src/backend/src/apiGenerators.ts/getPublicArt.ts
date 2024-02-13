@@ -1,4 +1,4 @@
-import { DistanceViewEntry } from "../../apiSchema/present";
+import { DistanceViewEntry } from "../../../common/apiSchema/present";
 import { crawlerConfigs as cc, csvIngestSources as cs, pipelineConfig as pc } from "../../pipelineConfig";
 import { DuckDBService } from "../lib/duckDBService";
 import { CustomizedPublicArtRecord } from "../models/publicArtRecord";

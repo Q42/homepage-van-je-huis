@@ -1,6 +1,6 @@
-import { AddressRecord } from "./apiSchema/addressRecord";
-import { PastData } from "./apiSchema/past";
-import { AgendaItem, PresentData } from "./apiSchema/present";
+import { AddressRecord } from "../common/apiSchema/addressRecord";
+import { PastData } from "../common/apiSchema/past";
+import { AgendaItem, PresentData } from "../common/apiSchema/present";
 import {
     crawlerConfigs,
     csvIngestSources as cs,

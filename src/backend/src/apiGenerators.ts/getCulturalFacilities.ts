@@ -1,4 +1,4 @@
-import { DistanceViewEntry, PresentEntityType } from "../../apiSchema/present";
+import { DistanceViewEntry, PresentEntityType } from "../../../common/apiSchema/present";
 import { crawlerConfigs as cc, csvIngestSources as cs, pipelineConfig as pc } from "../../pipelineConfig";
 import { DuckDBService } from "../lib/duckDBService";
 import { CustomizedCulturalFacilityRecord } from "../models/culturalFacility";
