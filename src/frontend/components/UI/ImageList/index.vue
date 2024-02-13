@@ -6,15 +6,23 @@
       class="image-wrapper"
     >
       <SharedImage :image="image.image" />
-      <SharedTypography variant="body" :compact="true">{{
-        image.title
-      }}</SharedTypography>
+      <div class="image-info">
+        <SharedTypography variant="body" :compact="true">{{
+          image.title
+        }}</SharedTypography>
+        <SharedLink
+          v-if="image.visitUrl"
+          :href="image.visitUrl"
+          :label="$t(getTranslationKey('images.externalLink'))"
+        />
+      </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { Image } from '@/models/Image'
+import { getTranslationKey } from '@/translations'
 
 type ImageWithMetaData = {
   image: Image
@@ -42,5 +50,10 @@ const props = defineProps<ImageListProps>()
 .image-wrapper {
   width: 615px;
   max-width: 75%;
+}
+
+.image-info {
+  display: flex;
+  gap: 5px;
 }
 </style>

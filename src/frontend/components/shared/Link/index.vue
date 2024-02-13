@@ -1,6 +1,9 @@
 <template>
   <NuxtLink :to="href" class="link"
-    >{{ label }} <span><SharedIcon :height="13" :width="13" type="link" /></span
+    ><SharedTypography variant="body" :compact="true">{{
+      label
+    }}</SharedTypography>
+    <span><SharedIcon :height="13" :width="13" type="link" /></span
   ></NuxtLink>
 </template>
 
@@ -15,15 +18,28 @@ const props = defineProps<LinkProps>()
 
 <style lang="less" scoped>
 .link {
+  position: relative;
   display: inline-flex;
   gap: 5px;
-  align-items: center;
   color: inherit;
   text-decoration: none;
   cursor: pointer;
-  border-bottom: 1px solid @primary-black;
+  transition: 1s;
+  &::after {
+    content: '';
+    top: 100%;
+    height: 1px;
+    background-color: @primary-black;
+    position: absolute;
+    display: block;
+    width: 100%;
+    transition: 0.2s ease;
+  }
+
   &:hover {
-    border-bottom: 2px solid @primary-black;
+    &::after {
+      height: 2px;
+    }
   }
 }
 </style>
