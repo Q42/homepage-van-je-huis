@@ -9,15 +9,21 @@ const endpoint = "https://lod.uba.uva.nl/_api/datasets/ATM/ATM-KG/services/ATM-K
 
 export class SparqlImageArchiveCrawler extends AbstractCrawler<ImageApiResponse, SparqlBatch> {
     protected sparqlClient: SparqlClient;
+    protected duckDBService: any;
 
-    public constructor(crawlerConfig: CrawlerConfig) {
+    public constructor(crawlerConfig: CrawlerConfig, duckDBService: any) {
+        if (!crawlerConfig) {
+            throw new Error("No crawlerConfig provided to SparqlImageArchiveCrawler");
+        }
+
         super(crawlerConfig);
 
-        this.sparqlClient = new SparqlClient({ endpointUrl: endpoint });
-    }
+        if (!duckDBService) {
+            throw new Error("No duckDBService provided to SparqlImageArchiveCrawler");
+        }
 
-    protected upscaleMemorixThumbnailImageUrl(url: string): string {
-        return url.replace("thumb/350x350/", "thumb/1000x1000/");
+        this.duckDBService = duckDBService;
+        this.sparqlClient = new SparqlClient({ endpointUrl: endpoint });
     }
 
     public async loadGuideData(): Promise<SparqlBatch[]> {
@@ -59,6 +65,33 @@ export class SparqlImageArchiveCrawler extends AbstractCrawler<ImageApiResponse,
             result.push(image);
         }
         return result;
+    }
+
+    public async finalize(): Promise<void> {
+        await this.duckDBService.runQuery(
+            queries.sqlStringReplace({
+                targetTable: this.crawlerConfig.outputTableName,
+                targetColumn: "archiveUrl",
+                sourceString: "https://ams-migrate.memorix.io/resources/records/",
+                targetString: "https://archief.amsterdam/beeldbank/detail/"
+            })
+        );
+        await this.duckDBService.runQuery(
+            queries.sqlStringReplace({
+                targetTable: this.crawlerConfig.outputTableName,
+                targetColumn: "imgUrl",
+                sourceString: "thumb/350x350/",
+                targetString: "thumb/1000x1000/"
+            })
+        );
+        await this.duckDBService.runQuery(
+            queries.sqlStringReplace({
+                targetTable: this.crawlerConfig.outputTableName,
+                targetColumn: "pandId",
+                sourceString: "http://bag.basisregistraties.overheid.nl/bag/id/pand/",
+                targetString: ""
+            })
+        );
     }
 
     public async teardown(): Promise<void> {}

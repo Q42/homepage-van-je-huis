@@ -12,5 +12,7 @@ export abstract class AbstractCrawler<T extends BaseApiResponse, Y> {
 
     public abstract crawl(guideRecord: Y): Promise<T[]>;
 
+    public abstract finalize(): Promise<void>;
+
     public abstract teardown(): Promise<void>;
 }

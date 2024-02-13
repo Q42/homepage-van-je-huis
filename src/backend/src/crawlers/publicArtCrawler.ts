@@ -9,7 +9,6 @@ import { publicArtCrawlerExtraConfig as pAc } from "../../pipelineConfig";
 
 export class PublicArtCrawler extends AbstractCrawler<PublicArtRecord, string> {
     browser: Browser | null;
-
     puppeteerOptions: PuppeteerLaunchOptions;
 
     constructor(crawlerConfig: CrawlerConfig, puppeteerOptions?: PuppeteerLaunchOptions) {
@@ -40,6 +39,10 @@ export class PublicArtCrawler extends AbstractCrawler<PublicArtRecord, string> {
                 visitUrl: guideRecord
             }
         ];
+    }
+
+    public async finalize(): Promise<void> {
+        return;
     }
 
     public async teardown(): Promise<void> {

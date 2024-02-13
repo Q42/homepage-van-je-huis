@@ -8,12 +8,13 @@ import {
 import { crawlerConfigs as cc, pipelineConfig as pc } from "./pipelineConfig";
 
 import { AbstractCrawler } from "./src/crawlers/abstractCrawler";
-import { ImageArchiveCrawler } from "./src/crawlers/archiveImageCrawler";
+
 import pRetry, { AbortError } from "p-retry";
 import cliProgress from "cli-progress";
 import { appendObjectToFile } from "./src/lib/failureLog";
 import { DuckDBService } from "./src/lib/duckDBService";
 import { PublicArtCrawler } from "./src/crawlers/publicArtCrawler";
+import { SparqlImageArchiveCrawler } from "./src/crawlers/sparqlImageCrawler";
 
 const duckDBService = new DuckDBService();
 
@@ -31,12 +32,13 @@ async function runCrawlers() {
     // system initialization
     checkFilePaths(getIngestFilePathsFromSources(cc));
     createDirectory(pc.intermediateOutputDirectory);
+    createDirectory(pc.intermediateOutputDirectory + "/db");
     createDirectory(`${pc.intermediateOutputDirectory}/failureLogs`);
 
-    await duckDBService.initDb({ dbLocation: `${pc.intermediateOutputDirectory}/${sessionName}.duckdb` });
+    await duckDBService.initDb({ dbLocation: `${pc.intermediateOutputDirectory}/db/${sessionName}.duckdb` });
 
     const instantiatedCrawlers = {
-        imageArchive: new cc.imageArchive.crawler(cc.imageArchive) as ImageArchiveCrawler,
+        imageArchive: new cc.imageArchive.crawler(cc.imageArchive, duckDBService) as SparqlImageArchiveCrawler,
         publicArt: new cc.publicArt.crawler(cc.publicArt) as PublicArtCrawler
     };
 
@@ -114,6 +116,7 @@ async function runCrawler(
         insertBatch.length = 0;
     }
     statusBar.stop();
+    await instantiatedCrawler.finalize();
     await instantiatedCrawler.teardown();
     dbService.exportTable({
         tableName: instantiatedCrawler.crawlerConfig.outputTableName,

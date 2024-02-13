@@ -35,6 +35,15 @@ async function generateAPI() {
 
     const sources: (CsvIngestSource | CrawlerConfig)[] = [...Object.values(cs), ...Object.values(crawlerConfigs)];
 
+    const sourcePaths = sources.map(
+        (source) => `${pipelineConfig.intermediateOutputDirectory}/${source.outputTableName}.parquet`
+    );
+    checkFilePaths(sourcePaths);
+
+    for (const source of sources) {
+        await duckDBService.loadIntermediateSource(source, true);
+    }
+
     const baseAdressList = (await duckDBService.runQuery(
         queries.sqlGetBaseTable({
             addressTable: cs.adressen.outputTableName,

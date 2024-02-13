@@ -122,6 +122,20 @@ export const queries = {
         OPTIONAL {?creationDateItem rico:hasEndDate ?endDate .}
     } LIMIT ${limit} OFFSET ${offset}
     `,
+    sqlStringReplace: ({
+        targetTable,
+        targetColumn,
+        sourceString,
+        targetString
+    }: {
+        targetTable: string;
+        targetColumn: string;
+        sourceString: string;
+        targetString: string;
+    }) => `
+    UPDATE "${targetTable}"
+    SET "${targetColumn}" = REPLACE("${targetColumn}", '${sourceString}', '${targetString}');
+    `,
 
     sqlSelectPublicArt: ({
         addresTableName,
