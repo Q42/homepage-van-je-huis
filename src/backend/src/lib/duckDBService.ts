@@ -191,12 +191,16 @@ export class DuckDBService {
     }
 
     /**
-     * Transforms latitude and longitude coordinates to Rijksdriehoek coordinates using DuckDB and inserts them into a new column.
+     * Transforms the geometry format of a column in a table and inserts the outcome as a new column.
      *
      * @param tableName - The name of the table.
-     * @param sourceColumnName - The name of the column containing the original geometry in string (VARCHAR) form.
-     * @param newRdColumnName - The name of the new column to store the transformed geometry.
-     * @throws Error if the spatial extension is not enabled in the DuckDB instance or if incompatible data is entered.
+     * @param sourceColumnName - The name of the source column.
+     * @param targetColumnName - The name of the target column.
+     * @param sourceEpsg - The EPSG code of the source geometry format.
+     * @param targetEpsg - The EPSG code of the target geometry format.
+     * @throws Error if the spatial extension is not enabled in the DuckDB instance.
+     * @throws Error if the source column does not exist in the table.
+     * @throws Error if the target column already exists in the table.
      * @returns A promise that resolves when the transformation is complete.
      */
     public async transformGeometryFormat({
