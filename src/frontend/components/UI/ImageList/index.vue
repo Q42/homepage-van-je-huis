@@ -1,5 +1,13 @@
 <template>
-  <div class="image-list"></div>
+  <div class="image-list">
+    <div
+      v-for="(image, index) in props.images"
+      :key="index"
+      class="image-wrapper"
+    >
+      <SharedImage :image="image.image" />
+    </div>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -9,7 +17,6 @@ type ImageWithMetaData = {
   image: Image
   title: string
   visitUrl?: string
-  type: string // TODO: Change to PresentEntityType
 }
 
 export interface ImageListProps {
@@ -24,6 +31,13 @@ const props = defineProps<ImageListProps>()
   width: 100%;
   height: 100%;
   display: flex;
-  background-color: silver;
+  flex-direction: column;
+  gap: 20px;
+  align-items: center;
+}
+
+.image-wrapper {
+  width: 615px;
+  max-width: 75%;
 }
 </style>

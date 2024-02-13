@@ -10,15 +10,17 @@ export interface ImageProps {
 }
 
 const getImageWidth = () => {
-  return props.image.width + 'px' || '100%'
+  return props.image.width ? props.image.width + 'px' : '100%'
 }
+
+const imageWidth = computed(getImageWidth)
 
 const props = defineProps<ImageProps>()
 </script>
 
 <style lang="less" scoped>
 .image {
-  width: v-bind(getImageWidth());
+  width: v-bind(imageWidth);
   position: relative;
   overflow: hidden;
 }
