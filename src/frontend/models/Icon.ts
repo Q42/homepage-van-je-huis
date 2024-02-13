@@ -1,1 +1,1 @@
-export type IconType = 'logo' | 'logo--no-text' | 'search' | 'link'
+export type IconType = 'logo' | 'logo--no-text' | 'search' | 'link' | 'stories'

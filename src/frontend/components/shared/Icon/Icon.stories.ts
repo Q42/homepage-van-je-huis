@@ -41,3 +41,10 @@ Link.args = {
   height: 13,
   width: 13,
 }
+
+export const Stories = Template.bind({})
+Stories.args = {
+  type: 'stories',
+  height: 24,
+  width: 24,
+}
