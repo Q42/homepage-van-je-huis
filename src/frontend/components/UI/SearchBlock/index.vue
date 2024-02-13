@@ -15,7 +15,18 @@
         icon="search"
       />
       <TransitionFade>
-        <div v-if="search" class="autocomplete-panel"></div>
+        <ul v-if="search" class="autocomplete-panel">
+          <li>Prinsengracht</li>
+          <li>Keizersgracht</li>
+          <li>Herengracht</li>
+          <li>Rozengracht</li>
+          <li>Leidsestraat</li>
+          <li>Van Baerlestraat</li>
+          <li>Kalverstraat</li>
+          <li>Nieuwezijds Voorburgwal</li>
+          <li>Oudezijds Voorburgwal</li>
+          <li>Jordaan</li>
+        </ul>
       </TransitionFade>
     </form>
   </div>
@@ -53,10 +64,18 @@ const handleSubmit = () => {
 
 .autocomplete-panel {
   position: absolute;
-  height: 300px;
+  max-height: 300px;
   width: 100%;
   top: 100%;
-  background: gray;
+  box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+  border-radius: 0 0 8px 8px;
+  overflow-y: auto;
+  border: solid 1px @neutral-grey1;
+}
+
+.autocomplete-panel li {
+  list-style: none;
+  padding: 10px;
 }
 
 .title {

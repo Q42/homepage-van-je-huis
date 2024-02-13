@@ -3,7 +3,7 @@ import type { Meta, StoryFn } from '@storybook/vue3'
 import SearchBlock, { SearchBlockProps } from './index.vue'
 
 export default {
-  title: 'UI/Ui/SearchBlock',
+  title: 'Ui/SearchBlock',
   component: SearchBlock,
 } as Meta<typeof SearchBlock>
 
