@@ -1,4 +1,5 @@
 import { csvIngestSources as cs } from "../../pipelineConfig";
+import { GeoString } from "./types";
 
 /**
  * Transforms the geometry column of a table in the database.
@@ -29,7 +30,7 @@ UPDATE ${tableName}
 SET ${newGeoColumnName} = ST_Transform(ST_GeomFromText(${sourceColumnName}), '${sourceEpsg}', '${targetEpsg}');`;
 
 export const queries = {
-    sqlGetBaseTable: `SELECT ${cs.adressen.outputTableName}.*, beschrijving AS straatnaamBeschrijving FROM ${cs.adressen.outputTableName} JOIN ${cs.straatOmschrijving.outputTableName} ON (${cs.adressen.outputTableName}."ligtAan:BAG.ORE.identificatieHoofdadres" = ${cs.straatOmschrijving.outputTableName} .identificatie)`,
+    sqlGetBaseTable: `SELECT ${cs.adressen.outputTableName}.*, St_AsText(${cs.adressen.outputTableName}.geometrie) as geometrie, beschrijving AS straatnaamBeschrijving FROM ${cs.adressen.outputTableName} JOIN ${cs.straatOmschrijving.outputTableName} ON (${cs.adressen.outputTableName}."ligtAan:BAG.ORE.identificatieHoofdadres" = ${cs.straatOmschrijving.outputTableName} .identificatie)`,
     sqlGetEventCalendar: `SELECT * FROM ${cs.eventsPlaceholder.outputTableName} ORDER BY Date_start ASC`,
     sqlSelectDistinct: ({ tableName, column, columnAs }: { tableName: string; column: string; columnAs?: string }) =>
         `SELECT DISTINCT "${column}" ${columnAs ? "AS " + columnAs : ""} FROM ${tableName}`,
@@ -90,22 +91,21 @@ export const queries = {
         ORDER BY distance_from_address ASC;
         `,
     sqlTransformGeometry,
-    countWithinRangeOfAddress: ({
-        addressId,
+    countWithinRangeOfLocation: ({
+        location,
         targetTable,
         targetColumn,
         targetGeometryColumn,
         range
     }: {
-        addressId: string;
+        location: GeoString;
         targetTable: string;
         targetColumn: string;
         targetGeometryColumn: string;
         range: number;
     }) => `
     SELECT COUNT(A.${targetColumn})
-    FROM "${targetTable}"  A
-    JOIN adressen B ON ST_Distance(A.${targetGeometryColumn}, B.geometrie) < ${range}
-    WHERE B.identificatie = '${addressId}'
+    FROM "${targetTable}" 
+    WHERE ST_Distance(${targetGeometryColumn}, ST_GeomFromText('${location}')) < ${range}
     `
 };

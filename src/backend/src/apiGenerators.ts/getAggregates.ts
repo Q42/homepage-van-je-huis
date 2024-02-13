@@ -1,15 +1,16 @@
 import { AggregateData, DistanceDataAggregateEntry } from "../../apiSchema/present";
 import { DuckDBService } from "../lib/duckDBService";
 import { queries } from "../lib/queries";
+import { GeoString } from "../lib/types";
 
 export async function getAggregates({
     duckDBService,
-    addresId,
+    addressLocation,
     numberOfAggregates,
     interval
 }: {
     duckDBService: DuckDBService;
-    addresId: string;
+    addressLocation: GeoString;
     numberOfAggregates: number;
     interval: number;
 }): Promise<DistanceDataAggregateEntry[]> {
@@ -20,12 +21,12 @@ export async function getAggregates({
         const aggregateData: AggregateData = {};
 
         const trees = await duckDBService.runQuery(
-            queries.countWithinRangeOfAddress({
+            queries.countWithinRangeOfLocation({
+                location: addressLocation,
                 targetTable: "bomen",
                 targetColumn: "*",
                 targetGeometryColumn: "rd_geometrie_bomen",
-                range: aggregateStart,
-                addressId: addresId
+                range: aggregateStart
             })
         );
 

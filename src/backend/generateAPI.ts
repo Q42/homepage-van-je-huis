@@ -114,7 +114,7 @@ async function generateAPI() {
         // Add the aggregate data
         const aggregateDataEntries = await getAggregates({
             duckDBService: duckDBService,
-            addresId: address.identificatie,
+            addressLocation: address.geometrie,
             numberOfAggregates: numberOfAggregates,
             interval: pc.presentAggregateInterval
         });
