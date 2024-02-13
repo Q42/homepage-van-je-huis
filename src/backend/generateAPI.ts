@@ -1,5 +1,5 @@
 import { AddressRecord } from "../common/apiSchema/addressRecord";
-import { PastData } from "../common/apiSchema/past";
+import { PastData, TimelineEntry } from "../common/apiSchema/past";
 import { AgendaItem, PresentData } from "../common/apiSchema/present";
 import {
     crawlerConfigs,
@@ -27,7 +27,7 @@ import { getPublicArt } from "./src/apiGenerators.ts/getPublicArt";
 import { getCulturalFacilities } from "./src/apiGenerators.ts/getCulturalFacilities";
 import { queries } from "./src/lib/queries";
 import { generateAddresResolveSchema } from "./src/utils/db";
-import { getArchivePhotos } from "./src/apiGenerators.ts/getArchivePhotos";
+import { getArchivePhotosForBuilding } from "./src/apiGenerators.ts/getArchivePhotos";
 
 const duckDBService = new DuckDBService();
 
@@ -124,14 +124,14 @@ async function generateAPI() {
         const culturalFacilities = await getCulturalFacilities(duckDBService, address.identificatie);
         addressPresent.slider.push(...culturalFacilities);
 
-        const archivePhotos = await getArchivePhotos(duckDBService, address["ligtIn:BAG.PND.identificatie"]);
+        const archivePhotos = await getArchivePhotosForBuilding(duckDBService, address["ligtIn:BAG.PND.identificatie"]);
 
-        if (archivePhotos.length > 0) {
-            addressPast.timeline.push(...archivePhotos);
-        } else {
-            // Do something smart for the addresses without dedicated images
+        if (archivePhotos.length < pc.minArchiveImages) {
+            const morePhotos: TimelineEntry[] = []; // Do something clever here to extand the image search range and filter out the duplicates
+            archivePhotos.push(...morePhotos);
         }
 
+        addressPast.timeline.push(...archivePhotos);
         // This is where the record gets finalized
         if (addressPast.timeline.length > 0) {
             const pastStartEnd = getMinMaxRangeFromPastData(addressPast);

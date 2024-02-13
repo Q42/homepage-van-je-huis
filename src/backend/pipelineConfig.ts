@@ -93,6 +93,7 @@ export type PipelineConfig = {
     sortSliders: boolean;
     presentViewRangeMax: number; // the maximum distance in meters to show in the present view
     rdColumnPrefix: string;
+    minArchiveImages: number; //If this threshold is not met by simply looking for images relating to an address, the search radius will be increased.
 };
 
 export const pipelineConfig: PipelineConfig = {
@@ -104,7 +105,8 @@ export const pipelineConfig: PipelineConfig = {
     maxConsecutiveCrawlFailuresBeforeAbort: 25,
     sortSliders: true,
     presentViewRangeMax: 1000,
-    rdColumnPrefix: "rd_geometrie_"
+    rdColumnPrefix: "rd_geometrie_",
+    minArchiveImages: 5
 };
 
 type PublicArtCrawlerExtraConfig = {

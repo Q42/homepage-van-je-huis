@@ -25,7 +25,10 @@ function getDatePosition(date1?: Date, date2?: Date) {
     return averageYear;
 }
 
-export async function getArchivePhotos(duckDBService: DuckDBService, pandId: string): Promise<TimelineEntry[]> {
+export async function getArchivePhotosForBuilding(
+    duckDBService: DuckDBService,
+    pandId: string
+): Promise<TimelineEntry[]> {
     const dbResults = (await duckDBService.runQuery(
         queries.sqlSelectArchivePhotos({ photoTableName: crawlerConfigs.imageArchive.outputTableName, pandId: pandId })
     )) as ImageApiResponse[];
