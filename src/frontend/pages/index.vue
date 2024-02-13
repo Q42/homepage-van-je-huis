@@ -1,7 +1,7 @@
 <template>
   <!-- <UISearchBlock /> -->
 
-  <UIImageList v-if="addressData" />
+  <UIImageList v-if="images" :images="images" />
 </template>
 
 <script setup lang="ts">
@@ -11,12 +11,22 @@ defineI18nRoute({
   },
 })
 
+const addressService = useAddressService()
+
 const addressData: any = ref(null) //TODO: fix typing
 
+const images = computed(() => {
+  if (!addressData.value) {
+    return null
+  }
+
+  return addressService.getImagesViewModel(addressData.value.presentData.slider)
+})
+
 onMounted(async () => {
-  // console.log('onMounted')
-  // // const data = await getAddressJSONandParse('5a58dacbfbb0dbf25da0a2041a8ae6f4')
-  // console.log('data', data)
-  // addressData.value = data
+  const data = await addressService.getAddressJSONandParse(
+    '5a58dacbfbb0dbf25da0a2041a8ae6f4',
+  )
+  addressData.value = data
 })
 </script>
