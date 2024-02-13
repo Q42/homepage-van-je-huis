@@ -14,7 +14,7 @@
 </template>
 
 <script setup lang="ts">
-import { IconType } from '~/models/Icon'
+import { IconType } from '@/models/Icon'
 
 export interface InputProps {
   placeholder: string
