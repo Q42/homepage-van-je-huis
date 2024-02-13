@@ -6,12 +6,15 @@
       class="image-wrapper"
     >
       <SharedImage :image="image.image" />
+      <SharedTypography variant="body" :compact="true">{{
+        image.title
+      }}</SharedTypography>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { Image } from '~/models/Image'
+import { Image } from '@/models/Image'
 
 type ImageWithMetaData = {
   image: Image
