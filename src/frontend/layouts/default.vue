@@ -12,6 +12,7 @@
 <style lang="less" scoped>
 .page-wrapper {
   min-height: 100vh;
+  padding: 0 20px;
 }
 
 main {
