@@ -24,6 +24,8 @@ Logo.args = {
 export const LogoNoText = Template.bind({})
 LogoNoText.args = {
   type: 'logo--no-text',
+  height: 40,
+  width: 12,
 }
 
 export const Search = Template.bind({})
@@ -31,4 +33,11 @@ Search.args = {
   type: 'search',
   height: 24,
   width: 24,
+}
+
+export const Link = Template.bind({})
+Link.args = {
+  type: 'link',
+  height: 13,
+  width: 13,
 }
