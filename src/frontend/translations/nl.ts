@@ -7,4 +7,7 @@ export const nl = {
   images: {
     externalLink: 'Naar originele bron',
   },
+  sidePanel: {
+    storiesLabel: 'Verhalen',
+  },
 }

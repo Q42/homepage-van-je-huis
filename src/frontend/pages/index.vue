@@ -1,7 +1,9 @@
 <template>
   <!-- <UISearchBlock /> -->
-
-  <UIImageList v-if="images" :images="images" />
+  <div>
+    <UIImageList v-if="images" :images="images" />
+    <UISidePanel />
+  </div>
 </template>
 
 <script setup lang="ts">
