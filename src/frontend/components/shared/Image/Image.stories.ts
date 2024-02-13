@@ -1,7 +1,7 @@
 import type { Meta, StoryFn } from '@storybook/vue3'
 
 import Image, { ImageProps } from './index.vue'
-import { mockImages } from '@/mockdata/MockImages/mockImages'
+import { mockImages } from '~/public/mockdata/MockImages/mockImages'
 
 export default {
   title: 'Shared/Image',
