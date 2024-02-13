@@ -1,4 +1,4 @@
-import { DistanceViewEntry, PresentEntityType } from "../../apiSchema/present";
+import { DistanceViewEntry, PresentEntityType } from "../../../common/apiSchema/present";
 import { crawlerConfigs as cc, csvIngestSources as cs, pipelineConfig as pc } from "../../pipelineConfig";
 import { DuckDBService } from "../lib/duckDBService";
 import { CustomizedCulturalFacilityRecord } from "../models/culturalFacility";
@@ -43,7 +43,7 @@ export async function getCulturalFacilities(
 
     return customArtRecords.map((artRecord) => {
         const newEntry: DistanceViewEntry = {
-            distanceToAddress: artRecord.distance_from_address,
+            position: artRecord.distance_from_address,
             title: artRecord.Naamorganisatie,
             visitUrl: artRecord.Correctie_Website,
             type: mapFacilityType(artRecord.Kunstdiscipline) ?? "cultureMulti"

@@ -1,6 +1,6 @@
-import { AddressRecord } from "./apiSchema/addressRecord";
-import { PastData } from "./apiSchema/past";
-import { AgendaItem, PresentData } from "./apiSchema/present";
+import { AddressRecord } from "../common/apiSchema/addressRecord";
+import { PastData } from "../common/apiSchema/past";
+import { AgendaItem, PresentData } from "../common/apiSchema/present";
 import {
     crawlerConfigs,
     csvIngestSources as cs,
@@ -94,15 +94,15 @@ async function generateAPI() {
 
     for (const address of baseAdressList) {
         const addressPresent: PresentData = {
-            distanceRangeStart: 0,
-            distanceRangeEnd: 0,
+            rangeStart: 0,
+            rangeEnd: 0,
             slider: [],
             agenda: events
         };
 
         const addressPast: PastData = {
-            timeRangeStart: 0,
-            timeRangeEnd: 0,
+            rangeStart: 0,
+            rangeEnd: 0,
             timeline: [],
             stories: []
         };
@@ -126,18 +126,18 @@ async function generateAPI() {
         // This is where the record gets finalized
         if (addressPast.timeline.length > 0) {
             const pastStartEnd = getMinMaxRangeFromPastData(addressPast);
-            addressPast.timeRangeStart = pastStartEnd.timeRangeStart;
-            addressPast.timeRangeEnd = pastStartEnd.timeRangeEnd;
+            addressPast.rangeStart = pastStartEnd.timeRangeStart;
+            addressPast.rangeEnd = pastStartEnd.timeRangeEnd;
         }
 
         if (addressPresent.slider.length > 0) {
             const presentStartEnd = getMinMaxRangeFromPresentData(addressPresent);
-            addressPresent.distanceRangeStart = presentStartEnd.distanceRangeStart;
-            addressPresent.distanceRangeEnd = presentStartEnd.distanceRangeEnd;
+            addressPresent.rangeStart = presentStartEnd.distanceRangeStart;
+            addressPresent.rangeEnd = presentStartEnd.distanceRangeEnd;
 
             if (pipelineConfig.sortSliders) {
-                addressPresent.slider.sort((a, b) => a.distanceToAddress - b.distanceToAddress);
-                addressPast.timeline.sort((a, b) => a.year - b.year);
+                addressPresent.slider.sort((a, b) => a.position - b.position);
+                addressPast.timeline.sort((a, b) => a.position - b.position);
             }
         }
 
