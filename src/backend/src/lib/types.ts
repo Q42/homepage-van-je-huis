@@ -71,7 +71,12 @@ export type ImageApiResponse = {
     archiveUrl?: string;
     title: string;
     imgUrl: string;
-    pandId: string;
+    pandId?: string;
+    addressLink?: string;
+    geoLink?: string;
+    streetLink?: string;
+    streetName?: string;
+    dateString: string;
     startDate: Date;
     endDate: Date;
 };

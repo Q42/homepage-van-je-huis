@@ -73,24 +73,43 @@ export const queries = {
     PREFIX memorix: <https://ams-migrate.memorix.io/resources/recordtypes/>
 
     SELECT (COUNT(*) as ?cnt) WHERE {
-    {
-        ?widget a memorix:Image ;
-                saa:hasOrHadSubjectBuilding ?pand ;
-                rico:title ?widgetLabel ;
-                <http://schema.org/thumbnailUrl> ?widgetImage ;
-    } UNION {
-        ?widget a memorix:Image ;
-                saa:hasOrHadSubjectAddress ?address ;
-                rico:title ?widgetLabel ;
-                <http://schema.org/thumbnailUrl> ?widgetImage . 
+        ?resource a memorix:Image ;
+                    rico:title ?title ;
+                    <http://schema.org/thumbnailUrl> ?thumbnail ;
+                    rico:creationDate ?creationDateItem .
+        
+        OPTIONAL { ?creationDateItem rico:hasBeginningDate ?startDate . }
+        OPTIONAL { ?creationDateItem rico:hasEndDate ?endDate . }
+        OPTIONAL { ?creationDateItem rico:textualValue ?textDate . }
+        
+        # Als er direct aan een pand gekoppeld is.
+        OPTIONAL { ?resource saa:hasOrHadSubjectBuilding ?pand . }
+        
+        # Als er aan een adres gekoppeld is, dat (optioneel) weer aan een pand gekoppeld is.
+        OPTIONAL { 
+        ?resource saa:hasOrHadSubjectAddress ?address . 
+        
         ?address a hg:Address ;
-                schema:geoContains ?geo .
-        ?geo schema:geoWithin ?pand .
-        ?pand a bag:Pand .
-    }
-        ?widget rico:creationDate ?creationDateItem .
-        OPTIONAL {?creationDateItem rico:hasBeginningDate ?startDate .}
-        OPTIONAL {?creationDateItem rico:hasEndDate ?endDate .}
+                    schema:geoContains ?geo ;
+                    hg:liesIn ?street .
+
+        ?street a hg:Street ;
+                    rdfs:label ?street_name .
+
+        # Koppeling aan pand is optioneel.
+        OPTIONAL {
+            ?geo schema:geoWithin ?pand .
+            ?pand a bag:Pand .
+        }
+        }
+        
+        # Als er ook aan een straat gekoppeld is.
+        OPTIONAL {
+        ?resource saa:hasOrHadSubjectLocation ?street .
+
+        ?street a hg:Street ;
+                    rdfs:label ?street_name .
+        }
     }
     `,
     sparqlGetImagesBatch: ({ offset, limit }: SparqlBatch) => `
@@ -102,26 +121,45 @@ export const queries = {
     PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
     PREFIX saa: <https://data.archief.amsterdam/ontology#>
     PREFIX memorix: <https://ams-migrate.memorix.io/resources/recordtypes/>
-
-    SELECT ?widget ?widgetLabel ?widgetImage ?pand ?startDate ?endDate WHERE {
-    {
-        ?widget a memorix:Image ;
-                saa:hasOrHadSubjectBuilding ?pand ;
-                rico:title ?widgetLabel ;
-                <http://schema.org/thumbnailUrl> ?widgetImage ;
-    } UNION {
-        ?widget a memorix:Image ;
-                saa:hasOrHadSubjectAddress ?address ;
-                rico:title ?widgetLabel ;
-                <http://schema.org/thumbnailUrl> ?widgetImage . 
-        ?address a hg:Address ;
-                schema:geoContains ?geo .
-        ?geo schema:geoWithin ?pand .
-        ?pand a bag:Pand .
-    }
-        ?widget rico:creationDate ?creationDateItem .
-        OPTIONAL {?creationDateItem rico:hasBeginningDate ?startDate .}
-        OPTIONAL {?creationDateItem rico:hasEndDate ?endDate .}
+    
+    SELECT DISTINCT * WHERE {
+        ?resource a memorix:Image ;
+                    rico:title ?title ;
+                    <http://schema.org/thumbnailUrl> ?thumbnail ;
+                    rico:creationDate ?creationDateItem .
+        
+        OPTIONAL { ?creationDateItem rico:hasBeginningDate ?startDate . }
+        OPTIONAL { ?creationDateItem rico:hasEndDate ?endDate . }
+        OPTIONAL { ?creationDateItem rico:textualValue ?textDate . }
+        
+        # Als er direct aan een pand gekoppeld is.
+        OPTIONAL { ?resource saa:hasOrHadSubjectBuilding ?pand . }
+        
+        # Als er aan een adres gekoppeld is, dat (optioneel) weer aan een pand gekoppeld is.
+        OPTIONAL { 
+          ?resource saa:hasOrHadSubjectAddress ?address . 
+          
+          ?address a hg:Address ;
+                    schema:geoContains ?geo ;
+                    hg:liesIn ?street .
+    
+          ?street a hg:Street ;
+                    rdfs:label ?street_name .
+    
+          # Koppeling aan pand is optioneel.
+          OPTIONAL {
+            ?geo schema:geoWithin ?pand .
+            ?pand a bag:Pand .
+          }
+        }
+        
+        # Als er ook aan een straat gekoppeld is.
+        OPTIONAL {
+          ?resource saa:hasOrHadSubjectLocation ?street .
+    
+          ?street a hg:Street ;
+                    rdfs:label ?street_name .
+        }
     } LIMIT ${limit} OFFSET ${offset}
     `,
     sqlStringReplace: ({

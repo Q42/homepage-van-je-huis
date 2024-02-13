@@ -5,7 +5,7 @@ import { AbstractCrawler } from "./abstractCrawler";
 import { CrawlerConfig, ImageApiResponse, SparqlBatch } from "../lib/types";
 import { imageArchiveCrawlerExtraConfig } from "../../pipelineConfig";
 
-const endpoint = "https://lod.uba.uva.nl/_api/datasets/ATM/ATM-KG/services/ATM-KG/sparql";
+const endpoint = "https://api.lod.uba.uva.nl/datasets/ATM/ATM-KG/services/ATM-KG/sparql";
 
 export class SparqlImageArchiveCrawler extends AbstractCrawler<ImageApiResponse, SparqlBatch> {
     protected sparqlClient: SparqlClient;
@@ -55,10 +55,15 @@ export class SparqlImageArchiveCrawler extends AbstractCrawler<ImageApiResponse,
 
         for await (const chunk of stream) {
             const image: ImageApiResponse = {
-                archiveUrl: chunk["widget"]?.value,
-                title: chunk["widgetLabel"]?.value,
-                imgUrl: chunk["widgetImage"]?.value,
+                archiveUrl: chunk["resource"]?.value,
+                title: chunk["title"]?.value,
+                imgUrl: chunk["thumbnail"]?.value,
                 pandId: chunk["pand"]?.value,
+                addressLink: chunk["address"]?.value,
+                geoLink: chunk["geo"]?.value,
+                streetLink: chunk["street"]?.value,
+                streetName: chunk["street_name"]?.value,
+                dateString: chunk["textDate"]?.value,
                 startDate: chunk["startDate"]?.value,
                 endDate: chunk["endDate"]?.value
             };

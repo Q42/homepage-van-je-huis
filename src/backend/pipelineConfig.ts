@@ -10,7 +10,7 @@ import { straatOmschrijvingInputColumns, straatnaamOmschrijvingOutputColumns } f
 import { cultureFacilitiesInputColumns, cultureFacilitiesOutputColumns } from "./src/models/culturalFacility";
 
 // devMode limits all select queries to a specified max number of rows
-export const devMode = { enabled: true, limit: 50 };
+export const devMode = { enabled: true, limit: 10000 };
 
 // See the type defenition for more info on what all these parameters do.
 export const csvIngestSources: CsvIngestSources = {
@@ -71,6 +71,11 @@ export const crawlerConfigs: CrawlerConfigs = {
             title: "VARCHAR",
             imgUrl: "VARCHAR",
             pandId: "VARCHAR",
+            addressLink: "VARCHAR",
+            geoLink: "VARCHAR",
+            streetLink: "VARCHAR",
+            streetName: "VARCHAR",
+            dateString: "VARCHAR",
             startDate: "DATE",
             endDate: "DATE"
         },
