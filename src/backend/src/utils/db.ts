@@ -1,7 +1,7 @@
 import { PipelineConfig } from "../../pipelineConfig";
 import { DuckDBService } from "../lib/duckDBService";
 import { ColumnDefenitions, CsvIngestSource } from "../lib/types";
-import { duckDBTransformLatLongGeoToRD } from "./rijksdriehoek";
+import { DBAddress } from "../models/adresses";
 
 export function getExportSelectQuery(
     tableName: string,
@@ -29,11 +29,12 @@ export async function loadFileToParquet(
     await dbService.ingestCSV(csvIngestSource);
 
     if (csvIngestSource.geoTransformColumn !== undefined) {
-        await duckDBTransformLatLongGeoToRD({
-            duckDBService: dbService,
+        await dbService.transformGeometryFormat({
             tableName: csvIngestSource.outputTableName,
-            latLongColumnName: csvIngestSource.geoTransformColumn,
-            newRdColumnName: pc.rdColumnPrefix + csvIngestSource.outputTableName
+            sourceColumnName: csvIngestSource.geoTransformColumn,
+            targetColumnName: pc.rdColumnPrefix + csvIngestSource.outputTableName,
+            sourceEpsg: "EPSG:4326",
+            targetEpsg: "EPSG:28992"
         });
 
         // add the newly generated column to the output columns and column defenitions
@@ -52,4 +53,25 @@ export async function loadFileToParquet(
     if (dropTableAfterExport) {
         await dbService.dropTable(csvIngestSource.outputTableName);
     }
+}
+
+export function generateAddresResolveSchema(addresses: DBAddress[]) {
+    const baseList: Record<string, string[]> = {};
+
+    addresses.forEach((address) => {
+        const streetname = address["ligtAan:BAG.ORE.naamHoofdadres"];
+        if (!streetname) {
+            return;
+        }
+        const houseNumber =
+            address.huisnummerHoofdadres +
+            (address.huisnummertoevoegingHoofdadres ?? "") +
+            (address.huisletterHoofdadres ?? "");
+
+        if (!baseList[streetname]) {
+            baseList[streetname] = [];
+        }
+        baseList[streetname].push(houseNumber);
+    });
+    return baseList;
 }

@@ -51,7 +51,8 @@ export class DuckDBService {
             devMode.enabled &&
             querystring.toLowerCase().includes("select") &&
             !querystring.toLowerCase().includes("limit") &&
-            !querystring.toLowerCase().includes("copy")
+            !querystring.toLowerCase().includes("copy") &&
+            !querystring.toLowerCase().includes("distinct")
         ) {
             if (querystring.trim().endsWith(";")) {
                 querystring = querystring.trim().slice(0, -1);
@@ -187,5 +188,51 @@ export class DuckDBService {
         const result = await this.runQuery(querystring);
 
         return result.length > 0;
+    }
+
+    /**
+     * Transforms the geometry format of a column in a table and inserts the outcome as a new column.
+     *
+     * @param tableName - The name of the table.
+     * @param sourceColumnName - The name of the source column.
+     * @param targetColumnName - The name of the target column.
+     * @param sourceEpsg - The EPSG code of the source geometry format.
+     * @param targetEpsg - The EPSG code of the target geometry format.
+     * @throws Error if the spatial extension is not enabled in the DuckDB instance.
+     * @throws Error if the source column does not exist in the table.
+     * @throws Error if the target column already exists in the table.
+     * @returns A promise that resolves when the transformation is complete.
+     */
+    public async transformGeometryFormat({
+        tableName,
+        sourceColumnName,
+        targetColumnName,
+        sourceEpsg,
+        targetEpsg
+    }: {
+        tableName: string;
+        sourceColumnName: string;
+        targetColumnName: string;
+        sourceEpsg: string;
+        targetEpsg: string;
+    }) {
+        if (!this.spatialEnabled) {
+            throw new Error("This operation requires that the spatial extension is enabled in the DuckDB instance.");
+        }
+
+        if (!(await this.columnExists(tableName, sourceColumnName))) {
+            throw new Error(`The column ${sourceColumnName} does not exist in the table ${tableName}.`);
+        }
+
+        if (await this.columnExists(tableName, targetColumnName)) {
+            throw new Error(`The column ${targetColumnName} already exists in the table ${tableName}.`);
+        }
+
+        return await this.runQuery(
+            `
+        ALTER TABLE ${tableName} ADD COLUMN ${targetColumnName} GEOMETRY;    
+        UPDATE ${tableName} 
+        SET ${targetColumnName} = ST_Transform(ST_GeomFromText(${sourceColumnName}), '${sourceEpsg}', '${targetEpsg}');`
+        );
     }
 }

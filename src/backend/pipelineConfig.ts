@@ -93,6 +93,8 @@ export const crawlerConfigs: CrawlerConfigs = {
 export type PipelineConfig = {
     intermediateOutputDirectory: string;
     apiOutputDirectory: string;
+    apiResoliverDirectory: string;
+    apiAddressFilesDirectory: string;
     dbBatchInsertMinThreshold: number;
     maxConsecutiveCrawlFailuresBeforeAbort: number;
     sortSliders: boolean;
@@ -103,6 +105,8 @@ export type PipelineConfig = {
 export const pipelineConfig: PipelineConfig = {
     intermediateOutputDirectory: "./intermediate_output",
     apiOutputDirectory: "./api_generated",
+    apiResoliverDirectory: "/resolve",
+    apiAddressFilesDirectory: "/address",
     dbBatchInsertMinThreshold: 500,
     maxConsecutiveCrawlFailuresBeforeAbort: 25,
     sortSliders: true,
