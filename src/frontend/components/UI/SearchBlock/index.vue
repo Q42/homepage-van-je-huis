@@ -58,7 +58,7 @@ const handleSubmit = () => {
   gap: 1.5rem;
   width: fit-content;
   justify-content: center;
-  margin-top: calc(25%);
+  margin-top: calc(50vh - @header-height);
   transform: translateY(-50%);
 }
 
