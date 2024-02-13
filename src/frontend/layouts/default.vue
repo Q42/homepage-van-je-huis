@@ -14,8 +14,4 @@
   min-height: 100vh;
   padding: 0 20px;
 }
-
-main {
-  min-height: 100%;
-}
 </style>

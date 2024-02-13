@@ -1,13 +1,9 @@
 <template>
-  <img class="image" :src="image.src" :alt="image.alt" />
+  <img class="image" :src="image.url" :alt="image.altText" />
 </template>
 
 <script setup lang="ts">
-type Image = {
-  src: string
-  alt: string
-  width?: number
-}
+import { Image } from '@/models/Image'
 
 export interface ImageProps {
   image: Image
