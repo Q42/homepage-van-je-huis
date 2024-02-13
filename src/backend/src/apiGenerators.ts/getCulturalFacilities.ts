@@ -43,7 +43,7 @@ export async function getCulturalFacilities(
 
     return customArtRecords.map((artRecord) => {
         const newEntry: DistanceViewEntry = {
-            distanceToAddress: artRecord.distance_from_address,
+            position: artRecord.distance_from_address,
             title: artRecord.Naamorganisatie,
             visitUrl: artRecord.Correctie_Website,
             type: mapFacilityType(artRecord.Kunstdiscipline) ?? "cultureMulti"

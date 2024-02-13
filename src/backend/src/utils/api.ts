@@ -42,7 +42,7 @@ export function assembleApiRecord(
 }
 
 export function getMinMaxRangeFromPastData(pastData: PastData): { timeRangeStart: number; timeRangeEnd: number } {
-    const timeline = pastData.timeline.map((entry) => entry.year);
+    const timeline = pastData.timeline.map((entry) => entry.position);
     const timeRangeStart = Math.min(...timeline);
     const timeRangeEnd = Math.max(...timeline);
     return { timeRangeEnd, timeRangeStart };
@@ -52,7 +52,7 @@ export function getMinMaxRangeFromPresentData(presentData: PresentData): {
     distanceRangeStart: number;
     distanceRangeEnd: number;
 } {
-    const timeline = presentData.slider.map((entry) => entry.distanceToAddress);
+    const timeline = presentData.slider.map((entry) => entry.position);
     const timeRangeStart = Math.min(...timeline);
     const timeRangeEnd = Math.max(...timeline);
     return { distanceRangeEnd: timeRangeEnd, distanceRangeStart: timeRangeStart };

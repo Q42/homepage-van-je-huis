@@ -1,4 +1,4 @@
-import { BaseDataEntity, ImageRef } from "./shared";
+import { BaseView, BaseDataEntity, BaseSliderEntry, ImageRef } from "./shared";
 
 export type GeoLevel = "straat" | "buurt" | "wijk" | "stadsdeel";
 
@@ -19,15 +19,13 @@ export type PresentEntityType =
     | "newMedia"
     | "debate";
 
-export type PresentData = {
-    distanceRangeStart: number; // Meters at which the slider starts
-    distanceRangeEnd: number; // Meters at which the slider starts
+export interface PresentData extends BaseView {
     slider: DistanceViewEntry[]; // The entries for on the slider
     agenda: AgendaItem[]; // The events and such
-};
+}
 
-export interface DistanceViewEntry extends BaseDataEntity {
-    distanceToAddress: number; // Approximate distance to the address
+export interface DistanceViewEntry extends BaseSliderEntry {
+    position: number; // distance from the address
     geoLevel?: GeoLevel; // The geo level of the entry
     image?: ImageRef;
     title: string; // Title of the entry

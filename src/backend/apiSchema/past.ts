@@ -1,15 +1,11 @@
-import { BaseDataEntity, ImageRef } from "./shared";
+import { BaseDataEntity, ImageRef, BaseSliderEntry, BaseView } from "./shared";
 
-export type PastData = {
-    timeRangeStart: number; // Year at which the timeline starts
-    timeRangeEnd: number; // Year at which the timeline ends
+export interface PastData extends BaseView {
     timeline: TimelineEntry[]; // The timeline itself
     stories: Story[]; // The stories
-};
+}
 
-interface TimelineEntry extends BaseDataEntity {
-    month?: number; // Month of the entry
-    year: number; // Year of the entry
+interface TimelineEntry extends BaseSliderEntry {
     image: ImageRef;
     title: string; // Title of the entry
     visitUrl?: string; // URL to the source where people can find out more info about the image
