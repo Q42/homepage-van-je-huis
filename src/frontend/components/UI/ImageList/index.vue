@@ -24,6 +24,10 @@
 import { Image } from '@/models/Image'
 import { getTranslationKey } from '@/translations'
 
+onMounted(() => {
+  console.log(JSON.stringify(props.images))
+})
+
 type ImageWithMetaData = {
   image: Image
   title: string
@@ -43,8 +47,9 @@ const props = defineProps<ImageListProps>()
   height: 100%;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 1.5rem;
   align-items: center;
+  padding-bottom: 1.5rem;
 }
 
 .image-wrapper {
