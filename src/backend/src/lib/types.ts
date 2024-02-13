@@ -59,14 +59,19 @@ export type ColumnDefenitions = Record<string, ColumnTypes>;
 
 export type IntermediateOutputFormats = "json" | "parquet";
 
-export type IntermediateTableRef = { fileLocation: string; tableName: string };
-
 export type BaseApiResponse = Record<string, any>;
-
-export type ImageUrlRepsonse = {
-    url: string;
-};
 
 export interface EnrichedDBAddress extends DBAddress {
     straatnaamBeschrijving: string;
 }
+
+export type SparqlBatch = { offset: number; limit: number };
+
+export type ImageApiResponse = {
+    archiveUrl?: string;
+    title: string;
+    imgUrl: string;
+    pandId: string;
+    startDate: string;
+    endDate: string;
+};

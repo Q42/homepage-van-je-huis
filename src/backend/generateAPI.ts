@@ -35,16 +35,12 @@ async function generateAPI() {
 
     const sources: (CsvIngestSource | CrawlerConfig)[] = [...Object.values(cs), ...Object.values(crawlerConfigs)];
 
-    const sourcePaths = sources.map(
-        (source) => `${pipelineConfig.intermediateOutputDirectory}/${source.outputTableName}.parquet`
-    );
-    checkFilePaths(sourcePaths);
-
-    for (const source of sources) {
-        await duckDBService.loadIntermediateSource(source, true);
-    }
-
-    const baseAdressList = (await duckDBService.runQuery(queries.sqlGetBaseTable)) as EnrichedDBAddress[];
+    const baseAdressList = (await duckDBService.runQuery(
+        queries.sqlGetBaseTable({
+            addressTable: cs.adressen.outputTableName,
+            streetDescriptionTable: cs.straatOmschrijving.outputTableName
+        })
+    )) as EnrichedDBAddress[];
 
     const resolverOutputDir = pc.apiOutputDirectory + pc.apiResoliverDirectory;
     const addressOutputDir = pc.apiOutputDirectory + pc.apiAddressFilesDirectory;
@@ -53,7 +49,9 @@ async function generateAPI() {
     createDirectory(resolverOutputDir);
     createDirectory(addressOutputDir);
 
-    const eventCalendar = (await duckDBService.runQuery(queries.sqlGetEventCalendar)) as calendarEvent[];
+    const eventCalendar = (await duckDBService.runQuery(
+        queries.sqlGetEventCalendar(cs.eventsPlaceholder.outputTableName)
+    )) as calendarEvent[];
     const events: AgendaItem[] = eventCalendar.map((event) => ({
         title: event.Name_event,
         description: event.Description ?? stringLibrary.eventNoDescription,

@@ -36,8 +36,8 @@ async function runCrawlers() {
     await duckDBService.initDb({ dbLocation: `${pc.intermediateOutputDirectory}/${sessionName}.duckdb` });
 
     const instantiatedCrawlers = {
-        // imageArchive: new cc.imageArchive.crawler(cc.imageArchive, duckDBService) as ImageArchiveCrawler,
-        publicArt: new cc.publicArt.crawler(cc.publicArt, { headless: false }) as PublicArtCrawler
+        imageArchive: new cc.imageArchive.crawler(cc.imageArchive) as ImageArchiveCrawler,
+        publicArt: new cc.publicArt.crawler(cc.publicArt) as PublicArtCrawler
     };
 
     for (const crawler of Object.values(instantiatedCrawlers)) {
@@ -65,6 +65,7 @@ async function runCrawler(
     let consecutiveFailures = 0;
     console.log("Loading guide data for:", instantiatedCrawler.crawlerConfig.crawler);
     const guideData = await instantiatedCrawler.loadGuideData();
+
     await dbService.createTableFromDefinition(
         instantiatedCrawler.crawlerConfig.outputTableName,
         instantiatedCrawler.crawlerConfig.outputColumns

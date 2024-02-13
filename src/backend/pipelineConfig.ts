@@ -1,7 +1,7 @@
 import { SparqlImageArchiveCrawler } from "./src/crawlers/sparqlImageCrawler";
 import { Options as PRetryOptions } from "p-retry";
 
-import { ApiCrawlerConfigs as CrawlerConfigs, CsvIngestSources, IntermediateOutputFormats } from "./src/lib/types";
+import { ApiCrawlerConfigs as CrawlerConfigs, CsvIngestSources } from "./src/lib/types";
 
 import { publicArtRecordOutputColumns } from "./src/models/publicArtRecord";
 import { PublicArtCrawler } from "./src/crawlers/publicArtCrawler";
@@ -57,37 +57,25 @@ export const defaultCrawlerRetryConfig: PRetryOptions = {
 
 export const crawlerConfigs: CrawlerConfigs = {
     publicArt: {
+        skip: true, // remove this flag to also run this crawler
         crawler: PublicArtCrawler,
         retryConfig: { ...defaultCrawlerRetryConfig, retries: 1 },
         outputTableName: "buitenkunst",
         outputColumns: publicArtRecordOutputColumns
-    }
-    /*
+    },
     imageArchive: {
-        crawler: ImageArchiveCrawler,
-        outputTableName: "archief_afbeeldingen",
-        guideSource: csvIngestSources.adressen
-        outputColumns: imageRecordOutputColumns,
-        retryConfig: defaultCrawlerRetryConfig
-    },*/
-    /*
-    imageArchive: {
-        skip: true, // remove this flag to also run this crawler
         crawler: SparqlImageArchiveCrawler,
         outputTableName: "archief_afbeeldingen",
-        guideSource: csvIngestSources.adressen
         outputColumns: {
-            id: "VARCHAR",
-            idTo: "VARCHAR",
+            archiveUrl: "VARCHAR",
             title: "VARCHAR",
-            description: "VARCHAR",
             imgUrl: "VARCHAR",
-            visitUrl: "VARCHAR",
-            date: "INTEGER",
-            copyright: "VARCHAR"
+            pandId: "VARCHAR",
+            startDate: "DATE",
+            endDate: "DATE"
         },
         retryConfig: defaultCrawlerRetryConfig
-    }*/
+    }
 };
 
 export type PipelineConfig = {
@@ -114,14 +102,22 @@ export const pipelineConfig: PipelineConfig = {
     rdColumnPrefix: "rd_geometrie_"
 };
 
-type PublicArtCrawlerConfig = {
+type PublicArtCrawlerExtraConfig = {
     totalPages: number;
     baseUrl: string;
     baseListPage: string;
 };
 
-export const publicArtCrawlerConfig: PublicArtCrawlerConfig = {
+export const publicArtCrawlerExtraConfig: PublicArtCrawlerExtraConfig = {
     totalPages: 108,
     baseUrl: "https://amsterdam.kunstwacht.nl",
     baseListPage: "https://amsterdam.kunstwacht.nl/kunstwerken/page"
+};
+
+type ImageArchiveCrawlerExtraConfig = {
+    paginationSize: number;
+};
+
+export const imageArchiveCrawlerExtraConfig: ImageArchiveCrawlerExtraConfig = {
+    paginationSize: 10000
 };
