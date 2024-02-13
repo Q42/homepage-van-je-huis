@@ -39,7 +39,9 @@ export const queries = {
         `SELECT ${addressTable}.*, beschrijving AS straatnaamBeschrijving FROM ${addressTable} JOIN ${streetDescriptionTable} ON (${addressTable}."ligtAan:BAG.ORE.identificatieHoofdadres" = ${streetDescriptionTable} .identificatie)`,
     sqlGetEventCalendar: (eventsTableName: string) => `SELECT * FROM ${eventsTableName} ORDER BY Date_start ASC`,
     sqlSelectDistinct: ({ tableName, column, columnAs }: { tableName: string; column: string; columnAs?: string }) =>
-        `SELECT DISTINCT "${column}" ${columnAs ? "AS " + columnAs : ""} FROM ${tableName}`,
+        `SELECT DISTINCT ${column === "*" ? "*" : `"${column}"`} ${columnAs ? "AS " + columnAs : ""} FROM ${tableName}`,
+    sqlSelectArchivePhotos: ({ photoTableName, pandId }: { photoTableName: string; pandId: string }) =>
+        `SELECT DISTINCT(*) FROM ${photoTableName} WHERE pandId = '${pandId}'`,
 
     sparqlSearchByAddress: (street: string, houseNumber: number) => `
         PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>

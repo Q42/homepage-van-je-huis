@@ -27,6 +27,7 @@ import { getPublicArt } from "./src/apiGenerators.ts/getPublicArt";
 import { getCulturalFacilities } from "./src/apiGenerators.ts/getCulturalFacilities";
 import { queries } from "./src/lib/queries";
 import { generateAddresResolveSchema } from "./src/utils/db";
+import { getArchivePhotos } from "./src/apiGenerators.ts/getArchivePhotos";
 
 const duckDBService = new DuckDBService();
 
@@ -122,6 +123,9 @@ async function generateAPI() {
         // Add the cultural facilities
         const culturalFacilities = await getCulturalFacilities(duckDBService, address.identificatie);
         addressPresent.slider.push(...culturalFacilities);
+
+        const archivePhotos = await getArchivePhotos(duckDBService, address["ligtIn:BAG.PND.identificatie"]);
+        addressPast.timeline.push(...archivePhotos);
 
         // This is where the record gets finalized
         if (addressPast.timeline.length > 0) {
