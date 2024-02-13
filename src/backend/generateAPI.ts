@@ -125,7 +125,12 @@ async function generateAPI() {
         addressPresent.slider.push(...culturalFacilities);
 
         const archivePhotos = await getArchivePhotos(duckDBService, address["ligtIn:BAG.PND.identificatie"]);
-        addressPast.timeline.push(...archivePhotos);
+
+        if (archivePhotos.length > 0) {
+            addressPast.timeline.push(...archivePhotos);
+        } else {
+            // Do something smart for the addresses without dedicated images
+        }
 
         // This is where the record gets finalized
         if (addressPast.timeline.length > 0) {
