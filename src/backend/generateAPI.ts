@@ -32,7 +32,7 @@ import { getArchivePhotosForBuilding } from "./src/apiGenerators.ts/getArchivePh
 const duckDBService = new DuckDBService();
 
 async function generateAPI() {
-    await duckDBService.initDb({ dbLocation: ":memory:" });
+    await duckDBService.initDb({ dbLocation: "./test.duckdb" });
 
     const sources: (CsvIngestSource | CrawlerConfig)[] = [...Object.values(cs), ...Object.values(crawlerConfigs)];
 
@@ -42,7 +42,9 @@ async function generateAPI() {
     checkFilePaths(sourcePaths);
 
     for (const source of sources) {
-        await duckDBService.loadIntermediateSource(source, true);
+        console.log("---");
+        await duckDBService.loadIntermediateSource(source);
+        console.log("---");
     }
 
     const baseAdressList = (await duckDBService.runQuery(

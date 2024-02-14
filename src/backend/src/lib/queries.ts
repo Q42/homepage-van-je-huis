@@ -177,7 +177,7 @@ export const queries = {
           ?street a hg:Street ;
                     rdfs:label ?street_name .
         }
-    } LIMIT ${limit} OFFSET ${offset}
+    } LIMIT ${limit}  ${offset === 0 ? "" : "OFFSET " + offset}
     `,
     sqlStringReplace: ({
         targetTable,
