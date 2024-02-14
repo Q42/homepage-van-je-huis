@@ -8,6 +8,7 @@ import { PublicArtCrawler } from "./src/crawlers/publicArtCrawler";
 import { adresInputColumns, adresOutputColumns } from "./src/models/adresses";
 import { straatOmschrijvingInputColumns, straatnaamOmschrijvingOutputColumns } from "./src/models/straatOmschrijving";
 import { cultureFacilitiesInputColumns, cultureFacilitiesOutputColumns } from "./src/models/culturalFacility";
+import { treesInputColumns, treesOutputColumns } from "./src/models/trees";
 
 // devMode limits all select queries to a specified max number of rows
 export const devMode = { enabled: true, limit: 10000 };
@@ -31,6 +32,13 @@ export const csvIngestSources: CsvIngestSources = {
         outputTableName: "cultuurvoorzieningen",
         inputColumns: cultureFacilitiesInputColumns,
         outputColumns: cultureFacilitiesOutputColumns,
+        geoTransformColumn: "WKT_LAT_LNG"
+    },
+    trees: {
+        ingestSourcePath: "./data_input/BOMEN.csv",
+        outputTableName: "bomen",
+        inputColumns: treesInputColumns,
+        outputColumns: treesOutputColumns,
         geoTransformColumn: "WKT_LAT_LNG"
     },
     // these are just placeholders for now and need to be replaced with the actual data once its available

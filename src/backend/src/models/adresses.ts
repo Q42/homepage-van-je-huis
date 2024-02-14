@@ -1,4 +1,4 @@
-import { ColumnDefenitions } from "../lib/types";
+import { ColumnDefenitions, GeoString } from "../lib/types";
 
 export const adresInputColumns: ColumnDefenitions = {
     "identificatie": "VARCHAR",
@@ -71,7 +71,7 @@ export type DBAddress = {
     "ligtIn:GBD.WIJK.code": string;
     "ligtIn:GBD.GGW.code": string;
     "ligtIn:GBD.SDL.code": string;
-    "geometrie": string;
+    "geometrie": GeoString;
 };
 
 export const adresOutputColumns: string[] = [

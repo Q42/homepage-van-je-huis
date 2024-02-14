@@ -1,4 +1,4 @@
-import { SparqlBatch } from "./types";
+import { GeoString, SparqlBatch } from "./types";
 
 /**
  * Transforms the geometry column of a table in the database.
@@ -111,6 +111,23 @@ export const queries = {
                     rdfs:label ?street_name .
         }
     }
+    `,
+    countWithinRangeOfLocation: ({
+        location,
+        targetTable,
+        targetColumn,
+        targetGeometryColumn,
+        range
+    }: {
+        location: GeoString;
+        targetTable: string;
+        targetColumn: string;
+        targetGeometryColumn: string;
+        range: number;
+    }) => `
+    SELECT COUNT(A.${targetColumn})
+    FROM "${targetTable}" 
+    WHERE ST_Distance(${targetGeometryColumn}, ST_GeomFromText('${location}')) < ${range}
     `,
     sparqlGetImagesBatch: ({ offset, limit }: SparqlBatch) => `
     PREFIX rico: <https://www.ica.org/standards/RiC/ontology#>
