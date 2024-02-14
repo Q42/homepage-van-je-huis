@@ -12,7 +12,7 @@ import { treesInputColumns, treesOutputColumns } from "./src/models/trees";
 import { buurtenInputColumns, buurtenOutputColumns } from "./src/models/buurten";
 
 // devMode limits all select queries to a specified max number of rows
-export const devMode = { enabled: true, limit: 10000 };
+export const devMode = { enabled: true, limit: 1000 };
 
 // See the type defenition for more info on what all these parameters do.
 export const csvIngestSources: CsvIngestSources = {
@@ -40,7 +40,6 @@ export const csvIngestSources: CsvIngestSources = {
         outputTableName: "buurten",
         inputColumns: buurtenInputColumns,
         outputColumns: buurtenOutputColumns
-        // geoTransformColumn: "geometrie"
     },
     trees: {
         ingestSourcePath: "./data_input/BOMEN.csv",
