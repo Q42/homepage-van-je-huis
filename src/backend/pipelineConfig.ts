@@ -9,6 +9,7 @@ import { adresInputColumns, adresOutputColumns } from "./src/models/adresses";
 import { straatOmschrijvingInputColumns, straatnaamOmschrijvingOutputColumns } from "./src/models/straatOmschrijving";
 import { cultureFacilitiesInputColumns, cultureFacilitiesOutputColumns } from "./src/models/culturalFacility";
 import { treesInputColumns, treesOutputColumns } from "./src/models/trees";
+import { buurtenInputColumns, buurtenOutputColumns } from "./src/models/buurten";
 
 // devMode limits all select queries to a specified max number of rows
 export const devMode = { enabled: true, limit: 10000 };
@@ -33,6 +34,13 @@ export const csvIngestSources: CsvIngestSources = {
         inputColumns: cultureFacilitiesInputColumns,
         outputColumns: cultureFacilitiesOutputColumns,
         geoTransformColumn: "WKT_LAT_LNG"
+    },
+    buurten: {
+        ingestSourcePath: "./data_input/GBD_buurt_Actueel.csv",
+        outputTableName: "buurten",
+        inputColumns: buurtenInputColumns,
+        outputColumns: buurtenOutputColumns
+        // geoTransformColumn: "geometrie"
     },
     trees: {
         ingestSourcePath: "./data_input/BOMEN.csv",
