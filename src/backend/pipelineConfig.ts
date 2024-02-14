@@ -10,6 +10,7 @@ import { straatOmschrijvingInputColumns, straatnaamOmschrijvingOutputColumns } f
 import { cultureFacilitiesInputColumns, cultureFacilitiesOutputColumns } from "./src/models/culturalFacility";
 import { treesInputColumns, treesOutputColumns } from "./src/models/trees";
 import { buurtenInputColumns, buurtenOutputColumns } from "./src/models/buurten";
+import { beesInputColumns, beesOutputColumns } from "./src/models/bees";
 
 // devMode limits all select queries to a specified max number of rows
 export const devMode = { enabled: true, limit: 1000 };
@@ -46,6 +47,13 @@ export const csvIngestSources: CsvIngestSources = {
         outputTableName: "bomen",
         inputColumns: treesInputColumns,
         outputColumns: treesOutputColumns,
+        geoTransformColumn: "WKT_LAT_LNG"
+    },
+    bees: {
+        ingestSourcePath: "./data_input/BIJEN_HONING.csv",
+        outputTableName: "bijen",
+        inputColumns: beesInputColumns,
+        outputColumns: beesOutputColumns,
         geoTransformColumn: "WKT_LAT_LNG"
     },
     // these are just placeholders for now and need to be replaced with the actual data once its available

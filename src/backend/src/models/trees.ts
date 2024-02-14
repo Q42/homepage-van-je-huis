@@ -1,11 +1,6 @@
 import { ColumnDefenitions, GeoString } from "../lib/types";
 import { amsterdamMapsGeoColumns } from "./amsterdamMapsGeo";
-export type TreeRecord = {
-    Naamorganisatie: string;
-    Kunstdiscipline: string;
-    Correctie_Website?: string;
-    WKT_LAT_LNG: GeoString;
-};
+
 export const treesInputColumns: ColumnDefenitions = {
     OBJECTNUMMER: "VARCHAR",
     id: "VARCHAR",
