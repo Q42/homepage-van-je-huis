@@ -151,11 +151,7 @@ async function generateAPI() {
         }
 
         const addressRecord: AddressRecord = assembleApiRecord(address, addressPresent, addressPast);
-        writeObjectToJsonFile(
-            addressRecord,
-            `${addressOutputDir}/${generateAddressID(addressRecord.address)}.json`,
-            devMode.enabled
-        );
+        writeObjectToJsonFile(addressRecord, `${addressOutputDir}/${generateAddressID(addressRecord.address)}.json`);
         statusBar.increment();
     }
     statusBar.stop();

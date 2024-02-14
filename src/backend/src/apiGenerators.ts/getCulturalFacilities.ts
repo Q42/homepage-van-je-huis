@@ -44,7 +44,8 @@ export async function getCulturalFacilities(
     return customArtRecords.map((artRecord) => {
         const newEntry: DistanceViewEntry = {
             position: artRecord.distance_from_address,
-            title: artRecord.Naamorganisatie,
+            // There are some encoding errors in the source CSV file that result in é being replaced by Ã©.
+            title: artRecord.Naamorganisatie?.replace(/Ã©/g, "é"),
             visitUrl: artRecord.Correctie_Website,
             type: mapFacilityType(artRecord.Kunstdiscipline) ?? "cultureMulti"
         };
