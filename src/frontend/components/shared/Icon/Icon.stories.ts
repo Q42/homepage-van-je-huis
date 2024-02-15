@@ -48,3 +48,10 @@ Stories.args = {
   height: 24,
   width: 24,
 }
+
+export const Close = Template.bind({})
+Close.args = {
+  type: 'close',
+  height: 24,
+  width: 24,
+}

@@ -3,7 +3,7 @@
 </template>
 
 <script setup lang="ts">
-import { Logo, LogoNoText, Search, Link, Stories } from '@/assets/icons'
+import { Logo, LogoNoText, Search, Link, Stories, Close } from '@/assets/icons'
 import { IconType } from '@/models/Icon'
 
 export interface IconProps {
@@ -26,6 +26,8 @@ const iconComponent = computed(() => {
       return Link
     case 'stories':
       return Stories
+    case 'close':
+      return Close
   }
 })
 </script>
