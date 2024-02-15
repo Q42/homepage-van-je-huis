@@ -14,22 +14,37 @@
       @mouseleave="handleMouseLeave"
       @click="openPanel"
     >
-      <SharedIcon type="stories" :height="24" :width="24" />
+      <SharedIcon :type="iconType" :height="24" :width="24" />
       <SharedTypography
         classes="side-panel__label__text"
         variant="body"
         :compact="true"
-        >verhalen</SharedTypography
       >
+        {{ label }}
+      </SharedTypography>
     </button>
     <!-- TODO: add aria label -->
-    <button class="close-btn" @click="closePanel">X</button>
+
+    <div
+      class="content-wrapper"
+      :class="{
+        'content-wrapper--open': panelIsOpen,
+      }"
+    >
+      <slot />
+    </div>
+    <button class="close-btn" @click="closePanel">
+      <SharedIcon :width="24" :height="24" type="close" />
+    </button>
   </div>
 </template>
 
 <script setup lang="ts">
+import { IconType } from '@/models/Icon'
+
 export interface SidePanelProps {
-  // TODO
+  label: string
+  iconType: IconType
 }
 const toggleIsHovered = ref(false)
 const panelIsOpen = ref(false)
@@ -72,13 +87,14 @@ const handleMouseLeave = () => {
   background: @primary-black;
   transform: translateX(90%);
   transition: transform 0.3s;
+  color: @primary-white;
 }
 
 .close-btn {
+  all: unset;
   position: absolute;
-  top: 15px;
+  top: 12px;
   right: 40px;
-  width: 48px;
   background: @primary-black;
   color: @primary-white;
   border: none;
@@ -103,14 +119,26 @@ const handleMouseLeave = () => {
   justify-content: center;
   color: @primary-white;
   padding-left: 20px;
-  padding-right: 100vw;
+  padding-right: 20px;
   background: @primary-black;
-  transform: translate(calc(-100% + 100vw - 20px), 12px);
+  transform: translate(calc(-100%), 12px);
   gap: 1rem;
   cursor: pointer;
 }
 
 .side-panel__label__text {
   color: @primary-white;
+}
+
+.content-wrapper {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  padding: 27px 40px;
+}
+
+.content-wrapper--open {
+  overflow: auto;
 }
 </style>

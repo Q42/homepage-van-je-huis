@@ -16,4 +16,7 @@ const Template: StoryFn<typeof SidePanel> = (args: SidePanelProps) => ({
 })
 
 export const SidePanelStory = Template.bind({})
-SidePanelStory.args = {}
+SidePanelStory.args = {
+  iconType: 'close',
+  label: 'verhalen',
+}
