@@ -18,6 +18,7 @@ const props = defineProps<LinkProps>()
 
 <style lang="less" scoped>
 .link {
+  width: fit-content;
   position: relative;
   display: inline-flex;
   gap: 5px;

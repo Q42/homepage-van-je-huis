@@ -231,8 +231,34 @@
     "timeline": [],
     "stories": [
       {
+        "image": {
+          "url": "https://images.memorix.nl/ams/thumb/1000x1000/87d81163-42b2-16f2-6890-dc5c2d22408d.jpg",
+          "altText": "Chez Diederichs, Frères, Marché au fleurs, à Amsterdam"
+        },
         "title": "Hier komt de naam van je straat vandaan.",
-        "contents": "De leerlooierijen en de huidenhandel, waarnaar deze en in de nabijheid gelegen straten in de Jordaan en in de grachtengordel zijn genoemd, waren in de zestiende eeuw eerst buiten de stad gevestigd. Toen het gebied geleidelijk binnen de stad kwam en hier straten werden aangelegd, werden deze naar die vanouds bloeiende bedrijven genoemd, te beginnen met de Runstraat en de Huidenstraat. Na 1658 breidden de looierijen zich uit op terreinen ten oosten van de Vijzelgracht, waar we thans de Nieuwe Looiersstraat en dwarsstraat vinden. De Derde Looiersdwarsstraat was voor de demping de Oude Looierssloot (Rb. 1-6-1898). Voor de Gedempte Nieuwe Looierssloot zie Fokke Simonszstraat."
+        "contents": "Genoemd naar drie woningen onder een dak, 't Keyserrijck genaamd, die in de zestiende eeuw hier op de hoek van de tegenwoordige Spuistraat stonden. In die tijd noemde men het steegje 't Keizerrijksteegje.",
+        "visitUrl": "#",
+        "visitUrlText": "Lees meer"
+      },
+      {
+        "image": {
+          "url": "https://images.memorix.nl/ams/thumb/1000x1000/87d81163-42b2-16f2-6890-dc5c2d22408d.jpg",
+          "altText": "Chez Diederichs, Frères, Marché au fleurs, à Amsterdam"
+        },
+        "title": "Hier komt de naam van je straat vandaan.",
+        "contents": "Genoemd naar drie woningen onder een dak, 't Keyserrijck genaamd, die in de zestiende eeuw hier op de hoek van de tegenwoordige Spuistraat stonden. In die tijd noemde men het steegje 't Keizerrijksteegje.",
+        "visitUrl": "#",
+        "visitUrlText": "Lees meer"
+      },
+      {
+        "image": {
+          "url": "https://images.memorix.nl/ams/thumb/1000x1000/87d81163-42b2-16f2-6890-dc5c2d22408d.jpg",
+          "altText": "Chez Diederichs, Frères, Marché au fleurs, à Amsterdam"
+        },
+        "title": "Hier komt de naam van je straat vandaan.",
+        "contents": "Genoemd naar drie woningen onder een dak, 't Keyserrijck genaamd, die in de zestiende eeuw hier op de hoek van de tegenwoordige Spuistraat stonden. In die tijd noemde men het steegje 't Keizerrijksteegje.",
+        "visitUrl": "#",
+        "visitUrlText": "Lees meer"
       }
     ]
   }

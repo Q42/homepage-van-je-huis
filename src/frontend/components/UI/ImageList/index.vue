@@ -24,10 +24,6 @@
 import { Image } from '@/models/Image'
 import { getTranslationKey } from '@/translations'
 
-onMounted(() => {
-  console.log(JSON.stringify(props.images))
-})
-
 type ImageWithMetaData = {
   image: Image
   title: string
