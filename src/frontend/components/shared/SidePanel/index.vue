@@ -23,8 +23,13 @@
         {{ label }}
       </SharedTypography>
     </button>
-    <!-- TODO: add aria label -->
-
+    <div class="header">
+      <SharedTypography variant="h3">{{ label }}</SharedTypography>
+      <!-- TODO: add aria label -->
+      <button class="close-btn" @click="closePanel">
+        <SharedIcon :width="24" :height="24" type="close" />
+      </button>
+    </div>
     <div
       class="content-wrapper"
       :class="{
@@ -33,9 +38,6 @@
     >
       <slot />
     </div>
-    <button class="close-btn" @click="closePanel">
-      <SharedIcon :width="24" :height="24" type="close" />
-    </button>
   </div>
 </template>
 
@@ -54,10 +56,12 @@ let timeout: NodeJS.Timeout | null = null
 const props = defineProps<SidePanelProps>()
 
 const openPanel = () => {
+  toggleIsHovered.value = false
   panelIsOpen.value = true
 }
 
 const closePanel = () => {
+  toggleIsHovered.value = false
   panelIsOpen.value = false
 }
 
@@ -92,13 +96,25 @@ const handleMouseLeave = () => {
 
 .close-btn {
   all: unset;
-  position: absolute;
-  top: 12px;
-  right: 40px;
   background: @primary-black;
   color: @primary-white;
   border: none;
   cursor: pointer;
+}
+
+.header {
+  height: @header-height;
+  position: fixed;
+  padding: 40px;
+  width: 100%;
+  top: 0;
+  left: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  z-index: 1;
+  background: @primary-black;
 }
 
 .side-panel--hover {
@@ -118,8 +134,7 @@ const handleMouseLeave = () => {
   align-items: center;
   justify-content: center;
   color: @primary-white;
-  padding-left: 20px;
-  padding-right: 20px;
+  padding-inline: 20px;
   background: @primary-black;
   transform: translate(calc(-100% + 1px), 12px);
   gap: 1rem;
@@ -135,7 +150,9 @@ const handleMouseLeave = () => {
   left: 0;
   top: 0;
   height: 100%;
-  padding: 27px 40px;
+  padding-inline: 40px;
+  margin-top: @header-height;
+  overflow: auto;
 }
 
 .content-wrapper--open {
