@@ -3,7 +3,7 @@ import type { Meta, StoryFn } from '@storybook/vue3'
 import SidePanel, { SidePanelProps } from './index.vue'
 
 export default {
-  title: 'Ui/SidePanel',
+  title: 'Shared/SidePanel',
   component: SidePanel,
 } as Meta<typeof SidePanel>
 
