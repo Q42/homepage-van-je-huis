@@ -121,7 +121,7 @@ const handleMouseLeave = () => {
   padding-left: 20px;
   padding-right: 20px;
   background: @primary-black;
-  transform: translate(calc(-100%), 12px);
+  transform: translate(calc(-100% + 1px), 12px);
   gap: 1rem;
   cursor: pointer;
 }

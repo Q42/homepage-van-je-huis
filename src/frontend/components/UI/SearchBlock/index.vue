@@ -16,6 +16,9 @@
       />
       <TransitionFade>
         <ul v-if="search" class="autocomplete-panel">
+          <li @click="() => (search = '5a58dacbfbb0dbf25da0a2041a8ae6f4')">
+            5a58dacbfbb0dbf25da0a2041a8ae6f4
+          </li>
           <li>Prinsengracht</li>
           <li>Keizersgracht</li>
           <li>Herengracht</li>
