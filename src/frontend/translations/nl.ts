@@ -10,4 +10,8 @@ export const nl = {
   sidePanel: {
     storiesLabel: 'Verhalen',
   },
+  addressPage: {
+    pastLabel: 'Verleden',
+    presentLabel: 'Heden',
+  },
 }

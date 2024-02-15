@@ -14,7 +14,12 @@
     </SharedSidePanel>
     <UIImageList v-if="images" :images="images" />
 
-    <div class="tab-buttons"></div>
+    <div class="tab-buttons">
+      <SharedButton :label="$t(getTranslationKey('addressPage.pastLabel'))" />
+      <SharedButton
+        :label="$t(getTranslationKey('addressPage.presentLabel'))"
+      />
+    </div>
   </div>
 </template>
 
@@ -56,5 +61,16 @@ onMounted(async () => {
   display: flex;
   flex-direction: column;
   gap: 80px;
+}
+
+.tab-buttons {
+  display: flex;
+  gap: 1.125rem;
+  width: fit-content;
+  z-index: 1;
+  position: fixed;
+  bottom: 20px;
+  margin-left: 50%;
+  transform: translatex(-50%);
 }
 </style>
