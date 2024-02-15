@@ -41,10 +41,13 @@ export interface SearchBlockProps {
 
 const props = defineProps<SearchBlockProps>()
 
+const router = useRouter()
+const { locale } = useI18n()
+
 const search = ref('')
 
 const handleSubmit = () => {
-  console.log('submit', search.value)
+  router.push('/' + locale.value + '/' + search.value)
 }
 </script>
 
