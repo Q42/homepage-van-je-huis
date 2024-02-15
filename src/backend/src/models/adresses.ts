@@ -68,9 +68,13 @@ export type DBAddress = {
     "ligtAan:BAG.ORE.naamHoofdadres": string;
     "gebruiksdoel": string | undefined;
     "ligtIn:GBD.BRT.code": string;
+    "ligtIn:GBD.BRT.naam": string;
     "ligtIn:GBD.WIJK.code": string;
+    "ligtIn:GBD.WIJK.naam": string;
     "ligtIn:GBD.GGW.code": string;
+    "ligtIn:GBD.GGW.naam": string;
     "ligtIn:GBD.SDL.code": string;
+    "ligtIn:GBD.SDL.naam": string;
     "geometrie": GeoString;
 };
 
@@ -85,8 +89,12 @@ export const adresOutputColumns: string[] = [
     "ligtIn:BAG.PND.identificatie",
     "gebruiksdoel",
     "ligtIn:GBD.BRT.code",
+    "ligtIn:GBD.BRT.naam",
     "ligtIn:GBD.WIJK.code",
+    "ligtIn:GBD.WIJK.naam",
     "ligtIn:GBD.GGW.code",
+    "ligtIn:GBD.GGW.naam",
     "ligtIn:GBD.SDL.code",
+    "ligtIn:GBD.SDL.naam",
     "geometrie"
 ];

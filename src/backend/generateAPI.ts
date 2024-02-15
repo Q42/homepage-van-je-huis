@@ -4,6 +4,7 @@ import { AgendaItem, PresentData } from "../common/apiSchema/present";
 import {
     crawlerConfigs,
     csvIngestSources as cs,
+    csvIngestSources,
     devMode,
     pipelineConfig as pc,
     pipelineConfig
@@ -26,13 +27,13 @@ import { CrawlerConfig, CsvIngestSource, EnrichedDBAddress } from "./src/lib/typ
 import { getPublicArt } from "./src/apiGenerators.ts/getPublicArt";
 import { getCulturalFacilities } from "./src/apiGenerators.ts/getCulturalFacilities";
 import { queries } from "./src/lib/queries";
-import { generateAddresResolveSchema } from "./src/utils/db";
 import { getArchivePhotosForBuilding } from "./src/apiGenerators.ts/getArchivePhotos";
+import { getAggregates } from "./src/apiGenerators.ts/getAggregates";
 
 const duckDBService = new DuckDBService();
 
 async function generateAPI() {
-    await duckDBService.initDb({ dbLocation: "./test.duckdb" });
+    await duckDBService.initDb({ dbLocation: ":memory:" });
 
     const sources: (CsvIngestSource | CrawlerConfig)[] = [...Object.values(cs), ...Object.values(crawlerConfigs)];
 
@@ -86,11 +87,17 @@ async function generateAPI() {
         )
     ).map((row) => row["s"]) as string[];
 
-    writeObjectToJsonFile({ streets: streetNames }, resolverOutputDir + "/streets.json");
+    // Generate the aggregates
+    console.log("Generating aggregates table");
+    await duckDBService.runQuery(
+        queries.sqlCreateAggregateTable({
+            aggregateTableName: pipelineConfig.aggregateTableName,
+            buurtenTableName: csvIngestSources.buurten.outputTableName,
+            beesTableName: csvIngestSources.bees.outputTableName,
+            treesTableName: csvIngestSources.trees.outputTableName
+        })
+    );
 
-    // writeObjectToJsonFile(generateAddresResolveSchema(baseAdressList), resolverOutputDir + "/addressFullResolve.json");
-
-    // Start generating the individual address API files
     const statusBar = new cliProgress.SingleBar({}, cliProgress.Presets.shades_classic);
     console.log("starting api generation");
     statusBar.start(baseAdressList.length, 0);
@@ -110,7 +117,7 @@ async function generateAPI() {
             stories: []
         };
 
-        // This is where all the data gets added to the api files
+        // Add the base data for the address
         if (address?.straatnaamBeschrijving) {
             addressPast.stories.push({
                 title: stringLibrary.streetNameOrigin,
@@ -126,6 +133,7 @@ async function generateAPI() {
         const culturalFacilities = await getCulturalFacilities(duckDBService, address.identificatie);
         addressPresent.slider.push(...culturalFacilities);
 
+        // Add the archive photos
         const archivePhotos = await getArchivePhotosForBuilding(duckDBService, address["ligtIn:BAG.PND.identificatie"]);
 
         if (archivePhotos.length < pc.minArchiveImages) {
@@ -145,11 +153,21 @@ async function generateAPI() {
             const presentStartEnd = getMinMaxRangeFromPresentData(addressPresent);
             addressPresent.rangeStart = presentStartEnd.distanceRangeStart;
             addressPresent.rangeEnd = presentStartEnd.distanceRangeEnd;
+        }
 
-            if (pipelineConfig.sortSliders) {
-                addressPresent.slider.sort((a, b) => a.position - b.position);
-                addressPast.timeline.sort((a, b) => a.position - b.position);
-            }
+        // Sprinkle in the aggregate data
+        const aggregateEntries = await getAggregates({
+            duckDBService,
+            address: address,
+            rangeStart: addressPresent.rangeStart,
+            rangeEnd: addressPresent.rangeEnd
+        });
+
+        addressPresent.slider.push(...aggregateEntries);
+
+        if (pipelineConfig.sortSliders) {
+            addressPresent.slider.sort((a, b) => a.position - b.position);
+            addressPast.timeline.sort((a, b) => a.position - b.position);
         }
 
         const addressRecord: AddressRecord = assembleApiRecord(address, addressPresent, addressPast);
