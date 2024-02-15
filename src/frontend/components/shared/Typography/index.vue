@@ -74,6 +74,6 @@ const classes = computed(() => {
 
 <style lang="less" scoped>
 .generic {
-  color: @primary-black;
+  color: inherit;
 }
 </style>

@@ -1,6 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+<svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
   <path
-    fill="#fff"
+    fill="currentColor"
     fill-rule="evenodd"
     d="M21.75 4.3 19.7 2.25 12 9.942 4.3 2.25 2.25 4.3 9.942 12 2.25 19.7l2.05 2.05 7.7-7.692 7.7 7.692 2.05-2.05-7.692-7.7 7.692-7.7Z"
     clip-rule="evenodd"
