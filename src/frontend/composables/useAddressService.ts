@@ -2,6 +2,8 @@ import { TimelineEntry } from '../../common/apiSchema/past'
 import { DistanceViewEntry } from '../../common/apiSchema/present'
 import { useAutocompleteStore } from '@/store/autocompleteStore'
 
+// TODO: better error handling (but wait till api is definitive)
+
 export const useAddressService = () => {
   const autocompleteStore = useAutocompleteStore()
 
@@ -42,7 +44,7 @@ export const useAddressService = () => {
   }
 
   const getHouseNumbers = async (streetSlug: string) => {
-    const filePath = `/api/resolve/resolve/${streetSlug}.json`
+    const filePath = `/api/resolve/numbers/${streetSlug}.json`
     const response = await fetch(filePath)
     if (!response.ok) {
       // TODO: Add error handling
@@ -50,7 +52,7 @@ export const useAddressService = () => {
       return null
     }
     const jsonData = await response.json()
-    return jsonData
+    return jsonData.numbers as string[] //TODO: dit kan nog mis gaan
   }
 
   return {

@@ -17,6 +17,7 @@
       />
       <SharedInput
         v-model:value="houseNumber"
+        :disabled="!Boolean(houseNumbers)"
         class="house-number-input"
         :placeholder="$t(getTranslationKey('home.houseNumberInputPlaceHolder'))"
         icon="search"
@@ -60,12 +61,30 @@ const filteredStreets = computed(() => {
     )
     .sort()
 })
+const houseNumbers: Ref<null | string[]> = ref(null)
+
+onUpdated(async () => {
+  if (streets.value?.includes(street.value) && street.value) {
+    const autocompleteHouseNumbers = await addressService.getHouseNumbers(
+      slugifyStreetName(street.value),
+    )
+
+    houseNumbers.value = autocompleteHouseNumbers
+  } else {
+    houseNumbers.value = null
+    houseNumber.value = ''
+  }
+})
+
+const autocompleteListContainsSelectedStreet = computed(() => {
+  return streets.value?.includes(street.value)
+})
 
 const autocompletePanelIsOpen = computed(
   () =>
     Boolean(filteredStreets.value) &&
     Boolean(street.value) &&
-    !autocompleteStore.autocompleteStreets?.includes(street.value),
+    !autocompleteListContainsSelectedStreet.value,
 )
 
 const handleSubmit = () => {
