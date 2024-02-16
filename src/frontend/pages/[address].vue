@@ -1,5 +1,6 @@
 <template>
   <div>
+    <h1>{{ currentView }}</h1>
     <SharedSidePanel
       :label="$t(getTranslationKey('sidePanel.storiesLabel'))"
       icon-type="stories"
@@ -15,9 +16,13 @@
     <UIImageList v-if="images" :images="images" />
 
     <div class="tab-buttons">
-      <SharedButton :label="$t(getTranslationKey('addressPage.pastLabel'))" />
+      <SharedButton
+        :label="$t(getTranslationKey('addressPage.pastLabel'))"
+        @click="() => (currentView = 'past')"
+      />
       <SharedButton
         :label="$t(getTranslationKey('addressPage.presentLabel'))"
+        @click="() => (currentView = 'present')"
       />
     </div>
   </div>
@@ -37,6 +42,7 @@ const { params } = useRoute()
 const addressService = useAddressService()
 
 const addressData: any = ref(null) //TODO: fix typing
+const currentView: Ref<'present' | 'past'> = ref('present')
 
 const images = computed(() => {
   if (!addressData.value) {
