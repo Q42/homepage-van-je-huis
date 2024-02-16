@@ -1,11 +1,17 @@
 <template>
   <div>
-    <h1>{{ currentView }}</h1>
     <SharedSidePanel
-      :label="$t(getTranslationKey('sidePanel.storiesLabel'))"
+      :label="
+        currentView === 'past'
+          ? $t(getTranslationKey('sidePanel.storiesLabel'))
+          : 'nog maken'
+      "
       icon-type="stories"
     >
-      <div v-if="addressData" class="side-panel-items">
+      <div
+        v-if="addressData && currentView === 'past'"
+        class="side-panel-items"
+      >
         <SharedStory
           v-for="(story, index) in addressData.pastData.stories"
           :key="index"
@@ -14,7 +20,7 @@
       </div>
     </SharedSidePanel>
     <UIImageList v-if="images" :images="images" />
-
+    <!-- TODO: accessibility -->
     <div class="tab-buttons">
       <SharedButton
         :label="$t(getTranslationKey('addressPage.pastLabel'))"
@@ -29,7 +35,11 @@
 </template>
 
 <script setup lang="ts">
-import { getTranslationKey } from '~/translations'
+import { PastData } from '../../common/apiSchema/past'
+import { AddressRecord } from '../../common/apiSchema/addressRecord'
+
+import { PresentData } from '../../common/apiSchema/present'
+import { getTranslationKey } from '@/translations'
 
 defineI18nRoute({
   paths: {
@@ -41,15 +51,28 @@ const { params } = useRoute()
 
 const addressService = useAddressService()
 
-const addressData: any = ref(null) //TODO: fix typing
-const currentView: Ref<'present' | 'past'> = ref('present')
+const addressData: Ref<AddressRecord | null> = ref(null)
+const currentView: Ref<'present' | 'past'> = ref('past')
+const pastData: Ref<PastData | null> = ref(null)
+const presentData: Ref<PresentData | null> = ref(null)
 
 const images = computed(() => {
   if (!addressData.value) {
     return null
   }
 
-  return addressService.getImagesViewModel(addressData.value.presentData.slider)
+  const getImages = () => {
+    if (!pastData.value || !presentData.value) {
+      throw new Error('Past or present data is missing')
+    }
+    if (currentView.value === 'past') {
+      return pastData.value.timeline
+    } else {
+      return presentData.value.slider
+    }
+  }
+
+  return addressService.getImagesViewModel(getImages())
 })
 
 onMounted(async () => {
@@ -57,8 +80,8 @@ onMounted(async () => {
     params.address as string,
   )
   addressData.value = data
-
-  console.log(addressData.value)
+  pastData.value = data.pastData
+  presentData.value = data.presentData
 })
 </script>
 
