@@ -11,6 +11,7 @@ import { cultureFacilitiesInputColumns, cultureFacilitiesOutputColumns } from ".
 import { treesInputColumns, treesOutputColumns } from "./src/models/trees";
 import { buurtenInputColumns, buurtenOutputColumns } from "./src/models/buurten";
 import { beesInputColumns, beesOutputColumns } from "./src/models/bees";
+import { sparqlImageOutputColumns } from "./src/models/sparqlImages";
 
 // devMode limits all select queries to a specified max number of rows
 export const devMode = { enabled: true, limit: 1000 };
@@ -89,19 +90,7 @@ export const crawlerConfigs: CrawlerConfigs = {
     imageArchive: {
         crawler: SparqlImageArchiveCrawler,
         outputTableName: "archief_afbeeldingen",
-        outputColumns: {
-            archiveUrl: "VARCHAR",
-            title: "VARCHAR",
-            imgUrl: "VARCHAR",
-            pandId: "VARCHAR",
-            addressLink: "VARCHAR",
-            geoLink: "VARCHAR",
-            streetLink: "VARCHAR",
-            streetName: "VARCHAR",
-            dateString: "VARCHAR",
-            startDate: "DATE",
-            endDate: "DATE"
-        },
+        outputColumns: sparqlImageOutputColumns,
         retryConfig: defaultCrawlerRetryConfig
     }
 };

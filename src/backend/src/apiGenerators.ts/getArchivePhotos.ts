@@ -2,7 +2,7 @@ import { TimelineEntry } from "../../../common/apiSchema/past";
 import { crawlerConfigs } from "../../pipelineConfig";
 import { DuckDBService } from "../lib/duckDBService";
 import { queries } from "../lib/queries/queries";
-import { ImageApiResponse } from "../lib/types";
+import { SparqlImage } from "../models/sparqlImages";
 
 function getDatePosition(date1?: Date, date2?: Date) {
     if (!date1 && !date2) {
@@ -31,7 +31,7 @@ export async function getArchivePhotosForBuilding(
 ): Promise<TimelineEntry[]> {
     const dbResults = (await duckDBService.runQuery(
         queries.sqlSelectArchivePhotos({ photoTableName: crawlerConfigs.imageArchive.outputTableName, pandId: pandId })
-    )) as ImageApiResponse[];
+    )) as SparqlImage[];
     return dbResults
         .map((image) => {
             try {

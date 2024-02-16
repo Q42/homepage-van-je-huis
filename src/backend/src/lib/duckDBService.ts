@@ -3,6 +3,7 @@ import { BaseApiResponse, ColumnDefenitions, CrawlerConfig, CsvIngestSource, Int
 import { parseValueForDbInsert } from "../utils/general";
 import { devMode, pipelineConfig as pc } from "../../pipelineConfig";
 import { getExportSelectQuery } from "../utils/db";
+import { queries } from "./queries/queries";
 
 type DuckDBConfig = {
     dbLocation?: string;
@@ -212,7 +213,7 @@ export class DuckDBService {
     }: {
         tableName: string;
         sourceColumnName: string;
-        targetColumnName: string;
+        targetColumnName?: string;
         sourceEpsg: string;
         targetEpsg: string;
     }) {
@@ -224,15 +225,18 @@ export class DuckDBService {
             throw new Error(`The column ${sourceColumnName} does not exist in the table ${tableName}.`);
         }
 
-        if (await this.columnExists(tableName, targetColumnName)) {
-            throw new Error(`The column ${targetColumnName} already exists in the table ${tableName}.`);
+        if (
+            targetColumnName !== undefined &&
+            targetColumnName !== sourceColumnName &&
+            (await this.columnExists(tableName, targetColumnName))
+        ) {
+            throw new Error(
+                `The column ${targetColumnName} already exists in the table ${tableName}. This would result in a data overwrite.`
+            );
         }
 
         return await this.runQuery(
-            `
-        ALTER TABLE ${tableName} ADD COLUMN ${targetColumnName} GEOMETRY;    
-        UPDATE ${tableName} 
-        SET ${targetColumnName} = ST_Transform(${sourceColumnName}, '${sourceEpsg}', '${targetEpsg}');`
+            queries.sqlTransformGeometry({ tableName, sourceColumnName, targetColumnName, sourceEpsg, targetEpsg })
         );
     }
 }

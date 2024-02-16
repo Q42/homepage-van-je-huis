@@ -1,15 +1,16 @@
 import SparqlClient from "sparql-http-client";
 import { queries } from "../lib/queries/queries";
-
 import { AbstractCrawler } from "./abstractCrawler";
-import { CrawlerConfig, ImageApiResponse, SparqlBatch } from "../lib/types";
+import { CrawlerConfig, SparqlBatch } from "../lib/types";
 import { imageArchiveCrawlerExtraConfig } from "../../pipelineConfig";
+import { SparqlImage } from "../models/sparqlImages";
+import { DuckDBService } from "../lib/duckDBService";
 
 const endpoint = "https://api.lod.uba.uva.nl/datasets/ATM/ATM-KG/services/ATM-KG/sparql";
 
-export class SparqlImageArchiveCrawler extends AbstractCrawler<ImageApiResponse, SparqlBatch> {
+export class SparqlImageArchiveCrawler extends AbstractCrawler<SparqlImage, SparqlBatch> {
     protected sparqlClient: SparqlClient;
-    protected duckDBService: any;
+    protected duckDBService: DuckDBService;
 
     public constructor(crawlerConfig: CrawlerConfig, duckDBService: any) {
         if (!crawlerConfig) {
@@ -44,25 +45,25 @@ export class SparqlImageArchiveCrawler extends AbstractCrawler<ImageApiResponse,
                 limit: imageArchiveCrawlerExtraConfig.paginationSize
             });
         }
-
         return sparqlBatch;
     }
 
-    public async crawl(guideRecord: SparqlBatch): Promise<ImageApiResponse[]> {
-        const result: ImageApiResponse[] = [];
+    public async crawl(guideRecord: SparqlBatch): Promise<SparqlImage[]> {
+        const result: SparqlImage[] = [];
 
         const stream = await this.sparqlClient.query.select(queries.sparql.getImagesBatch(guideRecord));
 
         for await (const chunk of stream) {
-            const image: ImageApiResponse = {
+            const image: SparqlImage = {
                 archiveUrl: chunk["resource"]?.value,
                 title: chunk["title"]?.value,
                 imgUrl: chunk["thumbnail"]?.value,
                 pandId: chunk["pand"]?.value,
                 addressLink: chunk["address"]?.value,
-                geoLink: chunk["geo"]?.value,
+                wktPoint: chunk["wkt"]?.value,
                 streetLink: chunk["street"]?.value,
                 streetName: chunk["street_name"]?.value,
+                streetId: chunk["openbareRuimte"]?.value,
                 dateString: chunk["textDate"]?.value,
                 startDate: chunk["startDate"]?.value,
                 endDate: chunk["endDate"]?.value
@@ -81,6 +82,7 @@ export class SparqlImageArchiveCrawler extends AbstractCrawler<ImageApiResponse,
                 targetString: "https://archief.amsterdam/beeldbank/detail/"
             })
         );
+
         await this.duckDBService.runQuery(
             queries.sqlStringReplace({
                 targetTable: this.crawlerConfig.outputTableName,
@@ -89,6 +91,7 @@ export class SparqlImageArchiveCrawler extends AbstractCrawler<ImageApiResponse,
                 targetString: "thumb/1000x1000/"
             })
         );
+
         await this.duckDBService.runQuery(
             queries.sqlStringReplace({
                 targetTable: this.crawlerConfig.outputTableName,
@@ -97,6 +100,31 @@ export class SparqlImageArchiveCrawler extends AbstractCrawler<ImageApiResponse,
                 targetString: ""
             })
         );
+
+        await this.duckDBService.runQuery(
+            queries.sqlStringReplace({
+                targetTable: this.crawlerConfig.outputTableName,
+                targetColumn: "pandId",
+                sourceString: "http://bag.basisregistraties.overheid.nl/bag/id/pand/",
+                targetString: ""
+            })
+        );
+
+        await this.duckDBService.runQuery(
+            queries.sqlStringReplace({
+                targetTable: this.crawlerConfig.outputTableName,
+                targetColumn: "pandId",
+                sourceString: "http://bag.basisregistraties.overheid.nl/bag/id/openbare-ruimte/",
+                targetString: ""
+            })
+        );
+
+        await this.duckDBService.transformGeometryFormat({
+            tableName: this.crawlerConfig.outputTableName,
+            sourceColumnName: "streetId",
+            sourceEpsg: "EPSG:4326",
+            targetEpsg: "EPSG:28992"
+        });
     }
 
     public async teardown(): Promise<void> {}

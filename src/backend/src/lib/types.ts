@@ -67,17 +67,3 @@ export interface EnrichedDBAddress extends DBAddress {
 }
 
 export type SparqlBatch = { offset: number; limit: number };
-
-export type ImageApiResponse = {
-    archiveUrl?: string;
-    title: string;
-    imgUrl: string;
-    pandId?: string;
-    addressLink?: string;
-    geoLink?: string;
-    streetLink?: string;
-    streetName?: string;
-    dateString: string;
-    startDate: Date;
-    endDate: Date;
-};
