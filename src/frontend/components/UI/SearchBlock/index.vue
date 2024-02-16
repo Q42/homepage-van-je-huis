@@ -10,26 +10,19 @@
     </div>
     <form class="form" @submit.prevent="handleSubmit">
       <SharedInput
-        class="street-input"
         v-model:value="street"
+        :disabled="!Boolean(streets)"
+        class="street-input"
         :placeholder="$t(getTranslationKey('home.streetInputPlaceHolder'))"
       />
       <SharedInput
-        class="house-number-input"
         v-model:value="houseNumber"
+        class="house-number-input"
         :placeholder="$t(getTranslationKey('home.houseNumberInputPlaceHolder'))"
         icon="search"
       />
       <TransitionFade>
-        <ul v-if="street" class="autocomplete-panel">
-          <li
-            v-for="id in tempAutoCompleteList"
-            :key="id"
-            @click="() => (street = id)"
-          >
-            5a58dacbfbb0dbf25da0a2041a8ae6f4
-          </li>
-        </ul>
+        <ul v-if="street" class="autocomplete-panel"></ul>
       </TransitionFade>
     </form>
   </div>
@@ -38,6 +31,7 @@ import { getTranslationKey } from '@/translations';
 
 <script setup lang="ts">
 import { getTranslationKey } from '@/translations'
+import { useAutocompleteStore } from '@/store/autocompleteStore'
 export interface SearchBlockProps {
   // TODO
 }
@@ -46,23 +40,20 @@ const props = defineProps<SearchBlockProps>()
 
 const router = useRouter()
 const { locale } = useI18n()
+const addressService = useAddressService()
+const autocompleteStore = useAutocompleteStore()
 
+const streets = computed(() => autocompleteStore.autocompleteStreets)
 const street = ref('')
 const houseNumber = ref('')
 
 const handleSubmit = () => {
   router.push('/' + locale.value + '/' + street.value)
 }
-// TODO: Remove this
-const tempAutoCompleteList = [
-  '4e67ac553e1b337b6901cab7409034d7',
-  '4e67ac553e1b337b6901cab7409034d7',
-  '22b8eeafdeac4649f4270b557d93ec45',
-  '36621c0cd0d2bc427286ce283876b4b7',
-  '79678b8bda840894a0ca2bf3c32fff80',
-  '13790327f965d243df5ab2b4921bf0e4',
-  'bb479ec6e7d342d353bb53a44a92a5ef',
-]
+
+onMounted(async () => {
+  await addressService.getAutocompleteStreets()
+})
 </script>
 
 <style lang="less" scoped>

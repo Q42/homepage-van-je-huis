@@ -1,7 +1,10 @@
 import { TimelineEntry } from '../../common/apiSchema/past'
 import { DistanceViewEntry } from '../../common/apiSchema/present'
+import { useAutocompleteStore } from '@/store/autocompleteStore'
 
 export const useAddressService = () => {
+  const autocompleteStore = useAutocompleteStore()
+
   const getAddressJSONandParse = async (addressSlug: string) => {
     const filePath = `/api/address/${addressSlug}.json`
     const response = await fetch(filePath)
@@ -35,7 +38,7 @@ export const useAddressService = () => {
       return null
     }
     const jsonData = await response.json()
-    return jsonData
+    autocompleteStore.setAutocompleteStreets(jsonData.streets)
   }
 
   const getHouseNumbers = async (streetSlug: string) => {
