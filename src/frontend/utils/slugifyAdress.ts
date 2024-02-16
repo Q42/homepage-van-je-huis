@@ -15,6 +15,10 @@ export const defaultSlugifyConfig: SlugifyConfig = {
   trim: true,
 }
 
+export const slugifyStreetName = (streetName: string) => {
+  return slugify(streetName, defaultSlugifyConfig)
+}
+
 export const slugifyAddress = (streetName: string, houseNumber: string) => {
   return slugify(streetName + '-' + houseNumber, defaultSlugifyConfig)
 }
