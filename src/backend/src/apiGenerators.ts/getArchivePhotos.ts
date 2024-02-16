@@ -1,7 +1,7 @@
 import { TimelineEntry } from "../../../common/apiSchema/past";
 import { crawlerConfigs } from "../../pipelineConfig";
 import { DuckDBService } from "../lib/duckDBService";
-import { queries } from "../lib/queries";
+import { queries } from "../lib/queries/queries";
 import { ImageApiResponse } from "../lib/types";
 
 function getDatePosition(date1?: Date, date2?: Date) {

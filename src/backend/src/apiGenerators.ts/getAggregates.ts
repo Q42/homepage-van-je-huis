@@ -1,6 +1,7 @@
 import { DistanceViewAggregateEntry, DistanceViewEntry } from "../../../common/apiSchema/present";
 import { pipelineConfig } from "../../pipelineConfig";
 import { DuckDBService } from "../lib/duckDBService";
+import { queries } from "../lib/queries/queries";
 import { DBAddress } from "../models/adresses";
 
 function divideOverRange(
@@ -42,10 +43,12 @@ export async function getAggregates({
 
     try {
         const numberOfTreeSpecies = (
-            await duckDBService.runQuery(`
-    Select number_of_tree_species as treeSpecies from ${pipelineConfig.aggregateTableName}
-    where "code" = '${address["ligtIn:GBD.BRT.code"]}'
-    `)
+            await duckDBService.runQuery(
+                queries.aggregates.sqlGetNumberOfTreeSpecies({
+                    aggregateTableName: pipelineConfig.aggregateTableName,
+                    brtCode: address["ligtIn:GBD.BRT.code"]
+                })
+            )
         )[0]["treeSpecies"];
 
         if (numberOfTreeSpecies) {
@@ -67,10 +70,12 @@ export async function getAggregates({
 
     try {
         const numberOfTrees = (
-            await duckDBService.runQuery(`
-    Select SUM(number_of_trees) as trees from ${pipelineConfig.aggregateTableName}
-    where "ligtIn:GBD.WIJK.code" = '${address["ligtIn:GBD.WIJK.code"]}'
-    `)
+            await duckDBService.runQuery(
+                queries.aggregates.sqlGetNumberOfTrees({
+                    aggregateTableName: pipelineConfig.aggregateTableName,
+                    wijkCode: address["ligtIn:GBD.WIJK.code"]
+                })
+            )
         )[0]["trees"];
         if (numberOfTrees) {
             const treesWijkEntry: DistanceViewAggregateEntry = {
@@ -91,10 +96,12 @@ export async function getAggregates({
 
     try {
         const numberOfBees = (
-            await duckDBService.runQuery(`
-    Select SUM(number_of_bees) as bees from ${pipelineConfig.aggregateTableName}
-    where "ligtIn:GBD.SDL.code" = '${address["ligtIn:GBD.SDL.code"]}'
-    `)
+            await duckDBService.runQuery(
+                queries.aggregates.sqlGetNumberOfBees({
+                    aggregateTableName: pipelineConfig.aggregateTableName,
+                    sdlCode: address["ligtIn:GBD.SDL.code"]
+                })
+            )
         )[0]["bees"];
 
         if (numberOfBees) {

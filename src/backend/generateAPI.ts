@@ -26,7 +26,7 @@ import { stringLibrary } from "./src/lib/strings";
 import { CrawlerConfig, CsvIngestSource, EnrichedDBAddress } from "./src/lib/types";
 import { getPublicArt } from "./src/apiGenerators.ts/getPublicArt";
 import { getCulturalFacilities } from "./src/apiGenerators.ts/getCulturalFacilities";
-import { queries } from "./src/lib/queries";
+import { queries } from "./src/lib/queries/queries";
 import { getArchivePhotosForBuilding } from "./src/apiGenerators.ts/getArchivePhotos";
 import { getAggregates } from "./src/apiGenerators.ts/getAggregates";
 
@@ -90,7 +90,7 @@ async function generateAPI() {
     // Generate the aggregates
     console.log("Generating aggregates table");
     await duckDBService.runQuery(
-        queries.sqlCreateAggregateTable({
+        queries.aggregates.sqlCreateAggregateTable({
             aggregateTableName: pipelineConfig.aggregateTableName,
             buurtenTableName: csvIngestSources.buurten.outputTableName,
             beesTableName: csvIngestSources.bees.outputTableName,

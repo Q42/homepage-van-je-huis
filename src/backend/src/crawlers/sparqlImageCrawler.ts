@@ -1,5 +1,5 @@
 import SparqlClient from "sparql-http-client";
-import { queries } from "../lib/queries";
+import { queries } from "../lib/queries/queries";
 
 import { AbstractCrawler } from "./abstractCrawler";
 import { CrawlerConfig, ImageApiResponse, SparqlBatch } from "../lib/types";
@@ -27,7 +27,7 @@ export class SparqlImageArchiveCrawler extends AbstractCrawler<ImageApiResponse,
     }
 
     public async loadGuideData(): Promise<SparqlBatch[]> {
-        const stream = await this.sparqlClient.query.select(queries.sparqlGetTotalImages);
+        const stream = await this.sparqlClient.query.select(queries.sparql.sparqlGetTotalImages);
         let totalImages = 0;
         for await (const chunk of stream) {
             if (chunk["cnt"]?.value) {
@@ -51,7 +51,7 @@ export class SparqlImageArchiveCrawler extends AbstractCrawler<ImageApiResponse,
     public async crawl(guideRecord: SparqlBatch): Promise<ImageApiResponse[]> {
         const result: ImageApiResponse[] = [];
 
-        const stream = await this.sparqlClient.query.select(queries.sparqlGetImagesBatch(guideRecord));
+        const stream = await this.sparqlClient.query.select(queries.sparql.getImagesBatch(guideRecord));
 
         for await (const chunk of stream) {
             const image: ImageApiResponse = {
