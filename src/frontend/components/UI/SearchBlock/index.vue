@@ -22,12 +22,19 @@
         icon="search"
       />
       <TransitionFade>
-        <ul v-if="street" class="autocomplete-panel"></ul>
+        <ul v-if="autocompletePanelIsOpen" class="autocomplete-panel">
+          <li
+            v-for="(autocompleteStreet, index) in filteredStreets"
+            :key="index"
+            @click="street = autocompleteStreet"
+          >
+            {{ autocompleteStreet }}
+          </li>
+        </ul>
       </TransitionFade>
     </form>
   </div>
 </template>
-import { getTranslationKey } from '@/translations';
 
 <script setup lang="ts">
 import { getTranslationKey } from '@/translations'
@@ -43,9 +50,23 @@ const { locale } = useI18n()
 const addressService = useAddressService()
 const autocompleteStore = useAutocompleteStore()
 
-const streets = computed(() => autocompleteStore.autocompleteStreets)
 const street = ref('')
 const houseNumber = ref('')
+const streets = computed(() => autocompleteStore.autocompleteStreets)
+const filteredStreets = computed(() => {
+  return streets.value
+    ?.filter((autocompleteStreet) =>
+      autocompleteStreet.toLowerCase().includes(street.value.toLowerCase()),
+    )
+    .sort()
+})
+
+const autocompletePanelIsOpen = computed(
+  () =>
+    Boolean(filteredStreets.value) &&
+    Boolean(street.value) &&
+    !autocompleteStore.autocompleteStreets?.includes(street.value),
+)
 
 const handleSubmit = () => {
   router.push('/' + locale.value + '/' + street.value)
