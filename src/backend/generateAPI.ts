@@ -98,6 +98,7 @@ async function generateAPI() {
         })
     );
 
+    // Start generating the individual address API files
     const statusBar = new cliProgress.SingleBar({}, cliProgress.Presets.shades_classic);
     console.log("starting api generation");
     statusBar.start(baseAdressList.length, 0);
