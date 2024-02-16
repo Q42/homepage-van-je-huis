@@ -1,5 +1,5 @@
 import { AddressRecord } from "../common/apiSchema/addressRecord";
-import { PastData } from "../common/apiSchema/past";
+import { PastData, TimelineEntry } from "../common/apiSchema/past";
 import { AgendaItem, PresentData } from "../common/apiSchema/present";
 import {
     crawlerConfigs,
@@ -27,6 +27,7 @@ import { getPublicArt } from "./src/apiGenerators.ts/getPublicArt";
 import { getCulturalFacilities } from "./src/apiGenerators.ts/getCulturalFacilities";
 import { queries } from "./src/lib/queries";
 import { generateAddresResolveSchema } from "./src/utils/db";
+import { getArchivePhotosForBuilding } from "./src/apiGenerators.ts/getArchivePhotos";
 
 const duckDBService = new DuckDBService();
 
@@ -44,7 +45,12 @@ async function generateAPI() {
         await duckDBService.loadIntermediateSource(source, true);
     }
 
-    const baseAdressList = (await duckDBService.runQuery(queries.sqlGetBaseTable)) as EnrichedDBAddress[];
+    const baseAdressList = (await duckDBService.runQuery(
+        queries.sqlGetBaseTable({
+            addressTable: cs.adressen.outputTableName,
+            streetDescriptionTable: cs.straatOmschrijving.outputTableName
+        })
+    )) as EnrichedDBAddress[];
 
     const resolverOutputDir = pc.apiOutputDirectory + pc.apiResoliverDirectory;
     const addressOutputDir = pc.apiOutputDirectory + pc.apiAddressFilesDirectory;
@@ -53,7 +59,9 @@ async function generateAPI() {
     createDirectory(resolverOutputDir);
     createDirectory(addressOutputDir);
 
-    const eventCalendar = (await duckDBService.runQuery(queries.sqlGetEventCalendar)) as calendarEvent[];
+    const eventCalendar = (await duckDBService.runQuery(
+        queries.sqlGetEventCalendar(cs.eventsPlaceholder.outputTableName)
+    )) as calendarEvent[];
     const events: AgendaItem[] = eventCalendar.map((event) => ({
         title: event.Name_event,
         description: event.Description ?? stringLibrary.eventNoDescription,
@@ -116,6 +124,14 @@ async function generateAPI() {
         const culturalFacilities = await getCulturalFacilities(duckDBService, address.identificatie);
         addressPresent.slider.push(...culturalFacilities);
 
+        const archivePhotos = await getArchivePhotosForBuilding(duckDBService, address["ligtIn:BAG.PND.identificatie"]);
+
+        if (archivePhotos.length < pc.minArchiveImages) {
+            const morePhotos: TimelineEntry[] = []; // Do something clever here to extand the image search range and filter out the duplicates
+            archivePhotos.push(...morePhotos);
+        }
+
+        addressPast.timeline.push(...archivePhotos);
         // This is where the record gets finalized
         if (addressPast.timeline.length > 0) {
             const pastStartEnd = getMinMaxRangeFromPastData(addressPast);
@@ -135,11 +151,7 @@ async function generateAPI() {
         }
 
         const addressRecord: AddressRecord = assembleApiRecord(address, addressPresent, addressPast);
-        writeObjectToJsonFile(
-            addressRecord,
-            `${addressOutputDir}/${generateAddressID(addressRecord.address)}.json`,
-            devMode.enabled
-        );
+        writeObjectToJsonFile(addressRecord, `${addressOutputDir}/${generateAddressID(addressRecord.address)}.json`);
         statusBar.increment();
     }
     statusBar.stop();

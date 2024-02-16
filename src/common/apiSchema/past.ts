@@ -5,7 +5,7 @@ export interface PastData extends BaseView {
   stories: Story[]; // The stories
 }
 
-interface TimelineEntry extends BaseSliderEntry {
+export interface TimelineEntry extends BaseSliderEntry {
   image: ImageRef;
   visitUrl?: string; // URL to the source where people can find out more info about the image
 }

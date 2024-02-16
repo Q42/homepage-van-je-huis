@@ -1,6 +1,5 @@
 import fs from "fs";
-import { CsvIngestSource, CsvIngestSources, IntermediateTableRef, ApiCrawlerConfigs } from "../lib/types";
-import { PipelineConfig } from "../../pipelineConfig";
+import { CsvIngestSources, ApiCrawlerConfigs } from "../lib/types";
 
 export function checkFilePaths(paths: string[]) {
     const missingSources: string[] = [];

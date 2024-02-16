@@ -1,4 +1,4 @@
-import { csvIngestSources as cs } from "../../pipelineConfig";
+import { SparqlBatch } from "./types";
 
 /**
  * Transforms the geometry column of a table in the database.
@@ -29,10 +29,19 @@ UPDATE ${tableName}
 SET ${newGeoColumnName} = ST_Transform(ST_GeomFromText(${sourceColumnName}), '${sourceEpsg}', '${targetEpsg}');`;
 
 export const queries = {
-    sqlGetBaseTable: `SELECT ${cs.adressen.outputTableName}.*, beschrijving AS straatnaamBeschrijving FROM ${cs.adressen.outputTableName} JOIN ${cs.straatOmschrijving.outputTableName} ON (${cs.adressen.outputTableName}."ligtAan:BAG.ORE.identificatieHoofdadres" = ${cs.straatOmschrijving.outputTableName} .identificatie)`,
-    sqlGetEventCalendar: `SELECT * FROM ${cs.eventsPlaceholder.outputTableName} ORDER BY Date_start ASC`,
+    sqlGetBaseTable: ({
+        addressTable,
+        streetDescriptionTable
+    }: {
+        addressTable: string;
+        streetDescriptionTable: string;
+    }) =>
+        `SELECT ${addressTable}.*, beschrijving AS straatnaamBeschrijving FROM ${addressTable} JOIN ${streetDescriptionTable} ON (${addressTable}."ligtAan:BAG.ORE.identificatieHoofdadres" = ${streetDescriptionTable} .identificatie)`,
+    sqlGetEventCalendar: (eventsTableName: string) => `SELECT * FROM ${eventsTableName} ORDER BY Date_start ASC`,
     sqlSelectDistinct: ({ tableName, column, columnAs }: { tableName: string; column: string; columnAs?: string }) =>
-        `SELECT DISTINCT "${column}" ${columnAs ? "AS " + columnAs : ""} FROM ${tableName}`,
+        `SELECT DISTINCT ${column === "*" ? "*" : `"${column}"`} ${columnAs ? "AS " + columnAs : ""} FROM ${tableName}`,
+    sqlSelectArchivePhotos: ({ photoTableName, pandId }: { photoTableName: string; pandId: string }) =>
+        `SELECT DISTINCT(*) FROM ${photoTableName} WHERE pandId = '${pandId}'`,
 
     sparqlSearchByAddress: (street: string, houseNumber: number) => `
         PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
@@ -52,6 +61,121 @@ export const queries = {
         ?address daa:houseNumberEnd ?houseNumberBig.
         filter(xsd:integer(?houseNumberSmall) <= ${houseNumber} && xsd:integer(?houseNumberBig) >= ${houseNumber})
         } LIMIT 1000`,
+
+    sparqlGetTotalImages: `
+    PREFIX rico: <https://www.ica.org/standards/RiC/ontology#>
+    PREFIX bag: <http://bag.basisregistraties.overheid.nl/def/bag#>
+    PREFIX schema: <https://schema.org/>
+    PREFIX hg: <http://rdf.histograph.io/>
+    PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+    PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+    PREFIX saa: <https://data.archief.amsterdam/ontology#>
+    PREFIX memorix: <https://ams-migrate.memorix.io/resources/recordtypes/>
+
+    SELECT (COUNT(*) as ?cnt) WHERE {
+        ?resource a memorix:Image ;
+                    rico:title ?title ;
+                    <http://schema.org/thumbnailUrl> ?thumbnail ;
+                    rico:creationDate ?creationDateItem .
+        
+        OPTIONAL { ?creationDateItem rico:hasBeginningDate ?startDate . }
+        OPTIONAL { ?creationDateItem rico:hasEndDate ?endDate . }
+        OPTIONAL { ?creationDateItem rico:textualValue ?textDate . }
+        
+        # Als er direct aan een pand gekoppeld is.
+        OPTIONAL { ?resource saa:hasOrHadSubjectBuilding ?pand . }
+        
+        # Als er aan een adres gekoppeld is, dat (optioneel) weer aan een pand gekoppeld is.
+        OPTIONAL { 
+        ?resource saa:hasOrHadSubjectAddress ?address . 
+        
+        ?address a hg:Address ;
+                    schema:geoContains ?geo ;
+                    hg:liesIn ?street .
+
+        ?street a hg:Street ;
+                    rdfs:label ?street_name .
+
+        # Koppeling aan pand is optioneel.
+        OPTIONAL {
+            ?geo schema:geoWithin ?pand .
+            ?pand a bag:Pand .
+        }
+        }
+        
+        # Als er ook aan een straat gekoppeld is.
+        OPTIONAL {
+        ?resource saa:hasOrHadSubjectLocation ?street .
+
+        ?street a hg:Street ;
+                    rdfs:label ?street_name .
+        }
+    }
+    `,
+    sparqlGetImagesBatch: ({ offset, limit }: SparqlBatch) => `
+    PREFIX rico: <https://www.ica.org/standards/RiC/ontology#>
+    PREFIX bag: <http://bag.basisregistraties.overheid.nl/def/bag#>
+    PREFIX schema: <https://schema.org/>
+    PREFIX hg: <http://rdf.histograph.io/>
+    PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+    PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+    PREFIX saa: <https://data.archief.amsterdam/ontology#>
+    PREFIX memorix: <https://ams-migrate.memorix.io/resources/recordtypes/>
+    
+    SELECT DISTINCT * WHERE {
+        ?resource a memorix:Image ;
+                    rico:title ?title ;
+                    <http://schema.org/thumbnailUrl> ?thumbnail ;
+                    rico:creationDate ?creationDateItem .
+        
+        OPTIONAL { ?creationDateItem rico:hasBeginningDate ?startDate . }
+        OPTIONAL { ?creationDateItem rico:hasEndDate ?endDate . }
+        OPTIONAL { ?creationDateItem rico:textualValue ?textDate . }
+        
+        # Als er direct aan een pand gekoppeld is.
+        OPTIONAL { ?resource saa:hasOrHadSubjectBuilding ?pand . }
+        
+        # Als er aan een adres gekoppeld is, dat (optioneel) weer aan een pand gekoppeld is.
+        OPTIONAL { 
+          ?resource saa:hasOrHadSubjectAddress ?address . 
+          
+          ?address a hg:Address ;
+                    schema:geoContains ?geo ;
+                    hg:liesIn ?street .
+    
+          ?street a hg:Street ;
+                    rdfs:label ?street_name .
+    
+          # Koppeling aan pand is optioneel.
+          OPTIONAL {
+            ?geo schema:geoWithin ?pand .
+            ?pand a bag:Pand .
+          }
+        }
+        
+        # Als er ook aan een straat gekoppeld is.
+        OPTIONAL {
+          ?resource saa:hasOrHadSubjectLocation ?street .
+    
+          ?street a hg:Street ;
+                    rdfs:label ?street_name .
+        }
+    } LIMIT ${limit} OFFSET ${offset}
+    `,
+    sqlStringReplace: ({
+        targetTable,
+        targetColumn,
+        sourceString,
+        targetString
+    }: {
+        targetTable: string;
+        targetColumn: string;
+        sourceString: string;
+        targetString: string;
+    }) => `
+    UPDATE "${targetTable}"
+    SET "${targetColumn}" = REPLACE("${targetColumn}", '${sourceString}', '${targetString}');
+    `,
 
     sqlSelectPublicArt: ({
         addresTableName,
