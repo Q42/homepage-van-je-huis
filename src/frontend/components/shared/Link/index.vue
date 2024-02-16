@@ -24,6 +24,7 @@ const props = defineProps<LinkProps>()
   gap: 5px;
   color: inherit;
   text-decoration: none;
+  white-space: nowrap;
   cursor: pointer;
   transition: 1s;
   &::after {

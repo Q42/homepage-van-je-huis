@@ -7,14 +7,14 @@
     >
       <SharedImage v-if="image.image" :image="image.image" />
       <div class="image-info">
-        <SharedTypography variant="body" :compact="true">{{
-          image.title
-        }}</SharedTypography>
-        <SharedLink
-          v-if="image.visitUrl"
-          :href="image.visitUrl"
-          :label="$t(getTranslationKey('images.externalLink'))"
-        />
+        <SharedTypography variant="body" :compact="true"
+          >{{ image.title }}
+          <SharedLink
+            v-if="image.visitUrl"
+            :href="image.visitUrl"
+            :label="$t(getTranslationKey('images.externalLink'))"
+          />
+        </SharedTypography>
       </div>
     </div>
   </div>
@@ -51,10 +51,5 @@ const props = defineProps<ImageListProps>()
 .image-wrapper {
   width: 615px;
   max-width: 75%;
-}
-
-.image-info {
-  display: flex;
-  gap: 5px;
 }
 </style>
