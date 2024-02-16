@@ -5,7 +5,6 @@ import {
     crawlerConfigs,
     csvIngestSources as cs,
     csvIngestSources,
-    devMode,
     pipelineConfig as pc,
     pipelineConfig
 } from "./pipelineConfig";
@@ -14,14 +13,15 @@ import { calendarEvent } from "./src/models/eventCalendar";
 
 import cliProgress from "cli-progress";
 
-import {
-    generateAddressID,
-    assembleApiRecord,
-    getMinMaxRangeFromPastData,
-    getMinMaxRangeFromPresentData
-} from "./src/utils/api";
+import { assembleApiRecord, getMinMaxRangeFromPastData, getMinMaxRangeFromPresentData } from "./src/utils/api";
 
-import { checkFilePaths, createDirectory, measureExecutionTime, writeObjectToJsonFile } from "./src/utils/general";
+import {
+    checkFilePaths,
+    createDirectory,
+    getHouseNumberFromAddress,
+    measureExecutionTime,
+    writeObjectToJsonFile
+} from "./src/utils/general";
 import { stringLibrary } from "./src/lib/strings";
 import { CrawlerConfig, CsvIngestSource, EnrichedDBAddress } from "./src/lib/types";
 import { getPublicArt } from "./src/apiGenerators.ts/getPublicArt";
@@ -29,8 +29,12 @@ import { getCulturalFacilities } from "./src/apiGenerators.ts/getCulturalFacilit
 import { queries } from "./src/lib/queries/queries";
 import { getArchivePhotosForBuilding } from "./src/apiGenerators.ts/getArchivePhotos";
 import { getAggregates } from "./src/apiGenerators.ts/getAggregates";
+import { ResolverService } from "./src/lib/resolverService";
+import { slugifyAddress } from "../common/util/resolve";
+import slugify from "slugify";
 
 const duckDBService = new DuckDBService();
+const resolverService = new ResolverService();
 
 async function generateAPI() {
     await duckDBService.initDb({ dbLocation: ":memory:" });
@@ -59,7 +63,6 @@ async function generateAPI() {
     const addressOutputDir = pc.apiOutputDirectory + pc.apiAddressFilesDirectory;
 
     createDirectory(pc.apiOutputDirectory);
-    createDirectory(resolverOutputDir);
     createDirectory(addressOutputDir);
 
     const eventCalendar = (await duckDBService.runQuery(
@@ -74,18 +77,6 @@ async function generateAPI() {
                 ? event.Date_end
                 : undefined
     }));
-
-    // Generate the resolver api files
-    console.log("Generating resolver files");
-    const streetNames = (
-        await duckDBService.runQuery(
-            queries.sqlSelectDistinct({
-                tableName: "adressen",
-                column: "ligtAan:BAG.ORE.naamHoofdadres",
-                columnAs: "s"
-            })
-        )
-    ).map((row) => row["s"]) as string[];
 
     // Generate the aggregates
     console.log("Generating aggregates table");
@@ -172,10 +163,18 @@ async function generateAPI() {
         }
 
         const addressRecord: AddressRecord = assembleApiRecord(address, addressPresent, addressPast);
-        writeObjectToJsonFile(addressRecord, `${addressOutputDir}/${generateAddressID(addressRecord.address)}.json`);
+
+        const addressFileName = slugifyAddress(
+            slugify,
+            address["ligtAan:BAG.ORE.naamHoofdadres"],
+            getHouseNumberFromAddress(address)
+        );
+        writeObjectToJsonFile(addressRecord, `${addressOutputDir}/${addressFileName}.json`);
+        resolverService.addAddressToResolverData(address);
         statusBar.increment();
     }
     statusBar.stop();
+    resolverService.writeResolverFiles(resolverOutputDir);
 }
 
 async function dbProcessRunner() {

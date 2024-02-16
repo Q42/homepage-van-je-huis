@@ -13,7 +13,7 @@ import { buurtenInputColumns, buurtenOutputColumns } from "./src/models/buurten"
 import { beesInputColumns, beesOutputColumns } from "./src/models/bees";
 
 // devMode limits all select queries to a specified max number of rows
-export const devMode = { enabled: true, limit: 10 };
+export const devMode = { enabled: true, limit: 1000 };
 
 // See the type defenition for more info on what all these parameters do.
 export const csvIngestSources: CsvIngestSources = {
