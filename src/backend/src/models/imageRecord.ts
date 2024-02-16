@@ -8,7 +8,6 @@ export interface ImageRecord extends BaseRecord {
     description?: string;
     visitUrl?: string;
     date?: number;
-    copyright?: string;
 }
 export const imageRecordOutputColumns: ColumnDefenitions = {
     id: "VARCHAR",

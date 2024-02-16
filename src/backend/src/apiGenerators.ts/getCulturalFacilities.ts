@@ -1,8 +1,8 @@
-import { DistanceViewEntry, PresentEntityType } from "../../apiSchema/present";
+import { DistanceViewEntry, PresentEntityType } from "../../../common/apiSchema/present";
 import { crawlerConfigs as cc, csvIngestSources as cs, pipelineConfig as pc } from "../../pipelineConfig";
 import { DuckDBService } from "../lib/duckDBService";
 import { CustomizedCulturalFacilityRecord } from "../models/culturalFacility";
-import { queries } from "../queries";
+import { queries } from "../lib/queries";
 
 function mapFacilityType(term: string): PresentEntityType | undefined {
     const termMapping: Record<string, PresentEntityType> = {
@@ -43,8 +43,9 @@ export async function getCulturalFacilities(
 
     return customArtRecords.map((artRecord) => {
         const newEntry: DistanceViewEntry = {
-            distanceToAddress: artRecord.distance_from_address,
-            title: artRecord.Naamorganisatie,
+            position: artRecord.distance_from_address,
+            // There are some encoding errors in the source CSV file that result in é being replaced by Ã©.
+            title: artRecord.Naamorganisatie?.replace(/Ã©/g, "é"),
             visitUrl: artRecord.Correctie_Website,
             type: mapFacilityType(artRecord.Kunstdiscipline) ?? "cultureMulti"
         };

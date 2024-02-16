@@ -1,7 +1,7 @@
 import { SparqlImageArchiveCrawler } from "./src/crawlers/sparqlImageCrawler";
 import { Options as PRetryOptions } from "p-retry";
 
-import { ApiCrawlerConfigs as CrawlerConfigs, CsvIngestSources, IntermediateOutputFormats } from "./src/lib/types";
+import { ApiCrawlerConfigs as CrawlerConfigs, CsvIngestSources } from "./src/lib/types";
 
 import { publicArtRecordOutputColumns } from "./src/models/publicArtRecord";
 import { PublicArtCrawler } from "./src/crawlers/publicArtCrawler";
@@ -10,7 +10,7 @@ import { straatOmschrijvingInputColumns, straatnaamOmschrijvingOutputColumns } f
 import { cultureFacilitiesInputColumns, cultureFacilitiesOutputColumns } from "./src/models/culturalFacility";
 
 // devMode limits all select queries to a specified max number of rows
-export const devMode = { enabled: true, limit: 50 };
+export const devMode = { enabled: true, limit: 10000 };
 
 // See the type defenition for more info on what all these parameters do.
 export const csvIngestSources: CsvIngestSources = {
@@ -57,67 +57,74 @@ export const defaultCrawlerRetryConfig: PRetryOptions = {
 
 export const crawlerConfigs: CrawlerConfigs = {
     publicArt: {
+        skip: true, // remove this flag to also run this crawler
         crawler: PublicArtCrawler,
         retryConfig: { ...defaultCrawlerRetryConfig, retries: 1 },
         outputTableName: "buitenkunst",
         outputColumns: publicArtRecordOutputColumns
-    }
-    /*
+    },
     imageArchive: {
-        crawler: ImageArchiveCrawler,
-        outputTableName: "archief_afbeeldingen",
-        guideSource: csvIngestSources.adressen
-        outputColumns: imageRecordOutputColumns,
-        retryConfig: defaultCrawlerRetryConfig
-    },*/
-    /*
-    imageArchive: {
-        skip: true, // remove this flag to also run this crawler
         crawler: SparqlImageArchiveCrawler,
         outputTableName: "archief_afbeeldingen",
-        guideSource: csvIngestSources.adressen
         outputColumns: {
-            id: "VARCHAR",
-            idTo: "VARCHAR",
+            archiveUrl: "VARCHAR",
             title: "VARCHAR",
-            description: "VARCHAR",
             imgUrl: "VARCHAR",
-            visitUrl: "VARCHAR",
-            date: "INTEGER",
-            copyright: "VARCHAR"
+            pandId: "VARCHAR",
+            addressLink: "VARCHAR",
+            geoLink: "VARCHAR",
+            streetLink: "VARCHAR",
+            streetName: "VARCHAR",
+            dateString: "VARCHAR",
+            startDate: "DATE",
+            endDate: "DATE"
         },
         retryConfig: defaultCrawlerRetryConfig
-    }*/
+    }
 };
 
 export type PipelineConfig = {
     intermediateOutputDirectory: string;
     apiOutputDirectory: string;
+    apiResoliverDirectory: string;
+    apiAddressFilesDirectory: string;
     dbBatchInsertMinThreshold: number;
     maxConsecutiveCrawlFailuresBeforeAbort: number;
     sortSliders: boolean;
     presentViewRangeMax: number; // the maximum distance in meters to show in the present view
     rdColumnPrefix: string;
+    minArchiveImages: number; //If this threshold is not met by simply looking for images relating to an address, the search radius will be increased.
 };
 
 export const pipelineConfig: PipelineConfig = {
     intermediateOutputDirectory: "./intermediate_output",
     apiOutputDirectory: "./api_generated",
+    apiResoliverDirectory: "/resolve",
+    apiAddressFilesDirectory: "/address",
     dbBatchInsertMinThreshold: 500,
     maxConsecutiveCrawlFailuresBeforeAbort: 25,
     sortSliders: true,
     presentViewRangeMax: 1000,
-    rdColumnPrefix: "rd_geometrie_"
+    rdColumnPrefix: "rd_geometrie_",
+    minArchiveImages: 5
 };
 
-type PublicArtCrawlerConfig = {
+type PublicArtCrawlerExtraConfig = {
     totalPages: number;
     baseUrl: string;
     baseListPage: string;
 };
 
-export const publicArtCrawlerConfig: PublicArtCrawlerConfig = {
+export const publicArtCrawlerExtraConfig: PublicArtCrawlerExtraConfig = {
     totalPages: 108,
     baseUrl: "https://amsterdam.kunstwacht.nl",
     baseListPage: "https://amsterdam.kunstwacht.nl/kunstwerken/page"
+};
+
+type ImageArchiveCrawlerExtraConfig = {
+    paginationSize: number;
+};
+
+export const imageArchiveCrawlerExtraConfig: ImageArchiveCrawlerExtraConfig = {
+    paginationSize: 10000
 };
