@@ -66,9 +66,7 @@ async function runCrawler(
 
     let consecutiveFailures = 0;
     console.log("Loading guide data for:", instantiatedCrawler.crawlerConfig.crawler);
-    let guideData = await instantiatedCrawler.loadGuideData();
-
-    guideData = guideData.slice(0, 3);
+    const guideData = await instantiatedCrawler.loadGuideData();
 
     await dbService.createTableFromDefinition(
         instantiatedCrawler.crawlerConfig.outputTableName,
