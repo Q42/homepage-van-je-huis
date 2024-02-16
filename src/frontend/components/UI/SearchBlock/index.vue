@@ -8,27 +8,27 @@
         $t(getTranslationKey('home.subtitle'))
       }}</SharedTypography>
     </div>
-    <form @submit.prevent="handleSubmit">
+    <form class="form" @submit.prevent="handleSubmit">
       <SharedInput
-        v-model:value="search"
-        :placeholder="$t(getTranslationKey('home.inputPlaceholder'))"
+        class="street-input"
+        v-model:value="street"
+        :placeholder="$t(getTranslationKey('home.streetInputPlaceHolder'))"
+      />
+      <SharedInput
+        class="house-number-input"
+        v-model:value="houseNumber"
+        :placeholder="$t(getTranslationKey('home.houseNumberInputPlaceHolder'))"
         icon="search"
       />
       <TransitionFade>
-        <ul v-if="search" class="autocomplete-panel">
-          <li @click="() => (search = '5a58dacbfbb0dbf25da0a2041a8ae6f4')">
+        <ul v-if="street" class="autocomplete-panel">
+          <li
+            v-for="id in tempAutoCompleteList"
+            :key="id"
+            @click="() => (street = id)"
+          >
             5a58dacbfbb0dbf25da0a2041a8ae6f4
           </li>
-          <li>Prinsengracht</li>
-          <li>Keizersgracht</li>
-          <li>Herengracht</li>
-          <li>Rozengracht</li>
-          <li>Leidsestraat</li>
-          <li>Van Baerlestraat</li>
-          <li>Kalverstraat</li>
-          <li>Nieuwezijds Voorburgwal</li>
-          <li>Oudezijds Voorburgwal</li>
-          <li>Jordaan</li>
         </ul>
       </TransitionFade>
     </form>
@@ -47,11 +47,22 @@ const props = defineProps<SearchBlockProps>()
 const router = useRouter()
 const { locale } = useI18n()
 
-const search = ref('')
+const street = ref('')
+const houseNumber = ref('')
 
 const handleSubmit = () => {
-  router.push('/' + locale.value + '/' + search.value)
+  router.push('/' + locale.value + '/' + street.value)
 }
+// TODO: Remove this
+const tempAutoCompleteList = [
+  '4e67ac553e1b337b6901cab7409034d7',
+  '4e67ac553e1b337b6901cab7409034d7',
+  '22b8eeafdeac4649f4270b557d93ec45',
+  '36621c0cd0d2bc427286ce283876b4b7',
+  '79678b8bda840894a0ca2bf3c32fff80',
+  '13790327f965d243df5ab2b4921bf0e4',
+  'bb479ec6e7d342d353bb53a44a92a5ef',
+]
 </script>
 
 <style lang="less" scoped>
@@ -77,6 +88,19 @@ const handleSubmit = () => {
   border-radius: 0 0 8px 8px;
   overflow-y: auto;
   border: solid 1px @neutral-grey1;
+}
+
+.street-input {
+  flex: 100;
+}
+
+.house-number-input {
+  flex: 2;
+}
+
+.form {
+  display: flex;
+  gap: 5px;
 }
 
 .autocomplete-panel li {
