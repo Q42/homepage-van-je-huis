@@ -5,7 +5,7 @@
       :key="index"
       class="image-wrapper"
     >
-      <SharedImage :image="image.image" />
+      <SharedImage v-if="image.image" :image="image.image" />
       <div class="image-info">
         <SharedTypography variant="body" :compact="true">{{
           image.title
