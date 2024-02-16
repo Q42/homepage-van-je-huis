@@ -1,6 +1,6 @@
-import { Image } from '@/models/Image'
+import { ImageRef } from '../../../../common/apiSchema/shared'
 
-export const mockImages: Image[] = [
+export const mockImages: ImageRef[] = [
   {
     url: 'https://amsterdam.kunstwacht.nl/cache/3/3/e/33e5cfcff27c773deb5b84537b845ab2_700_540.jpg',
     altText: 'Buurtberoemd',

@@ -21,11 +21,11 @@
 </template>
 
 <script setup lang="ts">
-import { Image } from '@/models/Image'
+import { ImageRef } from '../../../../common/apiSchema/shared'
 import { getTranslationKey } from '@/translations'
 
 type ImageWithMetaData = {
-  image: Image
+  image: ImageRef
   title: string
   visitUrl?: string
 }

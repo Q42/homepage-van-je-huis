@@ -3,10 +3,10 @@
 </template>
 
 <script setup lang="ts">
-import { Image } from '@/models/Image'
+import { ImageRef } from '../../../../common/apiSchema/shared'
 
 export interface ImageProps {
-  image: Image
+  image: ImageRef
 }
 
 const getImageWidth = () => {
