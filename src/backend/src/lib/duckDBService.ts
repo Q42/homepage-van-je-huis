@@ -199,6 +199,8 @@ export class DuckDBService {
      * @param targetColumnName - The name of the target column.
      * @param sourceEpsg - The EPSG code of the source geometry format.
      * @param targetEpsg - The EPSG code of the target geometry format.
+     * @param invertedSourceLatLong - If the source geometry uses POINT(long lat) instead of the regular way of lat long.
+     *
      * @throws Error if the spatial extension is not enabled in the DuckDB instance.
      * @throws Error if the source column does not exist in the table.
      * @throws Error if the target column already exists in the table.
@@ -209,13 +211,15 @@ export class DuckDBService {
         sourceColumnName,
         targetColumnName,
         sourceEpsg,
-        targetEpsg
+        targetEpsg,
+        invertedSourceLatLong
     }: {
         tableName: string;
         sourceColumnName: string;
         targetColumnName?: string;
         sourceEpsg: string;
         targetEpsg: string;
+        invertedSourceLatLong?: boolean;
     }) {
         if (!this.spatialEnabled) {
             throw new Error("This operation requires that the spatial extension is enabled in the DuckDB instance.");
@@ -236,7 +240,14 @@ export class DuckDBService {
         }
 
         return await this.runQuery(
-            queries.sqlTransformGeometry({ tableName, sourceColumnName, targetColumnName, sourceEpsg, targetEpsg })
+            queries.sqlTransformGeometry({
+                tableName,
+                sourceColumnName,
+                targetColumnName,
+                sourceEpsg,
+                targetEpsg,
+                invertedSourceLatLong
+            })
         );
     }
 }

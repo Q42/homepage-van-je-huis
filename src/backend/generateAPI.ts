@@ -37,7 +37,7 @@ const duckDBService = new DuckDBService();
 const resolverService = new ResolverService();
 
 async function generateAPI() {
-    await duckDBService.initDb({ dbLocation: ":memory:" });
+    await duckDBService.initDb({ dbLocation: "stuff.duckdb" });
 
     const sources: (CsvIngestSource | CrawlerConfig)[] = [...Object.values(cs), ...Object.values(crawlerConfigs)];
 

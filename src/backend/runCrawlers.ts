@@ -66,7 +66,9 @@ async function runCrawler(
 
     let consecutiveFailures = 0;
     console.log("Loading guide data for:", instantiatedCrawler.crawlerConfig.crawler);
-    const guideData = await instantiatedCrawler.loadGuideData();
+    let guideData = await instantiatedCrawler.loadGuideData();
+
+    guideData = guideData.slice(0, 3);
 
     await dbService.createTableFromDefinition(
         instantiatedCrawler.crawlerConfig.outputTableName,
@@ -122,7 +124,6 @@ async function runCrawler(
         tableName: instantiatedCrawler.crawlerConfig.outputTableName,
         outputFile: `${pc.intermediateOutputDirectory}/${instantiatedCrawler.crawlerConfig.outputTableName}`,
         columnDefenitions: instantiatedCrawler.crawlerConfig.outputColumns,
-        outputColumns: undefined,
         outputFormat: "parquet"
     });
 }

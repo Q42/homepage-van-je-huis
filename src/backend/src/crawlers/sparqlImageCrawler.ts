@@ -113,7 +113,7 @@ export class SparqlImageArchiveCrawler extends AbstractCrawler<SparqlImage, Spar
         await this.duckDBService.runQuery(
             queries.sqlStringReplace({
                 targetTable: this.crawlerConfig.outputTableName,
-                targetColumn: "pandId",
+                targetColumn: "streetId",
                 sourceString: "http://bag.basisregistraties.overheid.nl/bag/id/openbare-ruimte/",
                 targetString: ""
             })
@@ -121,9 +121,10 @@ export class SparqlImageArchiveCrawler extends AbstractCrawler<SparqlImage, Spar
 
         await this.duckDBService.transformGeometryFormat({
             tableName: this.crawlerConfig.outputTableName,
-            sourceColumnName: "streetId",
+            sourceColumnName: "wktPoint",
             sourceEpsg: "EPSG:4326",
-            targetEpsg: "EPSG:28992"
+            targetEpsg: "EPSG:28992",
+            invertedSourceLatLong: true
         });
     }
 

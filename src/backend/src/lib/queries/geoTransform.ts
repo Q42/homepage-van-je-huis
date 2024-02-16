@@ -14,21 +14,25 @@ export const sqlTransformGeometry = ({
     targetColumnName,
     sourceColumnName,
     sourceEpsg,
-    targetEpsg
+    targetEpsg,
+    invertedSourceLatLong
 }: {
     tableName: string;
     sourceColumnName: string;
     targetColumnName?: string;
     sourceEpsg: string;
     targetEpsg: string;
+    invertedSourceLatLong?: boolean;
 }) => {
     if (targetColumnName === undefined) {
         targetColumnName = sourceColumnName;
     }
 
+    const source = invertedSourceLatLong ? `ST_FlipCoordinates(${sourceColumnName})` : sourceColumnName;
+
     return `
 ${sourceColumnName !== targetColumnName ? "ALTER TABLE ${tableName} ADD COLUMN ${targetColumnName} GEOMETRY;" : ""}    
 UPDATE ${tableName} 
-SET ${targetColumnName} = ST_Transform(${sourceColumnName}, '${sourceEpsg}', '${targetEpsg}');
+SET ${targetColumnName} = ST_Transform(${source}, '${sourceEpsg}', '${targetEpsg}');
 `;
 };

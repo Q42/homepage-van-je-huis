@@ -70,8 +70,8 @@ export const sparqlQueries = {
     PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
     PREFIX saa: <https://data.archief.amsterdam/ontology#>
     PREFIX memorix: <https://ams-migrate.memorix.io/resources/recordtypes/>
-  
-    SELECT (COUNT(DISTINCT *) as ?cnt) WHERE {
+    
+    SELECT DISTINCT * WHERE {
         ?resource a memorix:Image ;
                     rico:title ?title ;
                     <http://schema.org/thumbnailUrl> ?thumbnail ;
@@ -93,12 +93,12 @@ export const sparqlQueries = {
                     hg:liesIn ?street .
         
           ?geo a geo:Geometry ; geo:asWKT ?wkt .
-  
+    
           ?street a hg:Street ;
                     rdfs:label ?street_name ;
                     owl:sameAs ?openbareRuimte .
           FILTER(CONTAINS(STR(?openbareRuimte), 'bag'))
-  
+    
           # Koppeling aan pand is optioneel.
           OPTIONAL {
             ?geo schema:geoWithin ?pand .
@@ -109,7 +109,7 @@ export const sparqlQueries = {
         # Als er ook aan een straat gekoppeld is.
         OPTIONAL {
           ?resource saa:hasOrHadSubjectLocation ?street .
-  
+    
           ?street a hg:Street ;               
                     rdfs:label ?street_name ;
                     owl:sameAs ?openbareRuimte .
