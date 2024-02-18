@@ -8,12 +8,9 @@
       "
       icon-type="stories"
     >
-      <div
-        v-if="addressData && currentView === 'past'"
-        class="side-panel-items"
-      >
+      <div v-if="pastData && currentView === 'past'" class="side-panel-items">
         <SharedStory
-          v-for="(story, index) in addressData.pastData.stories"
+          v-for="(story, index) in pastData.stories"
           :key="index"
           :story="story"
         />
@@ -50,7 +47,7 @@ const { pastData, presentData } = useAddress(params.address as string)
 const currentView: Ref<'present' | 'past'> = ref('past')
 
 const images = computed(() => {
-  if (!pastData || !presentData) {
+  if (!pastData.value || !presentData.value) {
     return null
   }
 
