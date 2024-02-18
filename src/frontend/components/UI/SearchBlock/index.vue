@@ -123,7 +123,6 @@ const streetAutocompleteIsOpen = computed(
   () =>
     streetInputIsFocused.value &&
     Boolean(filteredStreets.value) &&
-    Boolean(street.value) &&
     !streetAutocompleteListContainsSelectedStreet.value,
 )
 
