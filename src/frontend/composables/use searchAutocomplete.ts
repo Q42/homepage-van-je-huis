@@ -1,20 +1,20 @@
 import { useAutocompleteStore } from '@/store/autocompleteStore'
 
-export const useSearchAutocomplete = (street: Ref, houseNumber: ref) => {
+// This composable is tightly coupled with the search component. But I wanted to put some
+// logic in a separate file to make the component more readable.
+export const useSearchAutocomplete = (street: Ref, houseNumber: Ref) => {
   const autocompleteStore = useAutocompleteStore()
   const addressService = useAddressService()
 
   const streetInputIsFocused = ref(false)
   const houseNumberInputIsFocused = ref(false)
 
-  const streetAutocompleteListContainsSelectedStreet = computed(() => {
+  const streetListContainsSelected = computed(() => {
     return streets.value?.includes(street.value)
   })
-  const houseNumberAutocompleteListContainsSelectedHouseNumber = computed(
-    () => {
-      return houseNumbers.value?.includes(houseNumber.value.toUpperCase())
-    },
-  )
+  const houseNumberListContainsSelected = computed(() => {
+    return houseNumbers.value?.includes(houseNumber.value.toUpperCase())
+  })
 
   const streets = computed(() => autocompleteStore.autocompleteStreets)
   const filteredStreets = computed(() => {
@@ -44,15 +44,15 @@ export const useSearchAutocomplete = (street: Ref, houseNumber: ref) => {
     () =>
       streetInputIsFocused.value &&
       Boolean(filteredStreets.value) &&
-      !streetAutocompleteListContainsSelectedStreet.value,
+      !streetListContainsSelected.value,
   )
 
   const houseNumberAutocompleteIsOpen = computed(
     () =>
-      houseNumberInputIsFocused.value &&
-      !houseNumberAutocompleteListContainsSelectedHouseNumber.value,
+      houseNumberInputIsFocused.value && !houseNumberListContainsSelected.value,
   )
 
+  // We fetch the house numbers if we have a match with an autocomplete street
   onUpdated(async () => {
     if (streets.value?.includes(street.value) && street.value) {
       const autocompleteHouseNumbers = await addressService.getHouseNumbers(
@@ -66,6 +66,7 @@ export const useSearchAutocomplete = (street: Ref, houseNumber: ref) => {
     }
   })
 
+  // Focus logic is to enable user frendly autocomplete
   const handleFocusIn = (e: FocusEvent) => {
     const streetInput = document.getElementById('street-input')
     const houseNumberInput = document.getElementById('house-number-input')
