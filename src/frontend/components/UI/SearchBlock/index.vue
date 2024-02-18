@@ -45,6 +45,7 @@
         </ul>
       </TransitionFade>
     </form>
+    <div class="error">Vul een geldig adres in</div>
   </div>
 </template>
 
@@ -103,7 +104,13 @@ const houseNumberAutocompleteIsOpen = computed(
 )
 
 const handleSubmit = () => {
-  router.push('/' + locale.value + '/' + street.value)
+  if (!street.value || !houseNumber.value) {
+    return
+  }
+
+  router.push(
+    '/' + locale.value + '/' + slugifyAddress(street.value, houseNumber.value),
+  )
 }
 
 onMounted(async () => {
@@ -147,6 +154,14 @@ onMounted(async () => {
 .form {
   display: flex;
   gap: 5px;
+}
+// TODO: temp styles, not designed
+.error {
+  padding: 10px 20px;
+  background: lighten(@primary-red, 50%);
+  border-radius: 5px;
+  color: @primary-black;
+  border: 2px solid @primary-red;
 }
 
 .autocomplete-panel li {
