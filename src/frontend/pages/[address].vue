@@ -35,10 +35,6 @@
 </template>
 
 <script setup lang="ts">
-import { PastData } from '../../common/apiSchema/past'
-import { AddressRecord } from '../../common/apiSchema/addressRecord'
-
-import { PresentData } from '../../common/apiSchema/present'
 import { getTranslationKey } from '@/translations'
 
 defineI18nRoute({
@@ -50,14 +46,11 @@ defineI18nRoute({
 const { params } = useRoute()
 
 const addressService = useAddressService()
-
-const addressData: Ref<AddressRecord | null> = ref(null)
+const { pastData, presentData } = useAddress(params.address as string)
 const currentView: Ref<'present' | 'past'> = ref('past')
-const pastData: Ref<PastData | null> = ref(null)
-const presentData: Ref<PresentData | null> = ref(null)
 
 const images = computed(() => {
-  if (!addressData.value) {
+  if (!pastData || !presentData) {
     return null
   }
 
@@ -73,15 +66,6 @@ const images = computed(() => {
   }
 
   return addressService.getImagesViewModel(getImages())
-})
-
-onMounted(async () => {
-  const data = await addressService.getAddressJSONandParse(
-    params.address as string,
-  )
-  addressData.value = data
-  pastData.value = data.pastData
-  presentData.value = data.presentData
 })
 </script>
 
