@@ -13,12 +13,14 @@
     </div>
     <form class="form" @submit.prevent="handleSubmit">
       <SharedInput
+        id="street-input"
         v-model:value="street"
         :disabled="!Boolean(streets)"
         class="street-input"
         :placeholder="$t(getTranslationKey('home.streetInputPlaceHolder'))"
       />
       <SharedInput
+        id="house-number-input"
         v-model:value="houseNumber"
         :disabled="!Boolean(houseNumbers)"
         class="house-number-input"
@@ -107,19 +109,26 @@ onUpdated(async () => {
   }
 })
 
-const autocompleteListContainsSelectedStreet = computed(() => {
+const streetAutocompleteListContainsSelectedStreet = computed(() => {
   return streets.value?.includes(street.value)
+})
+
+const houseNumberAutocompleteListContainsSelectedHouseNumber = computed(() => {
+  return houseNumbers.value?.includes(houseNumber.value)
 })
 
 const streetAutocompleteIsOpen = computed(
   () =>
     Boolean(filteredStreets.value) &&
     Boolean(street.value) &&
-    !autocompleteListContainsSelectedStreet.value,
+    !streetAutocompleteListContainsSelectedStreet.value,
 )
 
 const houseNumberAutocompleteIsOpen = computed(
-  () => Boolean(houseNumbers.value) && Boolean(houseNumber.value),
+  () =>
+    Boolean(filteredHouseNumbers.value) &&
+    Boolean(houseNumber.value) &&
+    !houseNumberAutocompleteListContainsSelectedHouseNumber.value,
 )
 
 const selectStreet = (selectedStreet: string) => {
