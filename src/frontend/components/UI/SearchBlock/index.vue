@@ -8,6 +8,9 @@
         $t(getTranslationKey('home.subtitle'))
       }}</SharedTypography>
     </div>
+    <div v-if="hasError" class="error">
+      {{ $t(getTranslationKey(error as TranslationKey)) }}
+    </div>
     <form class="form" @submit.prevent="handleSubmit">
       <SharedInput
         v-model:value="street"
@@ -27,7 +30,7 @@
           <li
             v-for="(autocompleteStreet, index) in filteredStreets"
             :key="index"
-            @click="street = autocompleteStreet"
+            @click="() => selectStreet(autocompleteStreet)"
           >
             {{ autocompleteStreet }}
           </li>
@@ -38,19 +41,18 @@
           <li
             v-for="(autocompleteHouseNumber, index) in houseNumbers"
             :key="index"
-            @click="houseNumber = autocompleteHouseNumber"
+            @click="() => selectHouseNumber(autocompleteHouseNumber)"
           >
             {{ autocompleteHouseNumber }}
           </li>
         </ul>
       </TransitionFade>
     </form>
-    <div class="error">Vul een geldig adres in</div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { getTranslationKey } from '@/translations'
+import { getTranslationKey, TranslationKey } from '@/translations'
 import { useAutocompleteStore } from '@/store/autocompleteStore'
 export interface SearchBlockProps {
   // TODO
@@ -62,6 +64,9 @@ const router = useRouter()
 const { locale } = useI18n()
 const addressService = useAddressService()
 const autocompleteStore = useAutocompleteStore()
+
+const error: Ref<TranslationKey | null> = ref(null)
+const hasError = computed(() => Boolean(error.value))
 
 const street = ref('')
 const houseNumber = ref('')
@@ -103,8 +108,19 @@ const houseNumberAutocompleteIsOpen = computed(
   () => Boolean(houseNumbers.value) && Boolean(houseNumber.value),
 )
 
+const selectStreet = (selectedStreet: string) => {
+  error.value = null
+  street.value = selectedStreet
+}
+
+const selectHouseNumber = (selectedHouseNumber: string) => {
+  error.value = null
+  houseNumber.value = selectedHouseNumber
+}
+
 const handleSubmit = () => {
   if (!street.value || !houseNumber.value) {
+    error.value = getTranslationKey('search.invalideAddress')
     return
   }
 
@@ -120,7 +136,6 @@ onMounted(async () => {
 
 <style lang="less" scoped>
 .search-block {
-  position: relative;
   height: 100%;
   margin: auto;
   display: flex;
@@ -133,6 +148,7 @@ onMounted(async () => {
 }
 
 .autocomplete-panel {
+  background: @primary-white;
   position: absolute;
   max-height: 300px;
   width: 100%;
@@ -141,6 +157,7 @@ onMounted(async () => {
   border-radius: 0 0 8px 8px;
   overflow-y: auto;
   border: solid 1px @neutral-grey1;
+  z-index: 1;
 }
 
 .street-input {
@@ -152,6 +169,7 @@ onMounted(async () => {
 }
 
 .form {
+  position: relative;
   display: flex;
   gap: 5px;
 }
@@ -167,6 +185,7 @@ onMounted(async () => {
 .autocomplete-panel li {
   list-style: none;
   padding: 10px;
+  z-index: inherit;
 }
 
 .title {

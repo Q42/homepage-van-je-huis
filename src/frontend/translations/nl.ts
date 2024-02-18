@@ -15,4 +15,7 @@ export const nl = {
     pastLabel: 'Verleden',
     presentLabel: 'Heden',
   },
+  search: {
+    invalideAddress: 'Vul een geldig adres in',
+  },
 }
