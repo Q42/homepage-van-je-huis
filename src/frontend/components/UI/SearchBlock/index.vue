@@ -39,7 +39,7 @@
       <TransitionFade>
         <ul v-if="houseNumberAutocompleteIsOpen" class="autocomplete-panel">
           <li
-            v-for="(autocompleteHouseNumber, index) in houseNumbers"
+            v-for="(autocompleteHouseNumber, index) in filteredHouseNumbers"
             :key="index"
             @click="() => selectHouseNumber(autocompleteHouseNumber)"
           >
@@ -70,6 +70,7 @@ const hasError = computed(() => Boolean(error.value))
 
 const street = ref('')
 const houseNumber = ref('')
+
 const streets = computed(() => autocompleteStore.autocompleteStreets)
 const filteredStreets = computed(() => {
   return streets.value
@@ -79,6 +80,19 @@ const filteredStreets = computed(() => {
     .sort()
 })
 const houseNumbers: Ref<null | string[]> = ref(null)
+const filteredHouseNumbers = computed(() => {
+  if (!houseNumber.value) {
+    return houseNumbers.value
+  } else {
+    return houseNumbers.value
+      ?.filter((autocompleteHouseNumber) =>
+        autocompleteHouseNumber
+          .toLowerCase()
+          .includes(houseNumber.value.toLowerCase()),
+      )
+      .sort()
+  }
+})
 
 onUpdated(async () => {
   if (streets.value?.includes(street.value) && street.value) {
