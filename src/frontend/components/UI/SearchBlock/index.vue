@@ -23,13 +23,24 @@
         icon="search"
       />
       <TransitionFade>
-        <ul v-if="autocompletePanelIsOpen" class="autocomplete-panel">
+        <ul v-if="streetAutocompleteIsOpen" class="autocomplete-panel">
           <li
             v-for="(autocompleteStreet, index) in filteredStreets"
             :key="index"
             @click="street = autocompleteStreet"
           >
             {{ autocompleteStreet }}
+          </li>
+        </ul>
+      </TransitionFade>
+      <TransitionFade>
+        <ul v-if="houseNumberAutocompleteIsOpen" class="autocomplete-panel">
+          <li
+            v-for="(autocompleteHouseNumber, index) in houseNumbers"
+            :key="index"
+            @click="houseNumber = autocompleteHouseNumber"
+          >
+            {{ autocompleteHouseNumber }}
           </li>
         </ul>
       </TransitionFade>
@@ -80,11 +91,15 @@ const autocompleteListContainsSelectedStreet = computed(() => {
   return streets.value?.includes(street.value)
 })
 
-const autocompletePanelIsOpen = computed(
+const streetAutocompleteIsOpen = computed(
   () =>
     Boolean(filteredStreets.value) &&
     Boolean(street.value) &&
     !autocompleteListContainsSelectedStreet.value,
+)
+
+const houseNumberAutocompleteIsOpen = computed(
+  () => Boolean(houseNumbers.value) && Boolean(houseNumber.value),
 )
 
 const handleSubmit = () => {
