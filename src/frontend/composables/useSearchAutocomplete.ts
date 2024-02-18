@@ -25,7 +25,7 @@ export const useSearchAutocomplete = (street: Ref, houseNumber: Ref) => {
       .sort()
   })
 
-  const houseNumbers: Ref<null | string[]> = ref(null)
+  const houseNumbers: Ref<undefined | string[]> = ref()
   const filteredHouseNumbers = computed(() => {
     if (!houseNumber.value) {
       return houseNumbers.value
@@ -42,9 +42,9 @@ export const useSearchAutocomplete = (street: Ref, houseNumber: Ref) => {
 
   const streetAutocompleteIsOpen = computed(
     () =>
-      streetInputIsFocused.value &&
-      Boolean(filteredStreets.value) &&
-      !streetListContainsSelected.value,
+      // TODO: Uncomment this
+      // streetInputIsFocused.value &&
+      Boolean(filteredStreets.value) && !streetListContainsSelected.value,
   )
 
   const houseNumberAutocompleteIsOpen = computed(

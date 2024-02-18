@@ -32,9 +32,19 @@
           <li
             v-for="(autocompleteStreet, index) in filteredStreets"
             :key="index"
-            @click="() => selectStreet(autocompleteStreet)"
           >
-            {{ autocompleteStreet }}
+            <button
+              ref="streetItems"
+              :class="{
+                'autocomplete-item--focused': index === focussedStreetIndex,
+              }"
+              type="button"
+              @click="() => selectStreet(autocompleteStreet)"
+              @mouseenter="() => (focussedStreetIndex = index)"
+              @mouseleave="() => (focussedStreetIndex = null)"
+            >
+              {{ autocompleteStreet }}
+            </button>
           </li>
         </ul>
       </TransitionFade>
@@ -43,9 +53,20 @@
           <li
             v-for="(autocompleteHouseNumber, index) in filteredHouseNumbers"
             :key="index"
-            @click="() => selectHouseNumber(autocompleteHouseNumber)"
           >
-            {{ autocompleteHouseNumber }}
+            <button
+              ref="streetItems"
+              :class="{
+                'autocomplete-item--focused':
+                  index === focussedHouseNumberIndex,
+              }"
+              type="button"
+              @click="() => selectHouseNumber(autocompleteHouseNumber)"
+              @mouseenter="() => (focussedHouseNumberIndex = index)"
+              @mouseleave="() => (focussedHouseNumberIndex = null)"
+            >
+              {{ autocompleteHouseNumber }}
+            </button>
           </li>
         </ul>
       </TransitionFade>
@@ -68,6 +89,37 @@ const street = ref('')
 const houseNumber = ref('')
 const error: Ref<TranslationKey | null> = ref(null)
 const hasError = computed(() => Boolean(error.value))
+
+const focussedStreetIndex: Ref<number | null> = ref(null)
+const focussedHouseNumberIndex: Ref<number | null> = ref(null)
+
+const handleKeyboardFocus = (
+  direction: 'down' | 'up',
+  focussedIdentifier: Ref<number | null>,
+  list: Ref<string[] | undefined>,
+) => {
+  if (!list.value) {
+    return
+  }
+
+  if (direction === 'down') {
+    if (focussedIdentifier.value === null) {
+      focussedIdentifier.value = 0
+    } else if (focussedIdentifier.value < list.value.length - 1) {
+      focussedIdentifier.value++
+    } else if (focussedIdentifier.value === list.value.length - 1) {
+      focussedIdentifier.value = 0
+    }
+  } else if (direction === 'up') {
+    if (focussedIdentifier.value === null) {
+      focussedIdentifier.value = list.value.length - 1
+    } else if (focussedIdentifier.value > 0) {
+      focussedIdentifier.value--
+    } else if (focussedIdentifier.value === 0) {
+      focussedIdentifier.value = list.value.length - 1
+    }
+  }
+}
 
 const {
   streetAutocompleteIsOpen,
@@ -98,6 +150,34 @@ const handleSubmit = () => {
     '/' + locale.value + '/' + slugifyAddress(street.value, houseNumber.value),
   )
 }
+
+const handleKeyDown = (event: KeyboardEvent) => {
+  if (event.key === 'ArrowDown') {
+    if (streetAutocompleteIsOpen.value) {
+      handleKeyboardFocus('down', focussedStreetIndex, filteredStreets)
+    } else if (houseNumberAutocompleteIsOpen.value) {
+      handleKeyboardFocus(
+        'down',
+        focussedHouseNumberIndex,
+        filteredHouseNumbers,
+      )
+    }
+  } else if (event.key === 'ArrowUp') {
+    if (streetAutocompleteIsOpen.value) {
+      handleKeyboardFocus('up', focussedStreetIndex, filteredStreets)
+    } else if (houseNumberAutocompleteIsOpen.value) {
+      handleKeyboardFocus('up', focussedHouseNumberIndex, filteredHouseNumbers)
+    }
+  }
+}
+
+onMounted(() => {
+  window.addEventListener('keydown', handleKeyDown)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('keydown', handleKeyDown)
+})
 </script>
 
 <style lang="less" scoped>
@@ -148,9 +228,24 @@ const handleSubmit = () => {
   border: 2px solid @primary-red;
 }
 
+.autocomplete-panel button {
+  all: unset;
+  box-sizing: border-box;
+  padding: 10px;
+  width: 100%;
+  cursor: pointer;
+
+  &:hover {
+    background: @neutral-grey1;
+  }
+}
+
+.autocomplete-panel .autocomplete-item--focused {
+  background: @neutral-grey1;
+}
+
 .autocomplete-panel li {
   list-style: none;
-  padding: 10px;
   z-index: inherit;
 }
 
