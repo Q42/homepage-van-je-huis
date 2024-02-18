@@ -13,15 +13,15 @@
     </div>
     <form class="form" @submit.prevent="handleSubmit">
       <SharedInput
-        id="street-input"
         v-model:value="street"
+        input-id="street-input"
         :disabled="!Boolean(streets)"
         class="street-input"
         :placeholder="$t(getTranslationKey('home.streetInputPlaceHolder'))"
       />
       <SharedInput
-        id="house-number-input"
         v-model:value="houseNumber"
+        input-id="house-number-input"
         :disabled="!Boolean(houseNumbers)"
         class="house-number-input"
         :placeholder="$t(getTranslationKey('home.houseNumberInputPlaceHolder'))"
@@ -72,6 +72,8 @@ const hasError = computed(() => Boolean(error.value))
 
 const street = ref('')
 const houseNumber = ref('')
+const streetInputIsFocused = ref(false)
+const houseNumberInputIsFocused = ref(false)
 
 const streets = computed(() => autocompleteStore.autocompleteStreets)
 const filteredStreets = computed(() => {
@@ -114,11 +116,12 @@ const streetAutocompleteListContainsSelectedStreet = computed(() => {
 })
 
 const houseNumberAutocompleteListContainsSelectedHouseNumber = computed(() => {
-  return houseNumbers.value?.includes(houseNumber.value)
+  return houseNumbers.value?.includes(houseNumber.value.toUpperCase())
 })
 
 const streetAutocompleteIsOpen = computed(
   () =>
+    streetInputIsFocused.value &&
     Boolean(filteredStreets.value) &&
     Boolean(street.value) &&
     !streetAutocompleteListContainsSelectedStreet.value,
@@ -126,8 +129,7 @@ const streetAutocompleteIsOpen = computed(
 
 const houseNumberAutocompleteIsOpen = computed(
   () =>
-    Boolean(filteredHouseNumbers.value) &&
-    Boolean(houseNumber.value) &&
+    houseNumberInputIsFocused.value &&
     !houseNumberAutocompleteListContainsSelectedHouseNumber.value,
 )
 
@@ -152,8 +154,31 @@ const handleSubmit = () => {
   )
 }
 
+const handleFocusIn = (e: FocusEvent) => {
+  const streetInput = document.getElementById('street-input')
+  const houseNumberInput = document.getElementById('house-number-input')
+
+  if (e.target === streetInput) {
+    streetInputIsFocused.value = true
+  } else if (e.target === houseNumberInput) {
+    houseNumberInputIsFocused.value = true
+  }
+}
+
+const handleFocusOut = () => {
+  streetInputIsFocused.value = false
+  houseNumberInputIsFocused.value = false
+}
+
 onMounted(async () => {
   await addressService.getAutocompleteStreets()
+  document.addEventListener('focusin', handleFocusIn)
+  document.addEventListener('focusout', handleFocusOut)
+})
+
+onUnmounted(() => {
+  document.removeEventListener('focusin', handleFocusIn)
+  document.removeEventListener('focusout', handleFocusOut)
 })
 </script>
 

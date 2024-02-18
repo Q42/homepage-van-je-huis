@@ -6,6 +6,7 @@
     }"
   >
     <input
+      :id="inputId"
       :disabled="props.disabled"
       class="input"
       :class="{
@@ -29,6 +30,7 @@ export interface InputProps {
   placeholder: string
   icon?: IconType
   disabled?: boolean
+  inputId?: string
 }
 
 const value = defineModel('value')
