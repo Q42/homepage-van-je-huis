@@ -124,6 +124,5 @@ export async function getSurroundingsPhotos({
             dbResults.push(...intermediate_results);
         }
     }
-    console.log(dbResults);
     return { result: mapImageRecord(dbResults), uncertainty };
 }

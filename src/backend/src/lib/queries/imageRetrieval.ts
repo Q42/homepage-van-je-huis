@@ -1,6 +1,6 @@
 export const imageArchive = {
     sqlSelectArchivePhotos: ({ photoTableName, pandId }: { photoTableName: string; pandId: string }) =>
-        `SELECT DISTINCT(*) FROM ${photoTableName} WHERE pandId = '${pandId}'`,
+        `SELECT DISTINCT ON(imgUrl) * FROM ${photoTableName} WHERE pandId = '${pandId}'`,
     sqlGetNeighboringImages: ({
         addressTableName,
         archiveImagesTableName,
@@ -20,7 +20,7 @@ export const imageArchive = {
 
         return `
     SELECT
-        DISTINCT (B.imgUrl), B.* , round(ST_Distance(A.geometrie , B.wktPoint),0) as distance_from_address
+        DISTINCT ON(B.imgUrl) B.* , round(ST_Distance(A.geometrie , B.wktPoint),0) as distance_from_address
     FROM
         ${addressTableName} A
     JOIN ${archiveImagesTableName} AS B ON
@@ -48,7 +48,7 @@ export const imageArchive = {
         const excludeArrayString = excludeImages?.map((url) => `'${url}'`).join(",");
         return `
     SELECT
-        DISTINCT (B.imgUrl), B.*,
+        DISTINCT ON(B.imgUrl) B.*,
         round(ST_Distance(A.geometrie, B.wktPoint), 0) as distance_from_address
     FROM
         ${addressTableName} A
@@ -75,7 +75,7 @@ export const imageArchive = {
         const excludeArrayString = excludeImages?.map((url) => `'${url}'`).join(",");
         return `
     SELECT
-        DISTINCT (B.imgUrl), B.*,
+        DISTINCT ON(B.imgUrl), B.*,
         round(ST_Distance(A.geometrie, B.wktPoint), 0) as distance_from_address
     FROM
         ${addressTableName}  A
@@ -107,7 +107,7 @@ export const imageArchive = {
     }) => {
         const excludeArrayString = excludeImages?.map((url) => `'${url}'`).join(",");
         return `SELECT
-            DISTINCT (B.imgUrl), B.*,
+            DISTINCT ON(B.imgUrl) B.*,
             round(ST_Distance(A.geometrie, B.wktPoint), 0) as distance_from_address
         FROM
         ${addressTableName} A
