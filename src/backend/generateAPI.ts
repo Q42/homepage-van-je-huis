@@ -27,7 +27,7 @@ import { CrawlerConfig, CsvIngestSource, EnrichedDBAddress } from "./src/lib/typ
 import { getPublicArt } from "./src/apiGenerators.ts/getPublicArt";
 import { getCulturalFacilities } from "./src/apiGenerators.ts/getCulturalFacilities";
 import { queries } from "./src/lib/queries/queries";
-import { getArchivePhotosForBuilding } from "./src/apiGenerators.ts/getArchivePhotos";
+import { getAdditionalPhotosForBuilding, getArchivePhotosForBuilding } from "./src/apiGenerators.ts/getArchivePhotos";
 import { getAggregates } from "./src/apiGenerators.ts/getAggregates";
 import { ResolverService } from "./src/lib/resolverService";
 import { slugifyAddress } from "../common/util/resolve";
@@ -37,7 +37,7 @@ const duckDBService = new DuckDBService();
 const resolverService = new ResolverService();
 
 async function generateAPI() {
-    await duckDBService.initDb({ dbLocation: "stuff.duckdb" });
+    await duckDBService.initDb({ dbLocation: ":memory:" });
 
     const sources: (CsvIngestSource | CrawlerConfig)[] = [...Object.values(cs), ...Object.values(crawlerConfigs)];
 
@@ -126,14 +126,28 @@ async function generateAPI() {
         addressPresent.slider.push(...culturalFacilities);
 
         // Add the archive photos
+
+        let archivePhotoUncertainty: number | undefined = undefined;
         const archivePhotos = await getArchivePhotosForBuilding(duckDBService, address["ligtIn:BAG.PND.identificatie"]);
+        if (archivePhotos.length > 0) {
+            archivePhotoUncertainty = 0;
+        }
 
         if (archivePhotos.length < pc.minArchiveImages) {
-            const morePhotos: TimelineEntry[] = []; // Do something clever here to extand the image search range and filter out the duplicates
-            archivePhotos.push(...morePhotos);
+            const { result, uncertainty }: { result: TimelineEntry[]; uncertainty: number } =
+                await getAdditionalPhotosForBuilding(
+                    duckDBService,
+                    address.identificatie,
+                    pc.maxImgSearchRadius,
+                    pc.minArchiveImages - archivePhotos.length
+                );
+            archivePhotoUncertainty = uncertainty;
+
+            archivePhotos.push(...result);
         }
 
         addressPast.timeline.push(...archivePhotos);
+        addressPast.timelineUncertainty = archivePhotoUncertainty;
         // This is where the record gets finalized
         if (addressPast.timeline.length > 0) {
             const pastStartEnd = getMinMaxRangeFromPastData(addressPast);

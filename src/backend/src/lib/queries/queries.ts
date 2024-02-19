@@ -1,6 +1,7 @@
 import { GeoString } from "../types";
 import { aggregateQueries } from "./agregates";
 import { sqlTransformGeometry } from "./geoTransform";
+import { imageArchive } from "./imageRetrieval";
 import { sparqlQueries } from "./sparql";
 
 export const queries = {
@@ -15,8 +16,7 @@ export const queries = {
     sqlGetEventCalendar: (eventsTableName: string) => `SELECT * FROM ${eventsTableName} ORDER BY Date_start ASC`,
     sqlSelectDistinct: ({ tableName, column, columnAs }: { tableName: string; column: string; columnAs?: string }) =>
         `SELECT DISTINCT ${column === "*" ? "*" : `"${column}"`} ${columnAs ? "AS " + columnAs : ""} FROM ${tableName}`,
-    sqlSelectArchivePhotos: ({ photoTableName, pandId }: { photoTableName: string; pandId: string }) =>
-        `SELECT DISTINCT(*) FROM ${photoTableName} WHERE pandId = '${pandId}'`,
+
     countWithinRangeOfLocation: ({
         location,
         targetTable,
@@ -85,7 +85,9 @@ export const queries = {
         WHERE B.identificatie = '${addressId}'
         ORDER BY distance_from_address ASC;
         `,
+
     aggregates: aggregateQueries,
     sparql: sparqlQueries,
+    imageArchive: imageArchive,
     sqlTransformGeometry
 };
