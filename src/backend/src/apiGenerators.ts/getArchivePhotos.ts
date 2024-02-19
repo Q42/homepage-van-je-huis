@@ -73,7 +73,6 @@ export async function getSurroundingsPhotos({
     limit: number;
     excludeImages?: string[];
 }): Promise<{ result: TimelineEntry[]; uncertainty: number }> {
-    let results: SparqlImage[] = [];
     let uncertainty = 1;
 
     let dbResults = (await duckDBService.runQuery(
@@ -81,45 +80,50 @@ export async function getSurroundingsPhotos({
             addressTableName: csvIngestSources.adressen.outputTableName,
             archiveImagesTableName: crawlerConfigs.imageArchive.outputTableName,
             addressId: addressId,
-            maxDistance: maxDistance
+            maxDistance: maxDistance,
+            limit: limit,
+            excludeImages: excludeImages
         })
     )) as SparqlImage[];
 
-    if (dbResults.length < limit) {
+    excludeImages?.push(...dbResults.map((photo) => photo.imgUrl));
+    let remainingLimit = limit - dbResults.length;
+
+    if (remainingLimit > 0) {
         const intermediate_results = (await duckDBService.runQuery(
             queries.imageArchive.sqlStreetIdSearch({
                 addressTableName: csvIngestSources.adressen.outputTableName,
                 archiveImagesTableName: crawlerConfigs.imageArchive.outputTableName,
                 addressId: addressId,
-                limit: limit
+                limit: remainingLimit,
+                excludeImages: excludeImages
             })
         )) as SparqlImage[];
 
         if (intermediate_results.length > 0) {
             uncertainty = 2;
-            dbResults = intermediate_results;
+            dbResults.push(...intermediate_results);
+            excludeImages?.push(...intermediate_results.map((photo) => photo.imgUrl));
+            remainingLimit = limit - dbResults.length;
         }
     }
 
-    if (results.length < limit) {
+    if (remainingLimit > 0) {
         const intermediate_results = (await duckDBService.runQuery(
             queries.imageArchive.sqlAddressTitleSearch({
                 addressTableName: csvIngestSources.adressen.outputTableName,
                 archiveImagesTableName: crawlerConfigs.imageArchive.outputTableName,
                 addressId: addressId,
-                limit: limit
+                limit: remainingLimit,
+                excludeImages: excludeImages
             })
         )) as SparqlImage[];
 
         if (intermediate_results.length > 0) {
             uncertainty = 3;
-            dbResults = intermediate_results;
+            dbResults.push(...intermediate_results);
         }
     }
-
-    if (addressId === "0363010000543353") {
-        mapImageRecord(dbResults);
-    }
-
+    console.log(dbResults);
     return { result: mapImageRecord(dbResults), uncertainty };
 }

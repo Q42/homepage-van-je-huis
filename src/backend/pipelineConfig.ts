@@ -121,7 +121,7 @@ export const pipelineConfig: PipelineConfig = {
     presentViewRangeMax: 1000,
     rdColumnPrefix: "rd_geometrie_",
     minArchiveImages: 15,
-    maxImgSearchRadius: 500,
+    maxImgSearchRadius: 150,
     aggregateTableName: "aggregates"
 };
 

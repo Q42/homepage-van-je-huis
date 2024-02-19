@@ -12,7 +12,12 @@ export const queries = {
         addressTable: string;
         streetDescriptionTable: string;
     }) =>
-        `SELECT ${addressTable}.*, beschrijving AS straatnaamBeschrijving FROM ${addressTable} JOIN ${streetDescriptionTable} ON (${addressTable}."ligtAan:BAG.ORE.identificatieHoofdadres" = ${streetDescriptionTable} .identificatie)`,
+        `SELECT ${addressTable}.*, beschrijving AS straatnaamBeschrijving
+        FROM ${addressTable}
+        JOIN ${streetDescriptionTable}
+        ON (${addressTable}."ligtAan:BAG.ORE.identificatieHoofdadres" = ${streetDescriptionTable} .identificatie)
+        where ${addressTable}.identificatie ='0363010000544410'
+        `,
     sqlGetEventCalendar: (eventsTableName: string) => `SELECT * FROM ${eventsTableName} ORDER BY Date_start ASC`,
     sqlSelectDistinct: ({ tableName, column, columnAs }: { tableName: string; column: string; columnAs?: string }) =>
         `SELECT DISTINCT ${column === "*" ? "*" : `"${column}"`} ${columnAs ? "AS " + columnAs : ""} FROM ${tableName}`,
