@@ -18,7 +18,8 @@ import { nl } from 'date-fns/locale'
 import { AgendaItem } from '../../../../common/apiSchema/present'
 
 interface CalendarItem extends Omit<AgendaItem, 'date'> {
-  date: string
+  // TODO: fix this. date is alsways a string on FE
+  date: string | Date
 }
 
 export interface CalendarItemProps {
@@ -26,7 +27,9 @@ export interface CalendarItemProps {
 }
 
 const date = computed(() =>
-  format(parseISO(props.calendarItem.date), 'dd MMMM yyyy', { locale: nl }),
+  format(parseISO(props.calendarItem.date as string), 'dd MMMM yyyy', {
+    locale: nl,
+  }),
 )
 
 const props = defineProps<CalendarItemProps>()
