@@ -85,6 +85,7 @@ const props = defineProps<SearchBlockProps>()
 const router = useRouter()
 const { locale } = useI18n()
 
+const streetItems = ref<HTMLButtonElement[] | null>(null)
 const street = ref('')
 const houseNumber = ref('')
 const error: Ref<TranslationKey | null> = ref(null)
@@ -98,25 +99,26 @@ const handleKeyboardFocus = (
   focussedIdentifier: Ref<number | null>,
   list: Ref<string[] | undefined>,
 ) => {
-  if (!list.value) {
+  if (!list.value || !streetItems.value) {
     return
   }
 
   if (direction === 'down') {
-    if (focussedIdentifier.value === null) {
+    if (
+      focussedIdentifier.value === null ||
+      focussedIdentifier.value === list.value.length - 1
+    ) {
       focussedIdentifier.value = 0
+      streetItems.value[0].focus()
     } else if (focussedIdentifier.value < list.value.length - 1) {
       focussedIdentifier.value++
-    } else if (focussedIdentifier.value === list.value.length - 1) {
-      focussedIdentifier.value = 0
+      streetItems.value[focussedIdentifier.value].focus()
     }
   } else if (direction === 'up') {
-    if (focussedIdentifier.value === null) {
+    if (focussedIdentifier.value === null || focussedIdentifier.value === 0) {
       focussedIdentifier.value = list.value.length - 1
     } else if (focussedIdentifier.value > 0) {
       focussedIdentifier.value--
-    } else if (focussedIdentifier.value === 0) {
-      focussedIdentifier.value = list.value.length - 1
     }
   }
 }
@@ -168,15 +170,25 @@ const handleKeyDown = (event: KeyboardEvent) => {
     } else if (houseNumberAutocompleteIsOpen.value) {
       handleKeyboardFocus('up', focussedHouseNumberIndex, filteredHouseNumbers)
     }
+  } else if (event.key === 'Enter') {
+    if (streetAutocompleteIsOpen.value) {
+      if (filteredStreets.value && focussedStreetIndex.value) {
+        selectStreet(filteredStreets.value[focussedStreetIndex.value])
+      }
+    } else if (houseNumberAutocompleteIsOpen.value) {
+      if (filteredHouseNumbers.value && focussedHouseNumberIndex.value) {
+        selectHouseNumber(
+          filteredHouseNumbers.value[focussedHouseNumberIndex.value],
+        )
+      }
+    } else {
+      handleSubmit()
+    }
   }
 }
 
 onMounted(() => {
   window.addEventListener('keydown', handleKeyDown)
-})
-
-onUnmounted(() => {
-  window.removeEventListener('keydown', handleKeyDown)
 })
 </script>
 
@@ -191,19 +203,6 @@ onUnmounted(() => {
   justify-content: center;
   margin-top: calc(50vh - @header-height);
   transform: translateY(-50%);
-}
-
-.autocomplete-panel {
-  background: @primary-white;
-  position: absolute;
-  max-height: 300px;
-  width: 100%;
-  top: 100%;
-  box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
-  border-radius: 0 0 8px 8px;
-  overflow-y: auto;
-  border: solid 1px @neutral-grey1;
-  z-index: 1;
 }
 
 .street-input {
@@ -226,6 +225,19 @@ onUnmounted(() => {
   border-radius: 5px;
   color: @primary-black;
   border: 2px solid @primary-red;
+}
+
+.autocomplete-panel {
+  background: @primary-white;
+  position: absolute;
+  max-height: 300px;
+  width: 100%;
+  top: 100%;
+  box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+  border-radius: 0 0 8px 8px;
+  overflow-y: auto;
+  border: solid 1px @neutral-grey1;
+  z-index: 1;
 }
 
 .autocomplete-panel button {

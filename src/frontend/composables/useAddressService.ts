@@ -49,7 +49,7 @@ export const useAddressService = () => {
     if (!response.ok) {
       // TODO: Add error handling
       console.error('Error - No autocomplete house numbers names found')
-      return null
+      return
     }
     const jsonData = await response.json()
     return jsonData.numbers as string[] //TODO: dit kan nog mis gaan

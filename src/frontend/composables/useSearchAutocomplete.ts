@@ -6,9 +6,6 @@ export const useSearchAutocomplete = (street: Ref, houseNumber: Ref) => {
   const autocompleteStore = useAutocompleteStore()
   const addressService = useAddressService()
 
-  const streetInputIsFocused = ref(false)
-  const houseNumberInputIsFocused = ref(false)
-
   const streetListContainsSelected = computed(() => {
     return streets.value?.includes(street.value)
   })
@@ -42,56 +39,46 @@ export const useSearchAutocomplete = (street: Ref, houseNumber: Ref) => {
 
   const streetAutocompleteIsOpen = computed(
     () =>
-      // TODO: Uncomment this
-      // streetInputIsFocused.value &&
-      Boolean(filteredStreets.value) && !streetListContainsSelected.value,
+      street.value &&
+      Boolean(filteredStreets.value) &&
+      !streetListContainsSelected.value,
   )
 
+  const houseNumberInputHasFocus = ref(false)
   const houseNumberAutocompleteIsOpen = computed(
     () =>
-      houseNumberInputIsFocused.value && !houseNumberListContainsSelected.value,
+      houseNumberInputHasFocus.value && !houseNumberListContainsSelected.value,
   )
 
   // We fetch the house numbers if we have a match with an autocomplete street
   onUpdated(async () => {
-    if (streets.value?.includes(street.value) && street.value) {
+    if (
+      streets.value?.includes(street.value) &&
+      street.value &&
+      !houseNumbers.value
+    ) {
       const autocompleteHouseNumbers = await addressService.getHouseNumbers(
         slugifyStreetName(street.value),
       )
-
       houseNumbers.value = autocompleteHouseNumbers
-    } else {
+    } else if (!streets.value?.includes(street.value)) {
       houseNumbers.value = undefined
       houseNumber.value = ''
     }
   })
 
-  // Focus logic is to enable user frendly autocomplete
-  const handleFocusIn = (e: FocusEvent) => {
-    const streetInput = document.getElementById('street-input')
+  const handleFocusIn = () => {
     const houseNumberInput = document.getElementById('house-number-input')
-
-    if (e.target === streetInput) {
-      streetInputIsFocused.value = true
-    } else if (e.target === houseNumberInput) {
-      houseNumberInputIsFocused.value = true
-    }
-  }
-
-  const handleFocusOut = () => {
-    streetInputIsFocused.value = false
-    houseNumberInputIsFocused.value = false
+    houseNumberInputHasFocus.value = document.activeElement === houseNumberInput
   }
 
   onMounted(async () => {
     await addressService.getAutocompleteStreets()
     document.addEventListener('focusin', handleFocusIn)
-    document.addEventListener('focusout', handleFocusOut)
   })
 
   onUnmounted(() => {
     document.removeEventListener('focusin', handleFocusIn)
-    document.removeEventListener('focusout', handleFocusOut)
   })
 
   return {
