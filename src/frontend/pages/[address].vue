@@ -15,6 +15,17 @@
           :story="story"
         />
       </div>
+
+      <div
+        v-if="presentData && currentView === 'present'"
+        class="side-panel-items side-panel-items--calendar"
+      >
+        <SharedCalendarItem
+          v-for="(calenderItem, index) in presentData.agenda"
+          :key="index"
+          :calendar-item="calenderItem"
+        />
+      </div>
     </SharedSidePanel>
     <UIImageList v-if="images" :images="images" />
     <!-- TODO: accessibility -->
