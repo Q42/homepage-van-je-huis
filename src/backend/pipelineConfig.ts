@@ -106,7 +106,7 @@ export type PipelineConfig = {
     presentViewRangeMax: number; // the maximum distance in meters to show in the present view
     rdColumnPrefix: string;
     minArchiveImages: number; //If this threshold is not met by simply looking for images relating to an address, the search radius will be increased.
-    maxImgSearchRadius: number; //The maximum search radius for images when not enough images have been found on just the building.
+    maxImgSearchRadius: number; //The maximum search radius for surrounding
     aggregateTableName: string;
 };
 
@@ -120,7 +120,7 @@ export const pipelineConfig: PipelineConfig = {
     sortSliders: true,
     presentViewRangeMax: 1000,
     rdColumnPrefix: "rd_geometrie_",
-    minArchiveImages: 5,
+    minArchiveImages: 15,
     maxImgSearchRadius: 500,
     aggregateTableName: "aggregates"
 };

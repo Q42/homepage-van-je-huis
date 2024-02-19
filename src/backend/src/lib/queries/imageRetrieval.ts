@@ -6,14 +6,19 @@ export const imageArchive = {
         archiveImagesTableName,
         addressId,
         maxDistance,
-        limit
+        limit,
+        excludeImages
     }: {
         addressTableName: string;
         archiveImagesTableName: string;
         addressId: string;
         maxDistance?: number;
         limit?: number;
-    }) => `
+        excludeImages?: string[];
+    }) => {
+        const excludeArrayString = excludeImages?.map((url) => `'${url}'`).join(",");
+
+        return `
     SELECT
         DISTINCT (B.*), round(ST_Distance(A.geometrie , B.wktPoint),0) as distance_from_address
     FROM
@@ -22,19 +27,26 @@ export const imageArchive = {
         B.streetId = A."ligtAan:BAG.ORE.identificatieHoofdadres"
     WHERE
         (A.identificatie = '${addressId}' AND B.wktPoint IS NOT NULL ) AND distance_from_address < ${maxDistance}
+    ${excludeArrayString ? `AND B.imgUrl NOT IN (${excludeArrayString})` : ""}
     ORDER BY distance_from_address ASC ${limit ? `LIMIT ${limit}` : ""};
-    `,
+    `;
+    },
+
     sqlStreetIdSearch: ({
         addressTableName,
         archiveImagesTableName,
         addressId,
-        limit
+        limit,
+        excludeImages
     }: {
         addressTableName: string;
         archiveImagesTableName: string;
         addressId: string;
         limit?: number;
-    }) => `
+        excludeImages?: string[];
+    }) => {
+        const excludeArrayString = excludeImages?.map((url) => `'${url}'`).join(",");
+        return `
     SELECT
         DISTINCT (B.*),
         round(ST_Distance(A.geometrie, B.wktPoint), 0) as distance_from_address
@@ -42,20 +54,26 @@ export const imageArchive = {
         ${addressTableName} A
         JOIN ${archiveImagesTableName} AS B ON B.streetId = A."ligtAan:BAG.ORE.identificatieHoofdadres"
     WHERE
-        (A.identificatie = '${addressId}')
+        A.identificatie = '${addressId}'
+        ${excludeArrayString ? `AND B.imgUrl NOT IN (${excludeArrayString})` : ""}
         ${limit ? `LIMIT ${limit}` : ""};
-    `,
+    `;
+    },
     sqlAddressTitleSearch: ({
         addressTableName,
         archiveImagesTableName,
         addressId,
-        limit
+        limit,
+        excludeImages
     }: {
         addressTableName: string;
         archiveImagesTableName: string;
         addressId: string;
         limit?: number;
-    }) => `
+        excludeImages?: string[];
+    }) => {
+        const excludeArrayString = excludeImages?.map((url) => `'${url}'`).join(",");
+        return `
     SELECT
         DISTINCT (B.*),
         round(ST_Distance(A.geometrie, B.wktPoint), 0) as distance_from_address
@@ -69,26 +87,34 @@ export const imageArchive = {
             '%'
         )
     WHERE
-        (A.identificatie = '${addressId}')
+        A.identificatie = '${addressId}'
+        ${excludeArrayString ? `AND B.imgUrl NOT IN (${excludeArrayString})` : ""} 
         ${limit ? `LIMIT ${limit}` : ""};
-        `,
+        `;
+    },
     sqlStreetTitleSearch: ({
         addressTableName,
         archiveImagesTableName,
         addressId,
-        limit
+        limit,
+        excludeImages
     }: {
         addressTableName: string;
         archiveImagesTableName: string;
         addressId: string;
         limit?: number;
-    }) => `SELECT
+        excludeImages?: string[];
+    }) => {
+        const excludeArrayString = excludeImages?.map((url) => `'${url}'`).join(",");
+        return `SELECT
             DISTINCT (B.*),
             round(ST_Distance(A.geometrie, B.wktPoint), 0) as distance_from_address
         FROM
         ${addressTableName} A
             JOIN ${archiveImagesTableName} AS B ON B.title like concat('%', A."ligtAan:BAG.ORE.naamHoofdadres", '%')
         WHERE
-            (A.identificatie = '${addressId}')
-            ${limit ? `LIMIT ${limit}` : ""};`
+            A.identificatie = '${addressId}'
+            ${excludeArrayString ? `AND B.imgUrl NOT IN (${excludeArrayString})` : ""}
+            ${limit ? `LIMIT ${limit}` : ""};`;
+    }
 };

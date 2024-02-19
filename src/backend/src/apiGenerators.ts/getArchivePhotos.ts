@@ -39,7 +39,6 @@ function mapImageRecord(images: SparqlImage[]): TimelineEntry[] {
                     position: getDatePosition(image.startDate, image.endDate),
                     type: "archiveImage"
                 };
-
                 return entry;
             } catch {
                 return;
@@ -61,22 +60,28 @@ export async function getArchivePhotosForBuilding(
     return mapImageRecord(dbResults);
 }
 
-export async function getAdditionalPhotosForBuilding(
-    duckDBService: DuckDBService,
-    addressId: string,
-    maxDistance: number,
-    limit: number
-): Promise<{ result: TimelineEntry[]; uncertainty: number }> {
+export async function getSurroundingsPhotos({
+    duckDBService,
+    addressId,
+    maxDistance,
+    limit,
+    excludeImages
+}: {
+    duckDBService: DuckDBService;
+    addressId: string;
+    maxDistance: number;
+    limit: number;
+    excludeImages?: string[];
+}): Promise<{ result: TimelineEntry[]; uncertainty: number }> {
     let results: SparqlImage[] = [];
     let uncertainty = 1;
 
-    const dbResults = (await duckDBService.runQuery(
+    let dbResults = (await duckDBService.runQuery(
         queries.imageArchive.sqlGetNeighboringImages({
             addressTableName: csvIngestSources.adressen.outputTableName,
             archiveImagesTableName: crawlerConfigs.imageArchive.outputTableName,
             addressId: addressId,
-            maxDistance: maxDistance,
-            limit: limit
+            maxDistance: maxDistance
         })
     )) as SparqlImage[];
 
@@ -89,9 +94,10 @@ export async function getAdditionalPhotosForBuilding(
                 limit: limit
             })
         )) as SparqlImage[];
+
         if (intermediate_results.length > 0) {
             uncertainty = 2;
-            results = intermediate_results;
+            dbResults = intermediate_results;
         }
     }
 
@@ -107,8 +113,12 @@ export async function getAdditionalPhotosForBuilding(
 
         if (intermediate_results.length > 0) {
             uncertainty = 3;
-            results = intermediate_results;
+            dbResults = intermediate_results;
         }
+    }
+
+    if (addressId === "0363010000543353") {
+        mapImageRecord(dbResults);
     }
 
     return { result: mapImageRecord(dbResults), uncertainty };

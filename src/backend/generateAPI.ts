@@ -27,7 +27,7 @@ import { CrawlerConfig, CsvIngestSource, EnrichedDBAddress } from "./src/lib/typ
 import { getPublicArt } from "./src/apiGenerators.ts/getPublicArt";
 import { getCulturalFacilities } from "./src/apiGenerators.ts/getCulturalFacilities";
 import { queries } from "./src/lib/queries/queries";
-import { getAdditionalPhotosForBuilding, getArchivePhotosForBuilding } from "./src/apiGenerators.ts/getArchivePhotos";
+import { getSurroundingsPhotos, getArchivePhotosForBuilding } from "./src/apiGenerators.ts/getArchivePhotos";
 import { getAggregates } from "./src/apiGenerators.ts/getAggregates";
 import { ResolverService } from "./src/lib/resolverService";
 import { slugifyAddress } from "../common/util/resolve";
@@ -135,12 +135,13 @@ async function generateAPI() {
 
         if (archivePhotos.length < pc.minArchiveImages) {
             const { result, uncertainty }: { result: TimelineEntry[]; uncertainty: number } =
-                await getAdditionalPhotosForBuilding(
+                await getSurroundingsPhotos({
                     duckDBService,
-                    address.identificatie,
-                    pc.maxImgSearchRadius,
-                    pc.minArchiveImages - archivePhotos.length
-                );
+                    addressId: address.identificatie,
+                    maxDistance: pc.maxImgSearchRadius,
+                    limit: pc.minArchiveImages - archivePhotos.length,
+                    excludeImages: archivePhotos.map((photo) => photo.image.url)
+                });
             archivePhotoUncertainty = uncertainty;
 
             archivePhotos.push(...result);
