@@ -16,4 +16,14 @@ const Template: StoryFn<typeof CalendarItem> = (args: CalendarItemProps) => ({
 })
 
 export const CalendarItemStory = Template.bind({})
-CalendarItemStory.args = {}
+CalendarItemStory.args = {
+  calendarItem: {
+    image: {
+      url: 'https://images.memorix.nl/ams/thumb/1000x1000/87d81163-42b2-16f2-6890-dc5c2d22408d.jpg',
+      altText: 'Chez Diederichs, Frères, Marché au fleurs, à Amsterdam',
+    },
+    title: 'Openingsconcert',
+    description: 'Dit is een beschrijving van het openingsconcert.',
+    date: '2024-10-27T00:00:00.000Z',
+  },
+}
