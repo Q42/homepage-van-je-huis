@@ -12,10 +12,21 @@ export const queries = {
         addressTable: string;
         streetDescriptionTable: string;
     }) =>
-        `SELECT ${addressTable}.*, beschrijving AS straatnaamBeschrijving
-        FROM ${addressTable}
-        JOIN ${streetDescriptionTable}
-        ON (${addressTable}."ligtAan:BAG.ORE.identificatieHoofdadres" = ${streetDescriptionTable} .identificatie);
+        `
+        SELECT
+            A.*,
+            beschrijving AS straatnaamBeschrijving
+        FROM
+            ${addressTable} A
+        JOIN ${streetDescriptionTable} AS B
+                ON
+            (A."ligtAan:BAG.ORE.identificatieHoofdadres" = B.identificatie)
+        ORDER BY
+            A."ligtAan:BAG.ORE.naamHoofdadres",
+            A.huisnummerHoofdadres,
+            A.huisletterHoofdadres,
+            A.huisnummertoevoegingHoofdadres ASC
+            
         `,
     sqlGetEventCalendar: (eventsTableName: string) => `SELECT * FROM ${eventsTableName} ORDER BY Date_start ASC`,
     sqlSelectDistinct: ({ tableName, column, columnAs }: { tableName: string; column: string; columnAs?: string }) =>

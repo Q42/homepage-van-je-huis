@@ -75,7 +75,7 @@ export const imageArchive = {
         const excludeArrayString = excludeImages?.map((url) => `'${url}'`).join(",");
         return `
     SELECT
-        DISTINCT ON(B.imgUrl), B.*,
+        DISTINCT ON(B.imgUrl) B.*,
         round(ST_Distance(A.geometrie, B.wktPoint), 0) as distance_from_address
     FROM
         ${addressTableName}  A
