@@ -10,6 +10,7 @@ export const nl = {
   },
   sidePanel: {
     storiesLabel: 'Verhalen',
+    calendarLabel: 'Agenda',
   },
   addressPage: {
     pastLabel: 'Verleden',

@@ -4,9 +4,9 @@
       :label="
         currentView === 'past'
           ? $t(getTranslationKey('sidePanel.storiesLabel'))
-          : 'nog maken'
+          : $t(getTranslationKey('sidePanel.calendarLabel'))
       "
-      icon-type="stories"
+      :icon-type="currentView === 'past' ? 'stories' : 'calendar'"
     >
       <div v-if="pastData && currentView === 'past'" class="side-panel-items">
         <SharedStory
