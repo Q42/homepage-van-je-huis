@@ -49,6 +49,13 @@ Stories.args = {
   width: 24,
 }
 
+export const Calendar = Template.bind({})
+Calendar.args = {
+  type: 'calendar',
+  height: 24,
+  width: 24,
+}
+
 export const Close = Template.bind({})
 Close.args = {
   type: 'close',

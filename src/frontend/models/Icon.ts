@@ -5,3 +5,4 @@ export type IconType =
   | 'link'
   | 'stories'
   | 'close'
+  | 'calendar'
