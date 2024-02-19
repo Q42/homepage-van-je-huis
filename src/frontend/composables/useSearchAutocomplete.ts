@@ -61,7 +61,7 @@ export const useSearchAutocomplete = (street: Ref, houseNumber: Ref) => {
 
       houseNumbers.value = autocompleteHouseNumbers
     } else {
-      houseNumbers.value = null
+      houseNumbers.value = undefined
       houseNumber.value = ''
     }
   })
