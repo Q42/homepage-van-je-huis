@@ -20,8 +20,8 @@ export const nl = {
     invalideAddress: 'Vul een geldig adres in',
   },
   aggregateCard: {
-    beeTotal: 'Jouw buurt heeft {total} bijenvolken',
-    treeTotal: 'Jouw buurt heeft {total} bomen',
+    beeTotal: 'Jouw stadsdeel heeft {total} bijenvolken',
+    treeTotal: 'Jouw wijk heeft {total} bomen',
     treeSpecies: 'Jouw buurt heeft {total} boomsoorten',
     seeWhere: 'Bekijk waar ze staan',
     seeWhichTreeSpecies: 'Bekijk welke boomsoorten',
