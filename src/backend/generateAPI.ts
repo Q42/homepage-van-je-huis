@@ -32,11 +32,17 @@ import { getAggregates } from "./src/apiGenerators.ts/getAggregates";
 import { ResolverService } from "./src/lib/resolverService";
 import { slugifyAddress } from "../common/util/resolve";
 import slugify from "slugify";
+import { isExistingFile } from "./src/utils/checkExisting";
 
 const duckDBService = new DuckDBService();
 const resolverService = new ResolverService();
 
 async function generateAPI() {
+    const resolverOutputDir = pc.apiOutputDirectory + pc.apiResoliverDirectory;
+    const addressOutputDir = pc.apiOutputDirectory + pc.apiAddressFilesDirectory;
+    let generationCounter = 0;
+    let skipCounter = 0;
+
     await duckDBService.initDb({ dbLocation: ":memory:" });
 
     const sources: (CsvIngestSource | CrawlerConfig)[] = [...Object.values(cs), ...Object.values(crawlerConfigs)];
@@ -59,9 +65,6 @@ async function generateAPI() {
             offset: pc.startOffset
         })
     )) as EnrichedDBAddress[];
-
-    const resolverOutputDir = pc.apiOutputDirectory + pc.apiResoliverDirectory;
-    const addressOutputDir = pc.apiOutputDirectory + pc.apiAddressFilesDirectory;
 
     createDirectory(pc.apiOutputDirectory);
     createDirectory(addressOutputDir);
@@ -96,6 +99,21 @@ async function generateAPI() {
     statusBar.start(baseAdressList.length, 0);
 
     for (const address of baseAdressList) {
+        const addressFileName = slugifyAddress(
+            slugify,
+            address["ligtAan:BAG.ORE.naamHoofdadres"],
+            getHouseNumberFromAddress(address)
+        );
+
+        const outputFilePath = `${addressOutputDir}/${addressFileName}.json`;
+
+        if (pc.skipExistingApiFiles && isExistingFile(outputFilePath)) {
+            resolverService.addAddressToResolverData(address);
+            statusBar.increment();
+            skipCounter++;
+            continue;
+        }
+
         const addressPresent: PresentData = {
             rangeStart: 0,
             rangeEnd: 0,
@@ -150,6 +168,7 @@ async function generateAPI() {
 
         addressPast.timeline.push(...archivePhotos);
         addressPast.timelineUncertainty = archivePhotoUncertainty;
+
         // This is where the record gets finalized
         if (addressPast.timeline.length > 0) {
             const pastStartEnd = getMinMaxRangeFromPastData(addressPast);
@@ -180,17 +199,14 @@ async function generateAPI() {
 
         const addressRecord: AddressRecord = assembleApiRecord(address, addressPresent, addressPast);
 
-        const addressFileName = slugifyAddress(
-            slugify,
-            address["ligtAan:BAG.ORE.naamHoofdadres"],
-            getHouseNumberFromAddress(address)
-        );
-        writeObjectToJsonFile(addressRecord, `${addressOutputDir}/${addressFileName}.json`);
+        writeObjectToJsonFile(addressRecord, outputFilePath);
         resolverService.addAddressToResolverData(address);
+        generationCounter++;
         statusBar.increment();
     }
     statusBar.stop();
     resolverService.writeResolverFiles(resolverOutputDir);
+    console.log(`Generated ${generationCounter} API files, skipped ${skipCounter} existing files`);
 }
 
 async function dbProcessRunner() {

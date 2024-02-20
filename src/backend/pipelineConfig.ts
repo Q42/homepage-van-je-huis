@@ -96,11 +96,12 @@ export const crawlerConfigs: CrawlerConfigs = {
 };
 
 export type PipelineConfig = {
+    skipExistingApiFiles: boolean; // if true, the pipeline will skip the generation of api files for addresses that already have a file
     intermediateOutputDirectory: string;
     apiOutputDirectory: string;
     apiResoliverDirectory: string;
     apiAddressFilesDirectory: string;
-    startOffset: number | undefined;
+    startOffset: number | undefined; // the number of rows to skip in the base table
     dbBatchInsertMinThreshold: number;
     maxConsecutiveCrawlFailuresBeforeAbort: number;
     sortSliders: boolean;
@@ -112,6 +113,7 @@ export type PipelineConfig = {
 };
 
 export const pipelineConfig: PipelineConfig = {
+    skipExistingApiFiles: false,
     intermediateOutputDirectory: "./intermediate_output",
     apiOutputDirectory: "./api_generated",
     apiResoliverDirectory: "/resolve",
