@@ -14,7 +14,7 @@ import { beesInputColumns, beesOutputColumns } from "./src/models/bees";
 import { sparqlImageOutputColumns } from "./src/models/sparqlImages";
 
 // devMode limits all select queries to a specified max number of rows
-export const devMode = { enabled: false, limit: 1000 };
+export const devMode = { enabled: true, limit: 10000 };
 
 // See the type defenition for more info on what all these parameters do.
 export const csvIngestSources: CsvIngestSources = {

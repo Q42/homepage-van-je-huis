@@ -194,7 +194,8 @@ async function generateAPI() {
 
         if (pipelineConfig.sortSliders) {
             addressPresent.slider.sort((a, b) => a.position - b.position);
-            addressPast.timeline.sort((a, b) => a.position - b.position);
+            // the past timeline is sorted inversely as it starts in the present (highest value)
+            addressPast.timeline.sort((a, b) => b.position - a.position);
         }
 
         const addressRecord: AddressRecord = assembleApiRecord(address, addressPresent, addressPast);
