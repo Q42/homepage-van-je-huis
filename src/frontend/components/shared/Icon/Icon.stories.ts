@@ -62,3 +62,18 @@ Close.args = {
   height: 24,
   width: 24,
 }
+
+export const Bees = Template.bind({})
+Bees.args = {
+  type: 'bees',
+}
+
+export const Trees = Template.bind({})
+Trees.args = {
+  type: 'trees',
+}
+
+export const TreeSpecies = Template.bind({})
+TreeSpecies.args = {
+  type: 'tree-species',
+}

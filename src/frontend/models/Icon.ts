@@ -6,3 +6,6 @@ export type IconType =
   | 'stories'
   | 'close'
   | 'calendar'
+  | 'bees'
+  | 'trees'
+  | 'tree-species'

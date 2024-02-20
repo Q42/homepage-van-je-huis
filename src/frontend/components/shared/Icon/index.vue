@@ -11,6 +11,9 @@ import {
   Stories,
   Close,
   Calendar,
+  Bees,
+  Trees,
+  TreeSpecies,
 } from '@/assets/icons'
 import { IconType } from '@/models/Icon'
 
@@ -38,6 +41,12 @@ const iconComponent = computed(() => {
       return Close
     case 'calendar':
       return Calendar
+    case 'bees':
+      return Bees
+    case 'trees':
+      return Trees
+    case 'tree-species':
+      return TreeSpecies
   }
 })
 </script>
