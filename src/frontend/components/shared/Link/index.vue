@@ -3,7 +3,8 @@
     ><SharedTypography variant="body" :compact="true">{{
       label
     }}</SharedTypography>
-    <span><SharedIcon :height="13" :width="13" type="link" /></span
+    <span v-if="!hideIcon"
+      ><SharedIcon :height="13" :width="13" type="link" /></span
   ></NuxtLink>
 </template>
 
@@ -11,6 +12,7 @@
 export interface LinkProps {
   href: string
   label: string
+  hideIcon?: boolean
 }
 
 const props = defineProps<LinkProps>()

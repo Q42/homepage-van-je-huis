@@ -5,7 +5,7 @@
       <SharedTypography variant="h5">{{
         $t(titleKey, { total: count })
       }}</SharedTypography>
-      <SharedLink href="/bees" :label="$t(linkLabelKey)" />
+      <SharedLink href="/bees" :label="$t(linkLabelKey)" :hide-icon="true" />
     </div>
   </div>
 </template>
