@@ -57,10 +57,11 @@ export async function getAggregates({
                 title: "",
                 geoLevel: "buurt",
                 position: 0,
-                data: {}
+                data: {
+                    areaName: address["ligtIn:GBD.BRT.naam"],
+                    count: Number(numberOfTreeSpecies)
+                }
             };
-
-            treeSpeciesBuurtEntry.data[address["ligtIn:GBD.BRT.naam"]] = Number(numberOfTreeSpecies);
 
             aggregateEntries.push(treeSpeciesBuurtEntry);
         }
@@ -83,10 +84,11 @@ export async function getAggregates({
                 title: "",
                 geoLevel: "wijk",
                 position: 0,
-                data: {}
+                data: {
+                    areaName: address["ligtIn:GBD.WIJK.naam"],
+                    count: Number(numberOfTrees)
+                }
             };
-
-            treesWijkEntry.data[address["ligtIn:GBD.WIJK.naam"]] = Number(numberOfTrees);
 
             aggregateEntries.push(treesWijkEntry);
         }
@@ -110,10 +112,11 @@ export async function getAggregates({
                 title: "",
                 geoLevel: "stadsdeel",
                 position: 0,
-                data: {}
+                data: {
+                    areaName: address["ligtIn:GBD.SDL.naam"],
+                    count: Number(numberOfBees)
+                }
             };
-
-            beesStadsdeelEntry.data[address["ligtIn:GBD.SDL.naam"]] = Number(numberOfBees);
 
             aggregateEntries.push(beesStadsdeelEntry);
         }

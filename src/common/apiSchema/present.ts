@@ -36,7 +36,7 @@ export interface DistanceViewEntry extends BaseSliderEntry {
 
 export interface DistanceViewAggregateEntry
   extends Omit<DistanceViewEntry, "image" | "visitUrl"> {
-  data: Record<string, number>; // The data for the aggregate, where the key is the name of the buurt, wijk, stadsdeel etc.
+  data: { areaName: string; count: number };
   type: "aggregate_trees" | "aggregate_tree_species" | "aggregate_bees";
 }
 
