@@ -1,5 +1,5 @@
 import { DistanceViewAggregateEntry, DistanceViewEntry } from "../../../common/apiSchema/present";
-import { pipelineConfig } from "../../pipelineConfig";
+import { pipelineConfig } from "../../configs/pipelineConfig";
 import { DuckDBService } from "../lib/duckDBService";
 import { queries } from "../lib/queries/queries";
 import { DBAddress } from "../models/adresses";

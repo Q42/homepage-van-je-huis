@@ -1,7 +1,7 @@
 import { Database } from "duckdb-async";
 import { BaseApiResponse, ColumnDefenitions, CrawlerConfig, CsvIngestSource, IntermediateOutputFormats } from "./types";
 import { parseValueForDbInsert } from "../utils/general";
-import { devMode, pipelineConfig as pc } from "../../pipelineConfig";
+import { pipelineConfig as pc } from "../../configs/pipelineConfig";
 import { getExportSelectQuery } from "../utils/db";
 import { queries } from "./queries/queries";
 
@@ -49,7 +49,7 @@ export class DuckDBService {
             throw dbNotInitializedError;
         }
         if (
-            devMode.enabled &&
+            pc.devMode.enabled &&
             querystring.toLowerCase().includes("select") &&
             !querystring.toLowerCase().includes("limit") &&
             !querystring.toLowerCase().includes("copy") &&
@@ -58,7 +58,7 @@ export class DuckDBService {
             if (querystring.trim().endsWith(";")) {
                 querystring = querystring.trim().slice(0, -1);
             }
-            querystring += ` LIMIT ${devMode.limit};`;
+            querystring += ` LIMIT ${pc.devMode.limit};`;
         }
         return await this.db.all(querystring);
     }

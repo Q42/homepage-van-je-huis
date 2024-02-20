@@ -1,4 +1,4 @@
-import { PipelineConfig } from "../../pipelineConfig";
+import { PipelineConfig } from "../../configs/pipelineConfig";
 import { DuckDBService } from "../lib/duckDBService";
 import { ColumnDefenitions, CsvIngestSource } from "../lib/types";
 import { DBAddress } from "../models/adresses";

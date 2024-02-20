@@ -26,11 +26,15 @@ The system works by ingesting a bunch of csv files to an intermediate database f
 
 \*Not all crawlers need a guide.
 
-The most important file for the pipelines is the `pipelineConfig.ts`. This is where a lot of the parameters for the ingest and output are defined. When you want to add a new CSV input source, you only have to add it to the `pipelineConfig.ts` file and the system will automatically pick it up. The crawlers are a bit more complex. These need to be added to the config as well, but since there is not one generic crawler, you will also have to write a crawler class and instantiate it in the `runCrawlers.ts` file.
+The most important files for the system are in the configs directory. This is where a lot of the parameters for the ingest and output are defined. When you want to add a new CSV input source, you only have to add it to the `csvSourceConfig` file and the system will automatically pick it up. The crawlers are a bit more complex. These need to be added to the configs as well, but since there is not one generic crawler, you will also have to write a crawler class and instantiate it in the `runCrawlers.ts` file.
 
 For the CSV sources, you need to specify the schema that needs to be used to map the csv columns to the correct data types in the intermediate database. You need to specify all the columnst that are present in the csv.
 
 **Tip: don't write this schema yourself. Just dump the csv header, along with an example of the schema into ChatGPT and let it write the schema. Then you just need to check if it's correct.**
+
+The pipelineconfig details all the generic system settings that are not related to specific sources or crawlers.
+
+If you wish to prevent a specific crawler from running, you can set a flag in the crawlerconfig.
 
 In its current form, there are three separate scripts: ingestFiles, runCrawlers and generateApi. Make sure to look at the [architecture](https://miro.com/app/board/uXjVN4O0Egs=/) before trying to run the system, so you know which scripts depend on the output of which other scripts.
 

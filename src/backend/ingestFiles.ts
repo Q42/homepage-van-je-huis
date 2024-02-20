@@ -7,7 +7,8 @@ import {
 } from "./src/utils/general";
 import { loadFileToParquet } from "./src/utils/db";
 import { DuckDBService } from "./src/lib/duckDBService";
-import { csvIngestSources, pipelineConfig as pc } from "./pipelineConfig";
+import { pipelineConfig as pc } from "./configs/pipelineConfig";
+import { csvIngestSources } from "./configs/csvSourceConfigs";
 
 const duckDBService = new DuckDBService();
 

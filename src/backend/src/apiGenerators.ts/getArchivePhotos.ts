@@ -1,5 +1,7 @@
 import { TimelineEntry } from "../../../common/apiSchema/past";
-import { crawlerConfigs, csvIngestSources } from "../../pipelineConfig";
+import { crawlerConfigs } from "../../configs/crawlerConfigs";
+import { csvIngestSources } from "../../configs/csvSourceConfigs";
+
 import { DuckDBService } from "../lib/duckDBService";
 import { queries } from "../lib/queries/queries";
 import { SparqlImage } from "../models/sparqlImages";

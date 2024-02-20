@@ -1,13 +1,7 @@
 import { AddressRecord } from "../common/apiSchema/addressRecord";
 import { PastData, TimelineEntry } from "../common/apiSchema/past";
 import { AgendaItem, PresentData } from "../common/apiSchema/present";
-import {
-    crawlerConfigs,
-    csvIngestSources as cs,
-    csvIngestSources,
-    pipelineConfig as pc,
-    pipelineConfig
-} from "./pipelineConfig";
+import { pipelineConfig as pc, pipelineConfig } from "./configs/pipelineConfig";
 import { DuckDBService } from "./src/lib/duckDBService";
 import { calendarEvent } from "./src/models/eventCalendar";
 
@@ -33,6 +27,8 @@ import { ResolverService } from "./src/lib/resolverService";
 import { slugifyAddress } from "../common/util/resolve";
 import slugify from "slugify";
 import { isExistingFile } from "./src/utils/checkExisting";
+import { csvIngestSources as cs } from "./configs/csvSourceConfigs";
+import { crawlerConfigs } from "./configs/crawlerConfigs";
 
 const duckDBService = new DuckDBService();
 const resolverService = new ResolverService();
@@ -87,9 +83,9 @@ async function generateAPI() {
     await duckDBService.runQuery(
         queries.aggregates.sqlCreateAggregateTable({
             aggregateTableName: pipelineConfig.aggregateTableName,
-            buurtenTableName: csvIngestSources.buurten.outputTableName,
-            beesTableName: csvIngestSources.bees.outputTableName,
-            treesTableName: csvIngestSources.trees.outputTableName
+            buurtenTableName: cs.buurten.outputTableName,
+            beesTableName: cs.bees.outputTableName,
+            treesTableName: cs.trees.outputTableName
         })
     );
 

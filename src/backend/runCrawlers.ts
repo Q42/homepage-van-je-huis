@@ -5,7 +5,7 @@ import {
     getIngestFilePathsFromSources,
     measureExecutionTime
 } from "./src/utils/general";
-import { crawlerConfigs as cc, pipelineConfig as pc } from "./pipelineConfig";
+import { pipelineConfig as pc } from "./configs/pipelineConfig";
 
 import { AbstractCrawler } from "./src/crawlers/abstractCrawler";
 
@@ -15,6 +15,7 @@ import { appendObjectToFile } from "./src/lib/failureLog";
 import { DuckDBService } from "./src/lib/duckDBService";
 import { PublicArtCrawler } from "./src/crawlers/publicArtCrawler";
 import { SparqlImageArchiveCrawler } from "./src/crawlers/sparqlImageCrawler";
+import { crawlerConfigs as cc } from "./configs/crawlerConfigs";
 
 const duckDBService = new DuckDBService();
 
