@@ -17,10 +17,13 @@ export type PresentEntityType =
   | "TVandRadio"
   | "architecture"
   | "newMedia"
-  | "debate";
+  | "debate"
+  | "aggregate_trees"
+  | "aggregate_tree_species"
+  | "aggregate_bees";
 
 export interface PresentData extends BaseView {
-  slider: DistanceViewEntry[]; // The entries for on the slider
+  slider: (DistanceViewEntry | DistanceViewAggregateEntry)[]; // The entries for on the slider
   agenda: AgendaItem[]; // The events and such
 }
 
@@ -29,6 +32,12 @@ export interface DistanceViewEntry extends BaseSliderEntry {
   image?: ImageRef;
   visitUrl?: string; // URL to the source where people can find out more info about the image
   type: PresentEntityType; // The type of the entry
+}
+
+export interface DistanceViewAggregateEntry
+  extends Omit<DistanceViewEntry, "image" | "visitUrl"> {
+  data: Record<string, number>; // The data for the aggregate, where the key is the name of the buurt, wijk, stadsdeel etc.
+  type: "aggregate_trees" | "aggregate_tree_species" | "aggregate_bees";
 }
 
 export interface AgendaItem extends BaseDataEntity {

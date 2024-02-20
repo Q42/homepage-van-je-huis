@@ -2,7 +2,7 @@ import { DistanceViewEntry, PresentEntityType } from "../../../common/apiSchema/
 import { crawlerConfigs as cc, csvIngestSources as cs, pipelineConfig as pc } from "../../pipelineConfig";
 import { DuckDBService } from "../lib/duckDBService";
 import { CustomizedCulturalFacilityRecord } from "../models/culturalFacility";
-import { queries } from "../lib/queries";
+import { queries } from "../lib/queries/queries";
 
 function mapFacilityType(term: string): PresentEntityType | undefined {
     const termMapping: Record<string, PresentEntityType> = {

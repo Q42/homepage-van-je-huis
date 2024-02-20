@@ -8,9 +8,12 @@ import { PublicArtCrawler } from "./src/crawlers/publicArtCrawler";
 import { adresInputColumns, adresOutputColumns } from "./src/models/adresses";
 import { straatOmschrijvingInputColumns, straatnaamOmschrijvingOutputColumns } from "./src/models/straatOmschrijving";
 import { cultureFacilitiesInputColumns, cultureFacilitiesOutputColumns } from "./src/models/culturalFacility";
+import { treesInputColumns, treesOutputColumns } from "./src/models/trees";
+import { buurtenInputColumns, buurtenOutputColumns } from "./src/models/buurten";
+import { beesInputColumns, beesOutputColumns } from "./src/models/bees";
 
 // devMode limits all select queries to a specified max number of rows
-export const devMode = { enabled: true, limit: 10000 };
+export const devMode = { enabled: true, limit: 1000 };
 
 // See the type defenition for more info on what all these parameters do.
 export const csvIngestSources: CsvIngestSources = {
@@ -31,6 +34,26 @@ export const csvIngestSources: CsvIngestSources = {
         outputTableName: "cultuurvoorzieningen",
         inputColumns: cultureFacilitiesInputColumns,
         outputColumns: cultureFacilitiesOutputColumns,
+        geoTransformColumn: "WKT_LAT_LNG"
+    },
+    buurten: {
+        ingestSourcePath: "./data_input/GBD_buurt_Actueel.csv",
+        outputTableName: "buurten",
+        inputColumns: buurtenInputColumns,
+        outputColumns: buurtenOutputColumns
+    },
+    trees: {
+        ingestSourcePath: "./data_input/BOMEN.csv",
+        outputTableName: "bomen",
+        inputColumns: treesInputColumns,
+        outputColumns: treesOutputColumns,
+        geoTransformColumn: "WKT_LAT_LNG"
+    },
+    bees: {
+        ingestSourcePath: "./data_input/BIJEN_HONING.csv",
+        outputTableName: "bijen",
+        inputColumns: beesInputColumns,
+        outputColumns: beesOutputColumns,
         geoTransformColumn: "WKT_LAT_LNG"
     },
     // these are just placeholders for now and need to be replaced with the actual data once its available
@@ -94,6 +117,7 @@ export type PipelineConfig = {
     presentViewRangeMax: number; // the maximum distance in meters to show in the present view
     rdColumnPrefix: string;
     minArchiveImages: number; //If this threshold is not met by simply looking for images relating to an address, the search radius will be increased.
+    aggregateTableName: string;
 };
 
 export const pipelineConfig: PipelineConfig = {
@@ -106,7 +130,8 @@ export const pipelineConfig: PipelineConfig = {
     sortSliders: true,
     presentViewRangeMax: 1000,
     rdColumnPrefix: "rd_geometrie_",
-    minArchiveImages: 5
+    minArchiveImages: 5,
+    aggregateTableName: "aggregates"
 };
 
 type PublicArtCrawlerExtraConfig = {

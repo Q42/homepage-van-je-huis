@@ -1,5 +1,6 @@
 import fs from "fs";
 import { CsvIngestSources, ApiCrawlerConfigs } from "../lib/types";
+import { DBAddress } from "../models/adresses";
 
 export function checkFilePaths(paths: string[]) {
     const missingSources: string[] = [];
@@ -69,4 +70,12 @@ export function generateSessionName(start?: string): string {
     const dateString = date.toISOString().replace(/\.\d+Z/, "");
 
     return start ? start + "-" + dateString : dateString;
+}
+
+export function getHouseNumberFromAddress(address: DBAddress): string {
+    let addressNumber = String(address.huisnummerHoofdadres);
+    if (address.huisletterHoofdadres || address.huisnummertoevoegingHoofdadres) {
+        addressNumber += "-" + (address.huisletterHoofdadres ?? "") + (address.huisnummertoevoegingHoofdadres ?? "");
+    }
+    return addressNumber;
 }

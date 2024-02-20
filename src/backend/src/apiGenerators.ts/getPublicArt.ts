@@ -2,7 +2,7 @@ import { DistanceViewEntry } from "../../../common/apiSchema/present";
 import { crawlerConfigs as cc, csvIngestSources as cs, pipelineConfig as pc } from "../../pipelineConfig";
 import { DuckDBService } from "../lib/duckDBService";
 import { CustomizedPublicArtRecord } from "../models/publicArtRecord";
-import { queries } from "../lib/queries";
+import { queries } from "../lib/queries/queries";
 
 export async function getPublicArt(duckDBService: DuckDBService, addressId: string): Promise<DistanceViewEntry[]> {
     const customArtRecords = (await duckDBService.runQuery(
