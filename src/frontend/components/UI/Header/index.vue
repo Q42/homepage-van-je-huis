@@ -1,18 +1,12 @@
 <template>
   <div class="header">
     <SharedIcon
-      :width="12"
-      :height="40"
+      :height="isOnMobile ? 12 : 115"
       :type="IconType"
       class="header__logo"
     />
 
-    <SharedTypography
-      v-if="isOnMobile"
-      variant="h1"
-      :compact="true"
-      class="header__title"
-    >
+    <SharedTypography variant="h1" :compact="true" class="header__title">
       {{ $t(getTranslationKey('home.title')) }}
     </SharedTypography>
   </div>

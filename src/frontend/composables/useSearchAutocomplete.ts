@@ -15,11 +15,9 @@ export const useSearchAutocomplete = (street: Ref, houseNumber: Ref) => {
 
   const streets = computed(() => autocompleteStore.autocompleteStreets)
   const filteredStreets = computed(() => {
-    return streets.value
-      ?.filter((autocompleteStreet) =>
-        autocompleteStreet.toLowerCase().includes(street.value.toLowerCase()),
-      )
-      .sort()
+    return streets.value?.filter((autocompleteStreet) =>
+      autocompleteStreet.toLowerCase().startsWith(street.value.toLowerCase()),
+    )
   })
 
   const houseNumbers: Ref<undefined | string[]> = ref()
