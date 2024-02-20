@@ -1,12 +1,13 @@
 <template>
   <div v-if="entries" class="entry-list">
     <div v-for="(entry, index) in entries" :key="index" class="entry-wrapper">
-      <SharedAggregateCard
-        v-if="entryIsAggregate(entry)"
-        :type="entry.type as AggregateType"
-        :count="getAggregateCount(entry as DistanceViewAggregateEntry)"
-      />
-
+      <div class="card-wrapper">
+        <SharedAggregateCard
+          v-if="entryIsAggregate(entry)"
+          :type="entry.type as AggregateType"
+          :count="getAggregateCount(entry as DistanceViewAggregateEntry)"
+        />
+      </div>
       <SharedImage
         v-if="!entryIsAggregate(entry) && (entry as EntryWithImage).image"
         :image="(entry as EntryWithImage).image!"
@@ -77,5 +78,11 @@ const getAggregateCount = (entry: DistanceViewAggregateEntry) => {
 .entry-wrapper {
   width: 615px;
   max-width: 75%;
+}
+
+.card-wrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center;
 }
 </style>
