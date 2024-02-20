@@ -1,27 +1,25 @@
 <template>
   <div v-if="entries" class="entry-list">
-    <div v-for="(entry, index) in entries" :key="index">
-      <div v-if="entryIsAggregate(entry)" class="entry-wrapper">
-        <SharedAggregateCard
-          :type="entry.type as AggregateType"
-          :count="getAggregateCount(entry as DistanceViewAggregateEntry)"
-        />
-      </div>
-      <div v-else class="entry-wrapper">
-        <SharedImage
-          v-if="(entry as EntryWithImage).image"
-          :image="(entry as EntryWithImage).image!"
-        />
-        <div class="entry-info">
-          <SharedTypography variant="body" :compact="true"
-            >{{ entry.title }}
-            <SharedLink
-              v-if="(entry as EntryWithImage).visitUrl"
-              :href="(entry as EntryWithImage).visitUrl!"
-              :label="$t(getTranslationKey('images.externalLink'))"
-            />
-          </SharedTypography>
-        </div>
+    <div v-for="(entry, index) in entries" :key="index" class="entry-wrapper">
+      <SharedAggregateCard
+        v-if="entryIsAggregate(entry)"
+        :type="entry.type as AggregateType"
+        :count="getAggregateCount(entry as DistanceViewAggregateEntry)"
+      />
+
+      <SharedImage
+        v-if="!entryIsAggregate(entry) && (entry as EntryWithImage).image"
+        :image="(entry as EntryWithImage).image!"
+      />
+      <div class="entry-info">
+        <SharedTypography variant="body" :compact="true"
+          >{{ entry.title }}
+          <SharedLink
+            v-if="(entry as EntryWithImage).visitUrl"
+            :href="(entry as EntryWithImage).visitUrl!"
+            :label="$t(getTranslationKey('images.externalLink'))"
+          />
+        </SharedTypography>
       </div>
     </div>
   </div>
