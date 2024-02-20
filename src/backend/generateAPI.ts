@@ -4,7 +4,7 @@ import { AgendaItem, PresentData } from "../common/apiSchema/present";
 import {
     crawlerConfigs,
     csvIngestSources as cs,
-    devMode,
+    csvIngestSources,
     pipelineConfig as pc,
     pipelineConfig
 } from "./pipelineConfig";
@@ -13,23 +13,28 @@ import { calendarEvent } from "./src/models/eventCalendar";
 
 import cliProgress from "cli-progress";
 
-import {
-    generateAddressID,
-    assembleApiRecord,
-    getMinMaxRangeFromPastData,
-    getMinMaxRangeFromPresentData
-} from "./src/utils/api";
+import { assembleApiRecord, getMinMaxRangeFromPastData, getMinMaxRangeFromPresentData } from "./src/utils/api";
 
-import { checkFilePaths, createDirectory, measureExecutionTime, writeObjectToJsonFile } from "./src/utils/general";
+import {
+    checkFilePaths,
+    createDirectory,
+    getHouseNumberFromAddress,
+    measureExecutionTime,
+    writeObjectToJsonFile
+} from "./src/utils/general";
 import { stringLibrary } from "./src/lib/strings";
 import { CrawlerConfig, CsvIngestSource, EnrichedDBAddress } from "./src/lib/types";
 import { getPublicArt } from "./src/apiGenerators.ts/getPublicArt";
 import { getCulturalFacilities } from "./src/apiGenerators.ts/getCulturalFacilities";
-import { queries } from "./src/lib/queries";
-import { generateAddresResolveSchema } from "./src/utils/db";
+import { queries } from "./src/lib/queries/queries";
 import { getArchivePhotosForBuilding } from "./src/apiGenerators.ts/getArchivePhotos";
+import { getAggregates } from "./src/apiGenerators.ts/getAggregates";
+import { ResolverService } from "./src/lib/resolverService";
+import { slugifyAddress } from "../common/util/resolve";
+import slugify from "slugify";
 
 const duckDBService = new DuckDBService();
+const resolverService = new ResolverService();
 
 async function generateAPI() {
     await duckDBService.initDb({ dbLocation: ":memory:" });
@@ -42,7 +47,9 @@ async function generateAPI() {
     checkFilePaths(sourcePaths);
 
     for (const source of sources) {
-        await duckDBService.loadIntermediateSource(source, true);
+        console.log("---");
+        await duckDBService.loadIntermediateSource(source);
+        console.log("---");
     }
 
     const baseAdressList = (await duckDBService.runQuery(
@@ -56,7 +63,6 @@ async function generateAPI() {
     const addressOutputDir = pc.apiOutputDirectory + pc.apiAddressFilesDirectory;
 
     createDirectory(pc.apiOutputDirectory);
-    createDirectory(resolverOutputDir);
     createDirectory(addressOutputDir);
 
     const eventCalendar = (await duckDBService.runQuery(
@@ -72,21 +78,16 @@ async function generateAPI() {
                 : undefined
     }));
 
-    // Generate the resolver api files
-    console.log("Generating resolver files");
-    const streetNames = (
-        await duckDBService.runQuery(
-            queries.sqlSelectDistinct({
-                tableName: "adressen",
-                column: "ligtAan:BAG.ORE.naamHoofdadres",
-                columnAs: "s"
-            })
-        )
-    ).map((row) => row["s"]) as string[];
-
-    writeObjectToJsonFile({ streets: streetNames }, resolverOutputDir + "/streets.json");
-
-    // writeObjectToJsonFile(generateAddresResolveSchema(baseAdressList), resolverOutputDir + "/addressFullResolve.json");
+    // Generate the aggregates
+    console.log("Generating aggregates table");
+    await duckDBService.runQuery(
+        queries.aggregates.sqlCreateAggregateTable({
+            aggregateTableName: pipelineConfig.aggregateTableName,
+            buurtenTableName: csvIngestSources.buurten.outputTableName,
+            beesTableName: csvIngestSources.bees.outputTableName,
+            treesTableName: csvIngestSources.trees.outputTableName
+        })
+    );
 
     // Start generating the individual address API files
     const statusBar = new cliProgress.SingleBar({}, cliProgress.Presets.shades_classic);
@@ -108,7 +109,7 @@ async function generateAPI() {
             stories: []
         };
 
-        // This is where all the data gets added to the api files
+        // Add the base data for the address
         if (address?.straatnaamBeschrijving) {
             addressPast.stories.push({
                 title: stringLibrary.streetNameOrigin,
@@ -124,6 +125,7 @@ async function generateAPI() {
         const culturalFacilities = await getCulturalFacilities(duckDBService, address.identificatie);
         addressPresent.slider.push(...culturalFacilities);
 
+        // Add the archive photos
         const archivePhotos = await getArchivePhotosForBuilding(duckDBService, address["ligtIn:BAG.PND.identificatie"]);
 
         if (archivePhotos.length < pc.minArchiveImages) {
@@ -143,18 +145,36 @@ async function generateAPI() {
             const presentStartEnd = getMinMaxRangeFromPresentData(addressPresent);
             addressPresent.rangeStart = presentStartEnd.distanceRangeStart;
             addressPresent.rangeEnd = presentStartEnd.distanceRangeEnd;
+        }
 
-            if (pipelineConfig.sortSliders) {
-                addressPresent.slider.sort((a, b) => a.position - b.position);
-                addressPast.timeline.sort((a, b) => a.position - b.position);
-            }
+        // Sprinkle in the aggregate data
+        const aggregateEntries = await getAggregates({
+            duckDBService,
+            address: address,
+            rangeStart: addressPresent.rangeStart,
+            rangeEnd: addressPresent.rangeEnd
+        });
+
+        addressPresent.slider.push(...aggregateEntries);
+
+        if (pipelineConfig.sortSliders) {
+            addressPresent.slider.sort((a, b) => a.position - b.position);
+            addressPast.timeline.sort((a, b) => a.position - b.position);
         }
 
         const addressRecord: AddressRecord = assembleApiRecord(address, addressPresent, addressPast);
-        writeObjectToJsonFile(addressRecord, `${addressOutputDir}/${generateAddressID(addressRecord.address)}.json`);
+
+        const addressFileName = slugifyAddress(
+            slugify,
+            address["ligtAan:BAG.ORE.naamHoofdadres"],
+            getHouseNumberFromAddress(address)
+        );
+        writeObjectToJsonFile(addressRecord, `${addressOutputDir}/${addressFileName}.json`);
+        resolverService.addAddressToResolverData(address);
         statusBar.increment();
     }
     statusBar.stop();
+    resolverService.writeResolverFiles(resolverOutputDir);
 }
 
 async function dbProcessRunner() {

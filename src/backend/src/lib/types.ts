@@ -5,9 +5,10 @@ import { DBAddress } from "../models/adresses";
 export type CsvIngestSource = {
     ingestSourcePath: string; // path to the csv file
     outputTableName: string; // name of the table that is to be created from the csv
-    inputColumns: ColumnDefenitions; // the columns that are present in the csv
+    inputColumns: ColumnDefenitions; // the columns that are present in the csv. IMPORTANT: the order of the columns should be the same as in the csv.
     outputColumns: string[]; // the columns that need to be exported
-    // optinally, the name of a column that contains a lat long POINT that needs to be converted to RD
+
+    // optinally, the name of a column that contains regular gps geometry that needs to be converted to RD
     // this will create a new column with the name of "rd_geometrie_[tableName]"
     // this column shouldn't manually be added to the in- and output columns, as it will be added automatically.
     geoTransformColumn?: string;

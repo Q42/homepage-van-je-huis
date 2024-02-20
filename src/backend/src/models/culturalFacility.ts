@@ -1,4 +1,5 @@
 import { ColumnDefenitions, GeoString } from "../lib/types";
+import { amsterdamMapsGeoColumns } from "./amsterdamMapsGeo";
 export type CulturalFacilityRecord = {
     Naamorganisatie: string;
     Kunstdiscipline: string;
@@ -10,10 +11,7 @@ export const cultureFacilitiesInputColumns: ColumnDefenitions = {
     Naamorganisatie: "VARCHAR",
     Kunstdiscipline: "VARCHAR",
     Correctie_Website: "VARCHAR",
-    WKT_LNG_LAT: "VARCHAR",
-    WKT_LAT_LNG: "VARCHAR",
-    LNG: "DOUBLE",
-    LAT: "DOUBLE"
+    ...amsterdamMapsGeoColumns
 };
 
 export const cultureFacilitiesOutputColumns: string[] = [

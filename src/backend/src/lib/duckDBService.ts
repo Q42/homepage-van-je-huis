@@ -232,7 +232,7 @@ export class DuckDBService {
             `
         ALTER TABLE ${tableName} ADD COLUMN ${targetColumnName} GEOMETRY;    
         UPDATE ${tableName} 
-        SET ${targetColumnName} = ST_Transform(ST_GeomFromText(${sourceColumnName}), '${sourceEpsg}', '${targetEpsg}');`
+        SET ${targetColumnName} = ST_Transform(${sourceColumnName}, '${sourceEpsg}', '${targetEpsg}');`
         );
     }
 }

@@ -5,4 +5,5 @@ src/backend/data_output/
 src/backend/intermediate_output/
 src/backend/api_generated/
 **/*.duckdb
+**/*.duckdb.wal
 **/*.parquet
