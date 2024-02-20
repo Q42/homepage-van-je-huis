@@ -1,18 +1,18 @@
 import type { Meta, StoryFn } from '@storybook/vue3'
 
-import ImageList, { ImageListProps } from './index.vue'
+import ListView, { ListViewProps } from './index.vue'
 
 export default {
-  title: 'Ui/ImageList',
-  component: ImageList,
-} as Meta<typeof ImageList>
+  title: 'Ui/ListView',
+  component: ListView,
+} as Meta<typeof ListView>
 
-const Template: StoryFn<typeof ImageList> = (args: ImageListProps) => ({
-  components: { ImageList },
+const Template: StoryFn<typeof ListView> = (args: ListViewProps) => ({
+  components: { ListView },
   setup() {
     return { args }
   },
-  template: '<ImageList v-bind="args" />',
+  template: '<ListView v-bind="args" />',
 })
 
 const images = [
@@ -124,7 +124,7 @@ const images = [
   },
 ]
 
-export const ImageListStory = Template.bind({})
-ImageListStory.args = {
+export const ListViewStory = Template.bind({})
+ListViewStory.args = {
   images,
 }

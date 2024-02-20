@@ -1,25 +1,49 @@
+import { useAutocompleteStore } from '@/store/autocompleteStore'
+
+// TODO: better error handling (but wait till api is definitive)
+
 export const useAddressService = () => {
-  const getAddressJSONandParse = async (id: string) => {
-    const filePath = `/mockdata/address/${id}.json`
+  const autocompleteStore = useAutocompleteStore()
+
+  const getAddressJSONandParse = async (addressSlug: string) => {
+    const filePath = `/api/address/${addressSlug}.json`
     const response = await fetch(filePath)
     if (!response.ok) {
-      console.error('404 - Adress not found')
+      // TODO: Add error handling
+      console.error('Error - Adress not found')
       return null
     }
     const jsonData = await response.json()
     return jsonData
   }
 
-  // TODO: fix typing
-  const getImagesViewModel = (slider: any[]) => {
-    return slider.map((sliderItem: any) => {
-      return {
-        image: sliderItem.image,
-        title: sliderItem.title,
-        visitUrl: sliderItem.visitUrl,
-      }
-    })
+  const getAutocompleteStreets = async () => {
+    const filePath = `/api/resolve/streetNames.json`
+    const response = await fetch(filePath)
+    if (!response.ok) {
+      // TODO: Add error handling
+      console.error('Error - No autocomplete street names found')
+      return null
+    }
+    const jsonData = await response.json()
+    autocompleteStore.setAutocompleteStreets(jsonData.streets)
   }
 
-  return { getAddressJSONandParse, getImagesViewModel }
+  const getHouseNumbers = async (streetSlug: string) => {
+    const filePath = `/api/resolve/numbers/${streetSlug}.json`
+    const response = await fetch(filePath)
+    if (!response.ok) {
+      // TODO: Add error handling
+      console.error('Error - No autocomplete house numbers names found')
+      return
+    }
+    const jsonData = await response.json()
+    return jsonData.numbers as string[] //TODO: dit kan nog mis gaan
+  }
+
+  return {
+    getAddressJSONandParse,
+    getAutocompleteStreets,
+    getHouseNumbers,
+  }
 }
