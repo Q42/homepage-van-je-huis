@@ -1,7 +1,7 @@
 <template>
   <div class="page-wrapper">
     <UIHeader />
-    <main>
+    <main class="container">
       <slot />
     </main>
   </div>
@@ -11,7 +11,11 @@
 
 <style lang="less" scoped>
 .page-wrapper {
+  position: relative;
   min-height: 100vh;
+}
+
+.container {
   padding: 0 20px;
 }
 </style>

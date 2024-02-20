@@ -22,12 +22,5 @@ module.exports = {
         allow: ['warn', 'error'],
       },
     ],
-    'no-relative-import-paths/no-relative-import-paths': [
-      'warn',
-      {
-        allowSameFolder: true,
-        prefix: '@',
-      },
-    ],
   },
 }
