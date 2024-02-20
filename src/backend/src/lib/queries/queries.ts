@@ -7,10 +7,12 @@ import { sparqlQueries } from "./sparql";
 export const queries = {
     sqlGetBaseTable: ({
         addressTable,
-        streetDescriptionTable
+        streetDescriptionTable,
+        offset
     }: {
         addressTable: string;
         streetDescriptionTable: string;
+        offset?: number;
     }) =>
         `
         SELECT
@@ -26,6 +28,7 @@ export const queries = {
             A.huisnummerHoofdadres,
             A.huisletterHoofdadres,
             A.huisnummertoevoegingHoofdadres ASC
+        ${offset ? `OFFSET ${offset}` : ""}
             
         `,
     sqlGetEventCalendar: (eventsTableName: string) => `SELECT * FROM ${eventsTableName} ORDER BY Date_start ASC`,

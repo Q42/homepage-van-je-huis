@@ -7,12 +7,15 @@ type SlugifyConfig = {
   trim?: boolean;
 };
 
+const removeRegex = /['".]/g;
+
 type SlugifyFunction = (string: string, options?: SlugifyConfig) => string;
 
 export const defaultSlugifyConfig: SlugifyConfig = {
   lower: true,
   replacement: "_",
   trim: true,
+  remove: removeRegex,
 };
 
 export function slugifyStreetName(

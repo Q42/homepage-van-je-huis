@@ -55,7 +55,8 @@ async function generateAPI() {
     const baseAdressList = (await duckDBService.runQuery(
         queries.sqlGetBaseTable({
             addressTable: cs.adressen.outputTableName,
-            streetDescriptionTable: cs.straatOmschrijving.outputTableName
+            streetDescriptionTable: cs.straatOmschrijving.outputTableName,
+            offset: pc.startOffset
         })
     )) as EnrichedDBAddress[];
 

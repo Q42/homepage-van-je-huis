@@ -14,7 +14,7 @@ import { beesInputColumns, beesOutputColumns } from "./src/models/bees";
 import { sparqlImageOutputColumns } from "./src/models/sparqlImages";
 
 // devMode limits all select queries to a specified max number of rows
-export const devMode = { enabled: true, limit: 1000 };
+export const devMode = { enabled: false, limit: 1000 };
 
 // See the type defenition for more info on what all these parameters do.
 export const csvIngestSources: CsvIngestSources = {
@@ -100,6 +100,7 @@ export type PipelineConfig = {
     apiOutputDirectory: string;
     apiResoliverDirectory: string;
     apiAddressFilesDirectory: string;
+    startOffset: number | undefined;
     dbBatchInsertMinThreshold: number;
     maxConsecutiveCrawlFailuresBeforeAbort: number;
     sortSliders: boolean;
@@ -115,6 +116,7 @@ export const pipelineConfig: PipelineConfig = {
     apiOutputDirectory: "./api_generated",
     apiResoliverDirectory: "/resolve",
     apiAddressFilesDirectory: "/address",
+    startOffset: undefined,
     dbBatchInsertMinThreshold: 500,
     maxConsecutiveCrawlFailuresBeforeAbort: 25,
     sortSliders: true,
