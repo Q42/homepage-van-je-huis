@@ -1,7 +1,8 @@
 <template>
   <div class="header">
     <SharedIcon
-      :height="isOnMobile ? 12 : 115"
+      :width="isOnMobile ? 12 : 155"
+      :height="40"
       :type="IconType"
       class="header__logo"
     />
@@ -27,5 +28,6 @@ const IconType = computed(() => (isOnMobile.value ? 'logo--no-text' : 'logo'))
   height: @header-height;
   padding: 20px;
   gap: 10px;
+  align-items: center;
 }
 </style>
