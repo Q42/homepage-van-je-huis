@@ -1,10 +1,4 @@
-<svg
-  width="12px"
-  height="40px"
-  xmlns="http://www.w3.org/2000/svg"
-  fill="none"
-  viewBox="0 0 12 40"
->
+<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 12 40">
   <g class="amsterdam-logo__emblem">
     <path
       fill="#EC0000"
