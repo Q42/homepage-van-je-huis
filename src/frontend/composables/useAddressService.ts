@@ -1,5 +1,3 @@
-import { TimelineEntry } from '../../common/apiSchema/past'
-import { DistanceViewEntry } from '../../common/apiSchema/present'
 import { useAutocompleteStore } from '@/store/autocompleteStore'
 
 // TODO: better error handling (but wait till api is definitive)
@@ -17,18 +15,6 @@ export const useAddressService = () => {
     }
     const jsonData = await response.json()
     return jsonData
-  }
-
-  const getImagesViewModel = (
-    slider: (DistanceViewEntry | TimelineEntry)[],
-  ) => {
-    return slider.map((sliderItem) => {
-      return {
-        image: sliderItem.image,
-        title: sliderItem.title,
-        visitUrl: sliderItem.visitUrl,
-      }
-    })
   }
 
   const getAutocompleteStreets = async () => {
@@ -57,7 +43,6 @@ export const useAddressService = () => {
 
   return {
     getAddressJSONandParse,
-    getImagesViewModel,
     getAutocompleteStreets,
     getHouseNumbers,
   }

@@ -15,7 +15,6 @@
           :story="story"
         />
       </div>
-
       <div
         v-if="presentData && currentView === 'present'"
         class="side-panel-items side-panel-items--calendar"
@@ -27,7 +26,7 @@
         />
       </div>
     </SharedSidePanel>
-    <UIImageList v-if="images" :images="images" />
+    <UIListView :entries="entries" />
     <!-- TODO: accessibility -->
     <div class="tab-buttons">
       <SharedButton
@@ -53,27 +52,13 @@ defineI18nRoute({
 
 const { params } = useRoute()
 
-const addressService = useAddressService()
 const { pastData, presentData } = useAddress(params.address as string)
 const currentView: Ref<'present' | 'past'> = ref('past')
 
-const images = computed(() => {
-  if (!pastData.value || !presentData.value) {
-    return null
-  }
-
-  const getImages = () => {
-    if (!pastData.value || !presentData.value) {
-      throw new Error('Past or present data is missing')
-    }
-    if (currentView.value === 'past') {
-      return pastData.value.timeline
-    } else {
-      return presentData.value.slider
-    }
-  }
-
-  return addressService.getImagesViewModel(getImages())
+const entries = computed(() => {
+  return currentView.value === 'past'
+    ? pastData.value?.timeline
+    : presentData.value?.slider
 })
 </script>
 
