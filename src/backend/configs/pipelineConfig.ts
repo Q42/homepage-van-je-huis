@@ -34,6 +34,11 @@ export type PipelineConfig = {
     maxImgSearchRadius: number;
 
     aggregateTableName: string;
+
+    // Before generating the individual api files, the generation script constructs a master database
+    // out of all the intermediate database. For debugging purposes, it can be convenient to save this db on disk. So it can be manually queried against using a db client.
+    // For normal operation, ":memory:" is recommended.
+    generationTableLocation: ":memory:" | `${string}.duckdb`;
 };
 
 export const pipelineConfig: PipelineConfig = {
@@ -51,5 +56,6 @@ export const pipelineConfig: PipelineConfig = {
     rdColumnPrefix: "rd_geometrie_",
     minArchiveImages: 15,
     maxImgSearchRadius: 150,
-    aggregateTableName: "aggregates"
+    aggregateTableName: "aggregates",
+    generationTableLocation: ":memory:"
 };

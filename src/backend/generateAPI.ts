@@ -39,7 +39,7 @@ async function generateAPI() {
     let generationCounter = 0;
     let skipCounter = 0;
 
-    await duckDBService.initDb({ dbLocation: ":memory:" });
+    await duckDBService.initDb({ dbLocation: pc.generationTableLocation });
 
     const sources: (CsvIngestSource | CrawlerConfig)[] = [...Object.values(cs), ...Object.values(crawlerConfigs)];
 
