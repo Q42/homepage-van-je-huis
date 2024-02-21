@@ -45,7 +45,7 @@ export type PipelineConfig = {
 };
 
 export const pipelineConfig: PipelineConfig = {
-    devMode: { enabled: false, limit: 500 },
+    devMode: { enabled: true, limit: 500 },
     skipExistingApiFiles: false,
     analyticsEnabled: true,
     outputDirs: {

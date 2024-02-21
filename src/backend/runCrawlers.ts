@@ -89,6 +89,8 @@ async function runCrawler(
         } catch (e) {
             if (!(e instanceof AbortError)) {
                 consecutiveFailures++;
+            } else {
+                statusBar.increment();
             }
 
             appendObjectToFile(
