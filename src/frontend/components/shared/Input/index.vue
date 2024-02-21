@@ -17,6 +17,7 @@
       :value="value"
       @input="$emit('update:value', ($event.target as HTMLInputElement).value)"
     />
+    <!-- TODO: add aria label -->
     <button v-if="icon" type="submit" class="icon-btn">
       <SharedIcon :height="24" :width="24" :type="icon" />
     </button>
@@ -63,7 +64,11 @@ const props = defineProps<InputProps>()
 }
 .icon-btn {
   all: unset;
-  padding: 1rem 0;
+  padding: 1rem;
   cursor: pointer;
+
+  &:focus-visible {
+    outline: 1px solid @neutral-grey2;
+  }
 }
 </style>
