@@ -55,7 +55,7 @@
             :key="index"
           >
             <button
-              ref="streetItems"
+              ref="houseNumberItems"
               :class="{
                 'autocomplete-item--focused':
                   index === focussedHouseNumberIndex,
@@ -86,6 +86,7 @@ const router = useRouter()
 const { locale } = useI18n()
 
 const streetItems = ref<HTMLButtonElement[] | null>(null)
+const houseNumberItems = ref<HTMLButtonElement[] | null>(null)
 const street = ref('')
 const houseNumber = ref('')
 const error: Ref<TranslationKey | null> = ref(null)
@@ -95,31 +96,32 @@ const focussedStreetIndex: Ref<number | null> = ref(null)
 const focussedHouseNumberIndex: Ref<number | null> = ref(null)
 
 const handleKeyboardFocus = (
-  direction: 'down' | 'up',
+  direction: 'ArrowDown' | 'ArrowUp',
   focussedIdentifier: Ref<number | null>,
   list: Ref<string[] | undefined>,
+  focussableItems: Ref<HTMLButtonElement[] | null>,
 ) => {
-  if (!list.value || !streetItems.value) {
+  if (!list.value || !focussableItems.value) {
     return
   }
 
-  if (direction === 'down') {
+  if (direction === 'ArrowDown') {
     if (
       focussedIdentifier.value === null ||
       focussedIdentifier.value === list.value.length - 1
     ) {
       focussedIdentifier.value = 0
-      streetItems.value[0].focus()
     } else if (focussedIdentifier.value < list.value.length - 1) {
       focussedIdentifier.value++
-      streetItems.value[focussedIdentifier.value].focus()
     }
-  } else if (direction === 'up') {
+    focussableItems.value[focussedIdentifier.value].focus()
+  } else if (direction === 'ArrowUp') {
     if (focussedIdentifier.value === null || focussedIdentifier.value === 0) {
       focussedIdentifier.value = list.value.length - 1
     } else if (focussedIdentifier.value > 0) {
       focussedIdentifier.value--
     }
+    focussableItems.value[focussedIdentifier.value].focus()
   }
 }
 
@@ -154,35 +156,21 @@ const handleSubmit = () => {
 }
 
 const handleKeyDown = (event: KeyboardEvent) => {
-  if (event.key === 'ArrowDown') {
+  if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
     if (streetAutocompleteIsOpen.value) {
-      handleKeyboardFocus('down', focussedStreetIndex, filteredStreets)
+      handleKeyboardFocus(
+        event.key,
+        focussedStreetIndex,
+        filteredStreets,
+        streetItems,
+      )
     } else if (houseNumberAutocompleteIsOpen.value) {
       handleKeyboardFocus(
-        'down',
+        event.key,
         focussedHouseNumberIndex,
         filteredHouseNumbers,
+        houseNumberItems,
       )
-    }
-  } else if (event.key === 'ArrowUp') {
-    if (streetAutocompleteIsOpen.value) {
-      handleKeyboardFocus('up', focussedStreetIndex, filteredStreets)
-    } else if (houseNumberAutocompleteIsOpen.value) {
-      handleKeyboardFocus('up', focussedHouseNumberIndex, filteredHouseNumbers)
-    }
-  } else if (event.key === 'Enter') {
-    if (streetAutocompleteIsOpen.value) {
-      if (filteredStreets.value && focussedStreetIndex.value) {
-        selectStreet(filteredStreets.value[focussedStreetIndex.value])
-      }
-    } else if (houseNumberAutocompleteIsOpen.value) {
-      if (filteredHouseNumbers.value && focussedHouseNumberIndex.value) {
-        selectHouseNumber(
-          filteredHouseNumbers.value[focussedHouseNumberIndex.value],
-        )
-      }
-    } else {
-      handleSubmit()
     }
   }
 }
