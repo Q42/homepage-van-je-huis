@@ -12,6 +12,7 @@ import { assembleApiRecord, getMinMaxRangeFromPastData, getMinMaxRangeFromPresen
 import {
     checkFilePaths,
     createDirectory,
+    generateSessionName,
     getHouseNumberFromAddress,
     measureExecutionTime,
     writeObjectToJsonFile
@@ -29,9 +30,12 @@ import slugify from "slugify";
 import { isExistingFile } from "./src/utils/checkExisting";
 import { csvIngestSources as cs } from "./configs/csvSourceConfigs";
 import { crawlerConfigs } from "./configs/crawlerConfigs";
+import { AnalyticsService } from "./src/lib/analyticsService";
 
 const duckDBService = new DuckDBService();
 const resolverService = new ResolverService();
+const analyticsService = new AnalyticsService(!pc.enableAnalytics);
+const sessionName = generateSessionName("api-generation");
 
 async function generateAPI() {
     const resolverOutputDir = pc.apiOutputDirectory + pc.apiResoliverDirectory;
@@ -199,6 +203,7 @@ async function generateAPI() {
         writeObjectToJsonFile(addressRecord, outputFilePath);
         resolverService.addAddressToResolverData(address);
         generationCounter++;
+        analyticsService.addRecordToAnalytics(addressRecord);
         statusBar.increment();
     }
     statusBar.stop();
@@ -206,11 +211,23 @@ async function generateAPI() {
     console.log(`Generated ${generationCounter} API files, skipped ${skipCounter} existing files`);
 }
 
+async function teardown() {
+    console.log("shutting down");
+    analyticsService.writeAnalyticsDataToFile("analytics_" + sessionName);
+    try {
+        await duckDBService.db?.close();
+    } catch {}
+}
+
+process.on("SIGINT", teardown); // CTRL+C
+process.on("SIGQUIT", teardown); // Keyboard quit
+process.on("SIGTERM", teardown); // `kill` command
+
 async function dbProcessRunner() {
     try {
-        return generateAPI();
+        return await generateAPI();
     } finally {
-        await duckDBService.db?.close();
+        await teardown();
     }
 }
 

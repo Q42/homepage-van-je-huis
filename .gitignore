@@ -7,3 +7,4 @@ src/backend/api_generated/
 **/*.duckdb
 **/*.duckdb.wal
 **/*.parquet
+**/*analytics_*

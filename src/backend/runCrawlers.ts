@@ -1,10 +1,4 @@
-import {
-    checkFilePaths,
-    createDirectory,
-    generateSessionName,
-    getIngestFilePathsFromSources,
-    measureExecutionTime
-} from "./src/utils/general";
+import { createDirectory, generateSessionName, measureExecutionTime } from "./src/utils/general";
 import { pipelineConfig as pc } from "./configs/pipelineConfig";
 
 import { AbstractCrawler } from "./src/crawlers/abstractCrawler";

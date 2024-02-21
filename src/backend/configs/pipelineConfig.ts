@@ -39,10 +39,13 @@ export type PipelineConfig = {
     // out of all the intermediate database. For debugging purposes, it can be convenient to save this db on disk. So it can be manually queried against using a db client.
     // For normal operation, ":memory:" is recommended.
     generationTableLocation: ":memory:" | `${string}.duckdb`;
+
+    // If true, the analytics service will be enabled and will collect data on the generated addresses and export a report.
+    enableAnalytics: boolean;
 };
 
 export const pipelineConfig: PipelineConfig = {
-    devMode: { enabled: true, limit: 10000 },
+    devMode: { enabled: true, limit: 500 },
     skipExistingApiFiles: false,
     intermediateOutputDirectory: "./intermediate_output",
     apiOutputDirectory: "./api_generated",
@@ -57,5 +60,6 @@ export const pipelineConfig: PipelineConfig = {
     minArchiveImages: 15,
     maxImgSearchRadius: 150,
     aggregateTableName: "aggregates",
-    generationTableLocation: ":memory:"
+    generationTableLocation: ":memory:",
+    enableAnalytics: true
 };
