@@ -1,5 +1,5 @@
-import { BaseRecord } from "../models/baseRecord";
 import { BaseApiResponse } from "../lib/types";
+import { BaseRecord } from "../models/baseRecord";
 
 export type ApiClient = (...args: string[]) => Promise<Record<string, any>[]>;
 

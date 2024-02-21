@@ -1,15 +1,13 @@
 import slugify from "slugify";
+import { StreetsList, HouseNumberList } from "../../../common/apiSchema/resolve";
+import { slugifyStreetName } from "../../../common/util/resolve";
 import { DBAddress } from "../models/adresses";
 import { createDirectory, getHouseNumberFromAddress, writeObjectToJsonFile } from "../utils/general";
-import { slugifyStreetName } from "../../../common/util/resolve";
-import { StreetsList, HouseNumberList } from "../../../common/apiSchema/resolve";
 
 type ResolverData = Record<string, string[]>;
 
 export class ResolverService {
     private resolverData: ResolverData = {};
-
-    constructor() {}
 
     public addAddressToResolverData(address: DBAddress) {
         if (!(address["ligtAan:BAG.ORE.naamHoofdadres"] in this.resolverData)) {

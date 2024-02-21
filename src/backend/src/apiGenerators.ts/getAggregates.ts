@@ -1,4 +1,4 @@
-import { DistanceViewAggregateEntry, DistanceViewEntry } from "../../../common/apiSchema/present";
+import { DistanceViewAggregateEntry } from "../../../common/apiSchema/present";
 import { pipelineConfig } from "../../configs/pipelineConfig";
 import { DuckDBService } from "../lib/duckDBService";
 import { queries } from "../lib/queries/queries";
@@ -42,7 +42,7 @@ export async function getAggregates({
     const aggregateEntries: DistanceViewAggregateEntry[] = [];
 
     try {
-        const numberOfTreeSpecies = (
+        const numberOfTreeSpecies: number | undefined = (
             await duckDBService.runQuery(
                 queries.aggregates.sqlGetNumberOfTreeSpecies({
                     aggregateTableName: pipelineConfig.aggregateTableName,
@@ -70,7 +70,7 @@ export async function getAggregates({
     }
 
     try {
-        const numberOfTrees = (
+        const numberOfTrees: number | undefined = (
             await duckDBService.runQuery(
                 queries.aggregates.sqlGetNumberOfTrees({
                     aggregateTableName: pipelineConfig.aggregateTableName,
@@ -97,7 +97,7 @@ export async function getAggregates({
     }
 
     try {
-        const numberOfBees = (
+        const numberOfBees: bigint | undefined = (
             await duckDBService.runQuery(
                 queries.aggregates.sqlGetNumberOfBees({
                     aggregateTableName: pipelineConfig.aggregateTableName,

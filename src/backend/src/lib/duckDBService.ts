@@ -1,9 +1,9 @@
 import { Database } from "duckdb-async";
-import { BaseApiResponse, ColumnDefenitions, CrawlerConfig, CsvIngestSource, IntermediateOutputFormats } from "./types";
-import { parseValueForDbInsert } from "../utils/general";
 import { pipelineConfig as pc } from "../../configs/pipelineConfig";
 import { getExportSelectQuery } from "../utils/db";
+import { parseValueForDbInsert } from "../utils/general";
 import { queries } from "./queries/queries";
+import { BaseApiResponse, ColumnDefenitions, CrawlerConfig, CsvIngestSource, IntermediateOutputFormats } from "./types";
 
 type DuckDBConfig = {
     dbLocation?: string;
@@ -174,7 +174,7 @@ export class DuckDBService {
                 .join(",")})`;
         });
 
-        let querystring = `INSERT INTO ${tableName}(${columnNames.join(", ")}) VALUES ${valuesArray.join(", ")} `;
+        const querystring = `INSERT INTO ${tableName}(${columnNames.join(", ")}) VALUES ${valuesArray.join(", ")} `;
 
         return await this.runQuery(querystring);
     }

@@ -12,6 +12,6 @@ export const publicArtRecordOutputColumns: ColumnDefenitions = {
     location: "GEOMETRY"
 };
 
-export interface CustomizedPublicArtRecord extends Omit<PublicArtRecord, "location"> {
+export type CustomizedPublicArtRecord = {
     distance_from_address: number;
-}
+} & Omit<PublicArtRecord, "location">

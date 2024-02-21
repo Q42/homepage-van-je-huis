@@ -1,11 +1,10 @@
 import SparqlClient from "sparql-http-client";
-import { queries } from "../lib/queries/queries";
-import { AbstractCrawler } from "./abstractCrawler";
-import { CrawlerConfig, SparqlBatch } from "../lib/types";
-
-import { SparqlImage } from "../models/sparqlImages";
-import { DuckDBService } from "../lib/duckDBService";
 import { imageArchiveCrawlerExtraConfig } from "../../configs/crawlerConfigs";
+import { DuckDBService } from "../lib/duckDBService";
+import { queries } from "../lib/queries/queries";
+import { CrawlerConfig, SparqlBatch } from "../lib/types";
+import { SparqlImage } from "../models/sparqlImages";
+import { AbstractCrawler } from "./abstractCrawler";
 
 const endpoint = "https://api.lod.uba.uva.nl/datasets/ATM/ATM-KG/services/ATM-KG/sparql";
 

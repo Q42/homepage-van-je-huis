@@ -1,6 +1,5 @@
 import { ColumnDefenitions } from "../lib/types";
 
-export type BuurtRecord = {};
 export const buurtenInputColumns: ColumnDefenitions = {
     "identificatie": "VARCHAR",
     "code": "VARCHAR",
