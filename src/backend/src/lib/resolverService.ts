@@ -26,7 +26,6 @@ export class ResolverService {
             return;
         }
         console.log("writing resolver data to " + outputDir);
-        createDirectory(outputDir);
         createDirectory(outputDir + "/numbers");
 
         const streetsList: StreetsList = { streets: streetNames };

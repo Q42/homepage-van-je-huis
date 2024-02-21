@@ -106,7 +106,7 @@ export class DuckDBService {
             throw dbNotInitializedError;
         }
 
-        const parquetFile = `${pc.intermediateOutputDirectory}/${source.outputTableName}.parquet`;
+        const parquetFile = `${pc.outputDirs.root + pc.outputDirs.intermediateDbs}/${source.outputTableName}.parquet`;
         console.log(`loading intermediate source: ${parquetFile} into table ${source.outputTableName}`);
 
         const querystring = `CREATE ${tempTable ? "TEMP " : ""}TABLE ${source.outputTableName} AS FROM read_parquet('${parquetFile}')`;

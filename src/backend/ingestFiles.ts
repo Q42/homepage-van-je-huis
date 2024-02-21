@@ -14,13 +14,13 @@ const duckDBService = new DuckDBService();
 
 async function ingestFileSources() {
     const sessionName = generateSessionName("csv-ingest-run");
-    const dbDir = `${pc.intermediateOutputDirectory}/db`;
+    const dbDir = `${pc.outputDirs.root + pc.outputDirs.intermediateDbs}/db`;
 
     console.log("starting");
     // system initialization
 
     checkFilePaths(getIngestFilePathsFromSources(csvIngestSources));
-    createDirectory(pc.intermediateOutputDirectory);
+    createDirectory(pc.outputDirs.root + pc.outputDirs.intermediateDbs);
     createDirectory(dbDir);
 
     await duckDBService.initDb({ dbLocation: `${dbDir}/${sessionName}.duckdb` });

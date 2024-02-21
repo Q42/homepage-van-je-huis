@@ -9,9 +9,15 @@ export type PipelineConfig = {
     // Where should the intermediate databases be stored.
     intermediateOutputDirectory: string;
 
-    apiOutputDirectory: string;
-    apiResoliverDirectory: string;
-    apiAddressFilesDirectory: string;
+    outputDirs: {
+        root: string;
+        intermediateDbs: string;
+        api: { root: string; apiResolver: string; apiRecords: string };
+        analytics: string;
+    };
+
+    // If enabled, the analytics service will generate a simple analytics report on the generated api files.
+    analyticsEnabled: boolean;
 
     // the number of rows to skip in the base table
     startOffset: number | undefined;
@@ -39,18 +45,19 @@ export type PipelineConfig = {
     // out of all the intermediate database. For debugging purposes, it can be convenient to save this db on disk. So it can be manually queried against using a db client.
     // For normal operation, ":memory:" is recommended.
     generationTableLocation: ":memory:" | `${string}.duckdb`;
-
-    // If true, the analytics service will be enabled and will collect data on the generated addresses and export a report.
-    enableAnalytics: boolean;
 };
 
 export const pipelineConfig: PipelineConfig = {
     devMode: { enabled: true, limit: 500 },
     skipExistingApiFiles: false,
-    intermediateOutputDirectory: "./intermediate_output",
-    apiOutputDirectory: "./api_generated",
-    apiResoliverDirectory: "/resolve",
-    apiAddressFilesDirectory: "/address",
+    intermediateOutputDirectory: "./gen/intermediate_output",
+    analyticsEnabled: true,
+    outputDirs: {
+        root: "./gen",
+        api: { root: "/api", apiResolver: "/resolve", apiRecords: "/address" },
+        analytics: "/analytics",
+        intermediateDbs: "/intermediate_dbs"
+    },
     startOffset: undefined,
     dbBatchInsertMinThreshold: 500,
     maxConsecutiveCrawlFailuresBeforeAbort: 25,
@@ -60,6 +67,5 @@ export const pipelineConfig: PipelineConfig = {
     minArchiveImages: 15,
     maxImgSearchRadius: 150,
     aggregateTableName: "aggregates",
-    generationTableLocation: ":memory:",
-    enableAnalytics: true
+    generationTableLocation: ":memory:"
 };

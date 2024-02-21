@@ -34,12 +34,25 @@ import { AnalyticsService } from "./src/lib/analyticsService";
 
 const duckDBService = new DuckDBService();
 const resolverService = new ResolverService();
-const analyticsService = new AnalyticsService(!pc.enableAnalytics);
+const analyticsService = new AnalyticsService(!pc.analyticsEnabled);
 const sessionName = generateSessionName("api-generation");
+const analyticsOutputDir = pc.outputDirs.root + pc.outputDirs.analytics;
 
 async function generateAPI() {
-    const resolverOutputDir = pc.apiOutputDirectory + pc.apiResoliverDirectory;
-    const addressOutputDir = pc.apiOutputDirectory + pc.apiAddressFilesDirectory;
+    const resolverOutputDir = pc.outputDirs.root + pc.outputDirs.api.root + pc.outputDirs.api.apiResolver;
+    const addressOutputDir = pc.outputDirs.root + pc.outputDirs.api.root + pc.outputDirs.api.apiRecords;
+
+    const directoriesToBeCreated: string[] = [
+        pc.outputDirs.root,
+        pc.outputDirs.root + pc.outputDirs.api.root,
+        addressOutputDir,
+        resolverOutputDir
+    ];
+
+    if (pc.analyticsEnabled) {
+        directoriesToBeCreated.push(analyticsOutputDir);
+    }
+
     let generationCounter = 0;
     let skipCounter = 0;
 
@@ -48,7 +61,8 @@ async function generateAPI() {
     const sources: (CsvIngestSource | CrawlerConfig)[] = [...Object.values(cs), ...Object.values(crawlerConfigs)];
 
     const sourcePaths = sources.map(
-        (source) => `${pipelineConfig.intermediateOutputDirectory}/${source.outputTableName}.parquet`
+        (source) =>
+            `${pipelineConfig.outputDirs.root + pipelineConfig.outputDirs.intermediateDbs}/${source.outputTableName}.parquet`
     );
     checkFilePaths(sourcePaths);
 
@@ -66,8 +80,9 @@ async function generateAPI() {
         })
     )) as EnrichedDBAddress[];
 
-    createDirectory(pc.apiOutputDirectory);
-    createDirectory(addressOutputDir);
+    directoriesToBeCreated.forEach((dir) => {
+        createDirectory(dir);
+    });
 
     const eventCalendar = (await duckDBService.runQuery(
         queries.sqlGetEventCalendar(cs.eventsPlaceholder.outputTableName)
@@ -213,7 +228,7 @@ async function generateAPI() {
 
 async function teardown() {
     console.log("shutting down");
-    analyticsService.writeAnalyticsDataToFile("analytics_" + sessionName);
+    analyticsService.writeAnalyticsDataToFile(analyticsOutputDir + "/analytics_" + sessionName);
     try {
         await duckDBService.db?.close();
     } catch {}

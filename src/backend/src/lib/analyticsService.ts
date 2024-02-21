@@ -1,9 +1,10 @@
-import { AddressRecord } from "../../../common/apiSchema/addressRecord";
+import { AddresDescription, AddressRecord } from "../../../common/apiSchema/addressRecord";
 import { writeObjectToJsonFile } from "../utils/general";
 
 type DistributionKey = `${number}`;
 type Distribution = Record<DistributionKey, number>;
 type Range = { start: number | undefined; end: number | undefined };
+type Ranking = { value: number | undefined; address: AddresDescription | undefined };
 
 type AnalyticsData = {
     lastAddressId: string;
@@ -12,6 +13,11 @@ type AnalyticsData = {
     averagePastRange: Range;
     presentDataDistribution: Distribution;
     averagePresentRange: Range;
+    bestPresent: Ranking;
+    worstPresent: Ranking;
+    bestPast: Ranking;
+    worstPast: Ranking;
+    worstOverall: Ranking;
 };
 
 function averageCalculator(currentAverage: number, newValue: number, n: number) {
@@ -22,7 +28,23 @@ export class AnalyticsService {
     protected analyticsData: AnalyticsData = {
         numberOfRecords: 0,
         pastDataDistribution: {},
+        bestPast: {
+            value: undefined,
+            address: undefined
+        },
+        worstPast: {
+            value: undefined,
+            address: undefined
+        },
         presentDataDistribution: {},
+        bestPresent: {
+            value: undefined,
+            address: undefined
+        },
+        worstPresent: {
+            value: undefined,
+            address: undefined
+        },
         averagePastRange: {
             start: undefined,
             end: undefined
@@ -31,7 +53,11 @@ export class AnalyticsService {
             start: undefined,
             end: undefined
         },
-        lastAddressId: ""
+        lastAddressId: "",
+        worstOverall: {
+            value: undefined,
+            address: undefined
+        }
     };
 
     protected internalCounters = {
@@ -45,13 +71,7 @@ export class AnalyticsService {
         this.serviceDisabled = Boolean(disabled);
     }
 
-    public addRecordToAnalytics(record: AddressRecord): void {
-        if (this.serviceDisabled) {
-            return;
-        }
-        this.analyticsData.numberOfRecords++;
-        this.analyticsData.lastAddressId = record.id;
-
+    protected updateDistributions(record: AddressRecord) {
         const pastDataLength = record.pastData.timeline.length;
         if (!(String(pastDataLength) in this.analyticsData.pastDataDistribution)) {
             this.analyticsData.pastDataDistribution[String(pastDataLength) as DistributionKey] = 0;
@@ -63,7 +83,9 @@ export class AnalyticsService {
             this.analyticsData.presentDataDistribution[String(presentDataLength) as DistributionKey] = 0;
         }
         this.analyticsData.presentDataDistribution[String(presentDataLength) as DistributionKey]++;
+    }
 
+    protected updateAverages(record: AddressRecord) {
         if (!(record.pastData.rangeEnd === 0 && record.pastData.rangeStart === 0)) {
             this.internalCounters.pastRange++;
 
@@ -109,6 +131,60 @@ export class AnalyticsService {
                 this.internalCounters.presentRange
             );
         }
+    }
+
+    protected updateRankings(record: AddressRecord) {
+        if (
+            this.analyticsData.bestPast.value === undefined ||
+            record.pastData.timeline.length > this.analyticsData.bestPast.value
+        ) {
+            this.analyticsData.bestPast.value = record.pastData.timeline.length;
+            this.analyticsData.bestPast.address = record.address;
+        }
+
+        if (
+            this.analyticsData.worstPast.value === undefined ||
+            record.pastData.timeline.length < this.analyticsData.worstPast.value
+        ) {
+            this.analyticsData.worstPast.value = record.pastData.timeline.length;
+            this.analyticsData.worstPast.address = record.address;
+        }
+
+        if (
+            this.analyticsData.bestPresent.value === undefined ||
+            record.presentData.slider.length > this.analyticsData.bestPresent.value
+        ) {
+            this.analyticsData.bestPresent.value = record.presentData.slider.length;
+            this.analyticsData.bestPresent.address = record.address;
+        }
+
+        if (
+            this.analyticsData.worstPresent.value === undefined ||
+            record.presentData.slider.length < this.analyticsData.worstPresent.value
+        ) {
+            this.analyticsData.worstPresent.value = record.presentData.slider.length;
+            this.analyticsData.worstPresent.address = record.address;
+        }
+
+        if (
+            this.analyticsData.worstOverall.value === undefined ||
+            record.pastData.timeline.length + record.presentData.slider.length < this.analyticsData.worstOverall.value
+        ) {
+            this.analyticsData.worstOverall.value = record.pastData.timeline.length + record.presentData.slider.length;
+            this.analyticsData.worstOverall.address = record.address;
+        }
+    }
+
+    public addRecordToAnalytics(record: AddressRecord): void {
+        if (this.serviceDisabled) {
+            return;
+        }
+        this.analyticsData.numberOfRecords++;
+        this.analyticsData.lastAddressId = record.id;
+
+        this.updateDistributions(record);
+        this.updateAverages(record);
+        this.updateRankings(record);
     }
 
     public writeAnalyticsDataToFile(filePath: string): void {

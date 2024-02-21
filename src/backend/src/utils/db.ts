@@ -12,9 +12,8 @@ export function getExportSelectQuery(
         if (inputColumns[column] && inputColumns[column].toLowerCase() === "geometry") {
             // also enclose the column name in double quotes to avoid issues with special characters in the column name
             return `ST_AsText("${column}") as "${column}"`;
-        } 
-            return `"${column}"`;
-        
+        }
+        return `"${column}"`;
     });
 
     return `(SELECT ${parsedColumns.join(", ")} FROM ${tableName})`;
@@ -44,7 +43,7 @@ export async function loadFileToParquet(
 
     await dbService.exportTable({
         tableName: csvIngestSource.outputTableName,
-        outputFile: `${pc.intermediateOutputDirectory}/${csvIngestSource.outputTableName}`,
+        outputFile: `${pc.outputDirs.root + pc.outputDirs.intermediateDbs}/${csvIngestSource.outputTableName}`,
         outputColumns: csvIngestSource.outputColumns,
         columnDefenitions: csvIngestSource.inputColumns,
         outputFormat: "parquet"

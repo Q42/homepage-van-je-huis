@@ -25,11 +25,11 @@ async function runCrawlers() {
     console.log("starting");
     const sessionName = generateSessionName("crawler-run");
     // system initialization
-    createDirectory(pc.intermediateOutputDirectory);
-    createDirectory(pc.intermediateOutputDirectory + "/db");
-    createDirectory(`${pc.intermediateOutputDirectory}/failureLogs`);
+    createDirectory(pc.outputDirs.root + pc.outputDirs.intermediateDbs);
+    createDirectory(pc.outputDirs.root + pc.outputDirs.intermediateDbs + "/db");
+    createDirectory(`${pc.outputDirs.intermediateDbs}/failureLogs`);
 
-    await duckDBService.initDb({ dbLocation: `${pc.intermediateOutputDirectory}/db/${sessionName}.duckdb` });
+    await duckDBService.initDb({ dbLocation: `${pc.outputDirs.intermediateDbs}/db/${sessionName}.duckdb` });
 
     const instantiatedCrawlers = {
         imageArchive: new cc.imageArchive.crawler(cc.imageArchive, duckDBService) as SparqlImageArchiveCrawler,
@@ -89,7 +89,7 @@ async function runCrawler(
 
             appendObjectToFile(
                 row,
-                `${pc.intermediateOutputDirectory}/failureLogs/${sessionName}_${instantiatedCrawler.crawlerConfig.outputTableName}-failed.json`
+                `${pc.outputDirs.intermediateDbs}/failureLogs/${sessionName}_${instantiatedCrawler.crawlerConfig.outputTableName}-failed.json`
             );
         }
 
@@ -114,7 +114,7 @@ async function runCrawler(
     await instantiatedCrawler.teardown();
     dbService.exportTable({
         tableName: instantiatedCrawler.crawlerConfig.outputTableName,
-        outputFile: `${pc.intermediateOutputDirectory}/${instantiatedCrawler.crawlerConfig.outputTableName}`,
+        outputFile: `${pc.outputDirs.intermediateDbs}/${instantiatedCrawler.crawlerConfig.outputTableName}`,
         columnDefenitions: instantiatedCrawler.crawlerConfig.outputColumns,
         outputFormat: "parquet"
     });
