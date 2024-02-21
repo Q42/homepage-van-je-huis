@@ -59,6 +59,11 @@ export const useSearchAutocomplete = (street: Ref, houseNumber: Ref) => {
         slugifyStreetName(street.value),
       )
       houseNumbers.value = autocompleteHouseNumbers
+      const houseNumbersInput = document.getElementById('house-number-input')
+      if (houseNumbersInput) {
+        await nextTick()
+        houseNumbersInput.focus()
+      }
     } else if (!streets.value?.includes(street.value)) {
       houseNumbers.value = undefined
       houseNumber.value = ''
