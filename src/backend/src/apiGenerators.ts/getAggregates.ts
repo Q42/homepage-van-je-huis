@@ -42,14 +42,14 @@ export async function getAggregates({
     const aggregateEntries: DistanceViewAggregateEntry[] = [];
 
     try {
-        const numberOfTreeSpecies: number | undefined = (
+        const numberOfTreeSpecies = (
             await duckDBService.runQuery(
                 queries.aggregates.sqlGetNumberOfTreeSpecies({
                     aggregateTableName: pipelineConfig.aggregateTableName,
                     brtCode: address["ligtIn:GBD.BRT.code"]
                 })
             )
-        )[0]["treeSpecies"];
+        )[0]["treeSpecies"] as number | undefined;
 
         if (numberOfTreeSpecies) {
             const treeSpeciesBuurtEntry: DistanceViewAggregateEntry = {
@@ -70,14 +70,14 @@ export async function getAggregates({
     }
 
     try {
-        const numberOfTrees: number | undefined = (
+        const numberOfTrees = (
             await duckDBService.runQuery(
                 queries.aggregates.sqlGetNumberOfTrees({
                     aggregateTableName: pipelineConfig.aggregateTableName,
                     wijkCode: address["ligtIn:GBD.WIJK.code"]
                 })
             )
-        )[0]["trees"];
+        )[0]["trees"] as number | undefined;
         if (numberOfTrees) {
             const treesWijkEntry: DistanceViewAggregateEntry = {
                 type: "aggregate_trees",
@@ -97,14 +97,14 @@ export async function getAggregates({
     }
 
     try {
-        const numberOfBees: bigint | undefined = (
+        const numberOfBees = (
             await duckDBService.runQuery(
                 queries.aggregates.sqlGetNumberOfBees({
                     aggregateTableName: pipelineConfig.aggregateTableName,
                     sdlCode: address["ligtIn:GBD.SDL.code"]
                 })
             )
-        )[0]["bees"];
+        )[0]["bees"] as bigint | undefined;
 
         if (numberOfBees) {
             const beesStadsdeelEntry: DistanceViewAggregateEntry = {

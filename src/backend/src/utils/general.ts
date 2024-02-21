@@ -1,5 +1,5 @@
 import fs from "fs";
-import { CsvIngestSources, ApiCrawlerConfigs } from "../lib/types";
+import { CsvIngestSources } from "../lib/types";
 import { DBAddress } from "../models/adresses";
 
 export function checkFilePaths(paths: string[]) {
@@ -45,24 +45,25 @@ export async function measureExecutionTime(fn: () => Promise<any>) {
     return;
 }
 
-export function getIngestFilePathsFromSources(sources: CsvIngestSources | ApiCrawlerConfigs) {
+export function getIngestFilePathsFromSources(sources: CsvIngestSources) {
     const filePaths: string[] = [];
+
     Object.values(sources).forEach((source) => {
         if (source.ingestSourcePath !== undefined) {
-            filePaths.push(source.ingestSourcePath ?? source.guideFile);
+            filePaths.push(source.ingestSourcePath);
         }
     });
     return filePaths;
 }
 
-export function parseValueForDbInsert(value: any): string {
-    if (!value) {
+export function parseValueForDbInsert(value: undefined | null | number | bigint | string): string {
+    if (value === undefined || value === null) {
         return "NULL";
     }
     if (typeof value === "string") {
         return `'${value.replace(/'/g, '"')}'`.trim();
     }
-    return value.toString();
+    return String(value);
 }
 
 export function generateSessionName(start?: string): string {

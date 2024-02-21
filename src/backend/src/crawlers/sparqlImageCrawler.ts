@@ -12,7 +12,7 @@ export class SparqlImageArchiveCrawler extends AbstractCrawler<SparqlImage, Spar
     protected sparqlClient: SparqlClient;
     protected duckDBService: DuckDBService;
 
-    public constructor(crawlerConfig: CrawlerConfig, duckDBService: any) {
+    public constructor(crawlerConfig: CrawlerConfig, duckDBService: DuckDBService) {
         if (!crawlerConfig) {
             throw new Error("No crawlerConfig provided to SparqlImageArchiveCrawler");
         }
@@ -31,7 +31,7 @@ export class SparqlImageArchiveCrawler extends AbstractCrawler<SparqlImage, Spar
         const stream = await this.sparqlClient.query.select(queries.sparql.sparqlGetTotalImages);
         let totalImages = 0;
         for await (const chunk of stream) {
-            if (chunk["cnt"]?.value) {
+            if ("cnt" in chunk && chunk["cnt"].value) {
                 totalImages = parseInt(chunk["cnt"].value);
             }
         }
@@ -54,19 +54,20 @@ export class SparqlImageArchiveCrawler extends AbstractCrawler<SparqlImage, Spar
         const stream = await this.sparqlClient.query.select(queries.sparql.getImagesBatch(guideRecord));
 
         for await (const chunk of stream) {
+            const streamData = chunk as Record<string, { value: any }>;
             const image: SparqlImage = {
-                archiveUrl: chunk["resource"]?.value,
-                title: chunk["title"]?.value,
-                imgUrl: chunk["thumbnail"]?.value,
-                pandId: chunk["pand"]?.value,
-                addressLink: chunk["address"]?.value,
-                wktPoint: chunk["wkt"]?.value,
-                streetLink: chunk["street"]?.value,
-                streetName: chunk["street_name"]?.value,
-                streetId: chunk["openbareRuimte"]?.value,
-                dateString: chunk["textDate"]?.value,
-                startDate: chunk["startDate"]?.value,
-                endDate: chunk["endDate"]?.value
+                archiveUrl: streamData["resource"]?.value,
+                title: streamData["title"]?.value,
+                imgUrl: streamData["thumbnail"]?.value,
+                pandId: streamData["pand"]?.value,
+                addressLink: streamData["address"]?.value,
+                wktPoint: streamData["wkt"]?.value,
+                streetLink: streamData["street"]?.value,
+                streetName: streamData["street_name"]?.value,
+                streetId: streamData["openbareRuimte"]?.value,
+                dateString: streamData["textDate"]?.value,
+                startDate: streamData["startDate"]?.value,
+                endDate: streamData["endDate"]?.value
             };
             result.push(image);
         }

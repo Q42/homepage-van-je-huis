@@ -42,7 +42,7 @@ export class PublicArtCrawler extends AbstractCrawler<PublicArtRecord, string> {
     }
 
     public async finalize(): Promise<void> {
-        return;
+        return Promise.resolve();
     }
 
     public async teardown(): Promise<void> {

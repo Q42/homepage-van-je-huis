@@ -31,7 +31,6 @@ async function runCrawlers() {
     console.log("starting");
     const sessionName = generateSessionName("crawler-run");
     // system initialization
-    checkFilePaths(getIngestFilePathsFromSources(cc));
     createDirectory(pc.intermediateOutputDirectory);
     createDirectory(pc.intermediateOutputDirectory + "/db");
     createDirectory(`${pc.intermediateOutputDirectory}/failureLogs`);
