@@ -19,12 +19,19 @@ export function getExportSelectQuery(
     return `(SELECT ${parsedColumns.join(", ")} FROM ${tableName})`;
 }
 
-export async function loadFileToParquet(
-    dbService: DuckDBService,
-    csvIngestSource: CsvIngestSource,
-    pc: PipelineConfig,
-    dropTableAfterExport?: boolean
-) {
+export async function loadFileToParquet({
+    dbService,
+    csvIngestSource,
+    pc,
+    outputDir,
+    dropTableAfterExport
+}: {
+    dbService: DuckDBService;
+    csvIngestSource: CsvIngestSource;
+    pc: PipelineConfig;
+    outputDir: string;
+    dropTableAfterExport?: boolean;
+}) {
     await dbService.ingestCSV(csvIngestSource);
 
     if (csvIngestSource.geoTransformColumn !== undefined) {
@@ -43,7 +50,7 @@ export async function loadFileToParquet(
 
     await dbService.exportTable({
         tableName: csvIngestSource.outputTableName,
-        outputFile: `${pc.outputDirs.root + pc.outputDirs.intermediateDbs}/${csvIngestSource.outputTableName}`,
+        outputFile: `${outputDir}/${csvIngestSource.outputTableName}`,
         outputColumns: csvIngestSource.outputColumns,
         columnDefenitions: csvIngestSource.inputColumns,
         outputFormat: "parquet"

@@ -6,9 +6,6 @@ export type PipelineConfig = {
     // This allows you to break-off the generation process and pick up where you left off later on.
     skipExistingApiFiles: boolean;
 
-    // Where should the intermediate databases be stored.
-    intermediateOutputDirectory: string;
-
     outputDirs: {
         root: string;
         intermediateDbs: string;
@@ -48,9 +45,8 @@ export type PipelineConfig = {
 };
 
 export const pipelineConfig: PipelineConfig = {
-    devMode: { enabled: true, limit: 500 },
+    devMode: { enabled: false, limit: 500 },
     skipExistingApiFiles: false,
-    intermediateOutputDirectory: "./gen/intermediate_output",
     analyticsEnabled: true,
     outputDirs: {
         root: "./gen",

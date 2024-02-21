@@ -101,12 +101,16 @@ export class DuckDBService {
         return this.runQuery(`DROP TABLE ${tableName}`);
     }
 
-    public async loadIntermediateSource(source: CsvIngestSource | CrawlerConfig, tempTable?: boolean) {
+    public async loadIntermediateSource(
+        source: CsvIngestSource | CrawlerConfig,
+        intermediateDir: string,
+        tempTable?: boolean
+    ) {
         if (!this.db) {
             throw dbNotInitializedError;
         }
 
-        const parquetFile = `${pc.outputDirs.root + pc.outputDirs.intermediateDbs}/${source.outputTableName}.parquet`;
+        const parquetFile = `${intermediateDir}/${source.outputTableName}.parquet`;
         console.log(`loading intermediate source: ${parquetFile} into table ${source.outputTableName}`);
 
         const querystring = `CREATE ${tempTable ? "TEMP " : ""}TABLE ${source.outputTableName} AS FROM read_parquet('${parquetFile}')`;

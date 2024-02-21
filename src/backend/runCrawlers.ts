@@ -13,6 +13,11 @@ import { crawlerConfigs as cc } from "./configs/crawlerConfigs";
 
 const duckDBService = new DuckDBService();
 
+const intermediateDbDir = pc.outputDirs.root + pc.outputDirs.intermediateDbs;
+const duckDbDir = intermediateDbDir + "/duckDb";
+const failureLogDir = `${pc.outputDirs.root}/crawl_failureLogs`;
+const directoriesToBeCreated: string[] = [pc.outputDirs.root, intermediateDbDir, duckDbDir, failureLogDir];
+
 async function manageDbProcess() {
     try {
         await runCrawlers();
@@ -25,11 +30,10 @@ async function runCrawlers() {
     console.log("starting");
     const sessionName = generateSessionName("crawler-run");
     // system initialization
-    createDirectory(pc.outputDirs.root + pc.outputDirs.intermediateDbs);
-    createDirectory(pc.outputDirs.root + pc.outputDirs.intermediateDbs + "/db");
-    createDirectory(`${pc.outputDirs.intermediateDbs}/failureLogs`);
 
-    await duckDBService.initDb({ dbLocation: `${pc.outputDirs.intermediateDbs}/db/${sessionName}.duckdb` });
+    directoriesToBeCreated.forEach((dir) => createDirectory(dir));
+
+    await duckDBService.initDb({ dbLocation: `${duckDbDir}/${sessionName}.duckdb` });
 
     const instantiatedCrawlers = {
         imageArchive: new cc.imageArchive.crawler(cc.imageArchive, duckDBService) as SparqlImageArchiveCrawler,
@@ -89,7 +93,7 @@ async function runCrawler(
 
             appendObjectToFile(
                 row,
-                `${pc.outputDirs.intermediateDbs}/failureLogs/${sessionName}_${instantiatedCrawler.crawlerConfig.outputTableName}-failed.json`
+                `${failureLogDir}/${sessionName}_${instantiatedCrawler.crawlerConfig.outputTableName}-failed.json`
             );
         }
 
@@ -114,7 +118,7 @@ async function runCrawler(
     await instantiatedCrawler.teardown();
     dbService.exportTable({
         tableName: instantiatedCrawler.crawlerConfig.outputTableName,
-        outputFile: `${pc.outputDirs.intermediateDbs}/${instantiatedCrawler.crawlerConfig.outputTableName}`,
+        outputFile: `${intermediateDbDir}/${instantiatedCrawler.crawlerConfig.outputTableName}`,
         columnDefenitions: instantiatedCrawler.crawlerConfig.outputColumns,
         outputFormat: "parquet"
     });

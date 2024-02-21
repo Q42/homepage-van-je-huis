@@ -41,6 +41,7 @@ const analyticsOutputDir = pc.outputDirs.root + pc.outputDirs.analytics;
 async function generateAPI() {
     const resolverOutputDir = pc.outputDirs.root + pc.outputDirs.api.root + pc.outputDirs.api.apiResolver;
     const addressOutputDir = pc.outputDirs.root + pc.outputDirs.api.root + pc.outputDirs.api.apiRecords;
+    const intermediateDbDir = pc.outputDirs.root + pc.outputDirs.intermediateDbs;
 
     const directoriesToBeCreated: string[] = [
         pc.outputDirs.root,
@@ -68,7 +69,7 @@ async function generateAPI() {
 
     for (const source of sources) {
         console.log("---");
-        await duckDBService.loadIntermediateSource(source);
+        await duckDBService.loadIntermediateSource(source, intermediateDbDir);
         console.log("---");
     }
 
