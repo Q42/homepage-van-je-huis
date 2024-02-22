@@ -50,11 +50,10 @@ export type PipelineConfig = {
 };
 
 export const pipelineConfig: PipelineConfig = {
-    devMode: { enabled: true, limit: 500 },
+    devMode: { enabled: true, limit: 5000 },
     skipExistingApiFiles: false,
     analyticsEnabled: true,
-    loadAnalyticsSampleSetFromReport:
-        "/Users/thomas/Projects/homepage-van-je-huis/src/backend/gen/analytics/analytics_api-generation-2024-02-22T09:48:33.json",
+    loadAnalyticsSampleSetFromReport: "",
     outputDirs: {
         root: "./gen",
         api: { root: "/api", apiResolver: "/resolve", apiRecords: "/address" },
