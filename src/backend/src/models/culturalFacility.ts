@@ -21,6 +21,6 @@ export const cultureFacilitiesOutputColumns: string[] = [
     "WKT_LAT_LNG"
 ];
 
-export interface CustomizedCulturalFacilityRecord extends Omit<CulturalFacilityRecord, "location"> {
+export type CustomizedCulturalFacilityRecord = {
     distance_from_address: number;
-}
+} & Omit<CulturalFacilityRecord, "location">

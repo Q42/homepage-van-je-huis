@@ -12,6 +12,7 @@ import { assembleApiRecord, getMinMaxRangeFromPastData, getMinMaxRangeFromPresen
 import {
     checkFilePaths,
     createDirectory,
+    generateSessionName,
     getHouseNumberFromAddress,
     measureExecutionTime,
     writeObjectToJsonFile
@@ -29,13 +30,30 @@ import slugify from "slugify";
 import { isExistingFile } from "./src/utils/checkExisting";
 import { csvIngestSources as cs } from "./configs/csvSourceConfigs";
 import { crawlerConfigs } from "./configs/crawlerConfigs";
+import { AnalyticsService } from "./src/lib/analyticsService";
 
 const duckDBService = new DuckDBService();
 const resolverService = new ResolverService();
+const analyticsService = new AnalyticsService(!pc.analyticsEnabled);
+const sessionName = generateSessionName("api-generation");
+const analyticsOutputDir = pc.outputDirs.root + pc.outputDirs.analytics;
 
 async function generateAPI() {
-    const resolverOutputDir = pc.apiOutputDirectory + pc.apiResoliverDirectory;
-    const addressOutputDir = pc.apiOutputDirectory + pc.apiAddressFilesDirectory;
+    const resolverOutputDir = pc.outputDirs.root + pc.outputDirs.api.root + pc.outputDirs.api.apiResolver;
+    const addressOutputDir = pc.outputDirs.root + pc.outputDirs.api.root + pc.outputDirs.api.apiRecords;
+    const intermediateDbDir = pc.outputDirs.root + pc.outputDirs.intermediateDbs;
+
+    const directoriesToBeCreated: string[] = [
+        pc.outputDirs.root,
+        pc.outputDirs.root + pc.outputDirs.api.root,
+        addressOutputDir,
+        resolverOutputDir
+    ];
+
+    if (pc.analyticsEnabled) {
+        directoriesToBeCreated.push(analyticsOutputDir);
+    }
+
     let generationCounter = 0;
     let skipCounter = 0;
 
@@ -44,26 +62,37 @@ async function generateAPI() {
     const sources: (CsvIngestSource | CrawlerConfig)[] = [...Object.values(cs), ...Object.values(crawlerConfigs)];
 
     const sourcePaths = sources.map(
-        (source) => `${pipelineConfig.intermediateOutputDirectory}/${source.outputTableName}.parquet`
+        (source) =>
+            `${pipelineConfig.outputDirs.root + pipelineConfig.outputDirs.intermediateDbs}/${source.outputTableName}.parquet`
     );
     checkFilePaths(sourcePaths);
 
     for (const source of sources) {
         console.log("---");
-        await duckDBService.loadIntermediateSource(source);
+        await duckDBService.loadIntermediateSource(source, intermediateDbDir);
         console.log("---");
+    }
+
+    const sampleSet: string[] = [];
+
+    if (pc.loadAnalyticsSampleSetFromReport && pc.devMode.enabled) {
+        sampleSet.push(...AnalyticsService.loadSampleSetFromReportFile(pc.loadAnalyticsSampleSetFromReport));
+        console.log("Using sample set from analytics report");
     }
 
     const baseAdressList = (await duckDBService.runQuery(
         queries.sqlGetBaseTable({
             addressTable: cs.adressen.outputTableName,
             streetDescriptionTable: cs.straatOmschrijving.outputTableName,
-            offset: pc.startOffset
+            offset: pc.startOffset,
+            limit: pc.devMode.enabled ? pc.devMode.limit : undefined,
+            sampleSet: sampleSet
         })
     )) as EnrichedDBAddress[];
 
-    createDirectory(pc.apiOutputDirectory);
-    createDirectory(addressOutputDir);
+    directoriesToBeCreated.forEach((dir) => {
+        createDirectory(dir);
+    });
 
     const eventCalendar = (await duckDBService.runQuery(
         queries.sqlGetEventCalendar(cs.eventsPlaceholder.outputTableName)
@@ -199,6 +228,7 @@ async function generateAPI() {
         writeObjectToJsonFile(addressRecord, outputFilePath);
         resolverService.addAddressToResolverData(address);
         generationCounter++;
+        analyticsService.addRecordToAnalytics(addressRecord);
         statusBar.increment();
     }
     statusBar.stop();
@@ -206,11 +236,23 @@ async function generateAPI() {
     console.log(`Generated ${generationCounter} API files, skipped ${skipCounter} existing files`);
 }
 
+async function teardown() {
+    console.log("shutting down");
+    analyticsService.writeAnalyticsDataToFile(analyticsOutputDir + "/analytics_" + sessionName);
+    try {
+        await duckDBService.db?.close();
+    } catch {}
+}
+
+process.on("SIGINT", teardown); // CTRL+C
+process.on("SIGQUIT", teardown); // Keyboard quit
+process.on("SIGTERM", teardown); // `kill` command
+
 async function dbProcessRunner() {
     try {
-        return generateAPI();
+        return await generateAPI();
     } finally {
-        await duckDBService.db?.close();
+        await teardown();
     }
 }
 

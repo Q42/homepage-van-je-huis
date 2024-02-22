@@ -1,9 +1,9 @@
 import { Database } from "duckdb-async";
-import { BaseApiResponse, ColumnDefenitions, CrawlerConfig, CsvIngestSource, IntermediateOutputFormats } from "./types";
-import { parseValueForDbInsert } from "../utils/general";
 import { pipelineConfig as pc } from "../../configs/pipelineConfig";
 import { getExportSelectQuery } from "../utils/db";
+import { parseValueForDbInsert } from "../utils/general";
 import { queries } from "./queries/queries";
+import { BaseApiResponse, ColumnDefenitions, CrawlerConfig, CsvIngestSource, IntermediateOutputFormats } from "./types";
 
 type DuckDBConfig = {
     dbLocation?: string;
@@ -48,18 +48,6 @@ export class DuckDBService {
         if (!this.db) {
             throw dbNotInitializedError;
         }
-        if (
-            pc.devMode.enabled &&
-            querystring.toLowerCase().includes("select") &&
-            !querystring.toLowerCase().includes("limit") &&
-            !querystring.toLowerCase().includes("copy") &&
-            !querystring.toLowerCase().includes("distinct")
-        ) {
-            if (querystring.trim().endsWith(";")) {
-                querystring = querystring.trim().slice(0, -1);
-            }
-            querystring += ` LIMIT ${pc.devMode.limit};`;
-        }
         return await this.db.all(querystring);
     }
     public async ingestCSV(source: CsvIngestSource) {
@@ -101,12 +89,16 @@ export class DuckDBService {
         return this.runQuery(`DROP TABLE ${tableName}`);
     }
 
-    public async loadIntermediateSource(source: CsvIngestSource | CrawlerConfig, tempTable?: boolean) {
+    public async loadIntermediateSource(
+        source: CsvIngestSource | CrawlerConfig,
+        intermediateDir: string,
+        tempTable?: boolean
+    ) {
         if (!this.db) {
             throw dbNotInitializedError;
         }
 
-        const parquetFile = `${pc.intermediateOutputDirectory}/${source.outputTableName}.parquet`;
+        const parquetFile = `${intermediateDir}/${source.outputTableName}.parquet`;
         console.log(`loading intermediate source: ${parquetFile} into table ${source.outputTableName}`);
 
         const querystring = `CREATE ${tempTable ? "TEMP " : ""}TABLE ${source.outputTableName} AS FROM read_parquet('${parquetFile}')`;
@@ -174,7 +166,7 @@ export class DuckDBService {
                 .join(",")})`;
         });
 
-        let querystring = `INSERT INTO ${tableName}(${columnNames.join(", ")}) VALUES ${valuesArray.join(", ")} `;
+        const querystring = `INSERT INTO ${tableName}(${columnNames.join(", ")}) VALUES ${valuesArray.join(", ")} `;
 
         return await this.runQuery(querystring);
     }

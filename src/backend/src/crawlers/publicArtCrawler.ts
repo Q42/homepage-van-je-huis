@@ -1,11 +1,11 @@
-import puppeteer, { Browser, Page, PuppeteerLaunchOptions } from "puppeteer";
-import { AbstractCrawler } from "./abstractCrawler";
-import { CrawlerConfig } from "../lib/types";
-import { geoLocationToRDGeometryString } from "../utils/rijksdriehoek";
-import { PublicArtRecord } from "../models/publicArtRecord";
 import cliProgress from "cli-progress";
 import { AbortError } from "p-retry";
+import puppeteer, { Browser, Page, PuppeteerLaunchOptions } from "puppeteer";
 import { publicArtCrawlerExtraConfig as pAc } from "../../configs/crawlerConfigs";
+import { CrawlerConfig } from "../lib/types";
+import { PublicArtRecord } from "../models/publicArtRecord";
+import { geoLocationToRDGeometryString } from "../utils/rijksdriehoek";
+import { AbstractCrawler } from "./abstractCrawler";
 
 export class PublicArtCrawler extends AbstractCrawler<PublicArtRecord, string> {
     browser: Browser | null;
@@ -31,7 +31,7 @@ export class PublicArtCrawler extends AbstractCrawler<PublicArtRecord, string> {
             waitUntil: "domcontentloaded"
         });
         const record = await this.extractArtDetails(fetcherPage);
-        fetcherPage.close();
+        await fetcherPage.close();
 
         return [
             {
@@ -42,7 +42,7 @@ export class PublicArtCrawler extends AbstractCrawler<PublicArtRecord, string> {
     }
 
     public async finalize(): Promise<void> {
-        return;
+        return Promise.resolve();
     }
 
     public async teardown(): Promise<void> {

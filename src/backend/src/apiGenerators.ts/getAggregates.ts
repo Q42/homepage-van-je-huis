@@ -1,4 +1,4 @@
-import { DistanceViewAggregateEntry, DistanceViewEntry } from "../../../common/apiSchema/present";
+import { DistanceViewAggregateEntry } from "../../../common/apiSchema/present";
 import { pipelineConfig } from "../../configs/pipelineConfig";
 import { DuckDBService } from "../lib/duckDBService";
 import { queries } from "../lib/queries/queries";
@@ -49,7 +49,7 @@ export async function getAggregates({
                     brtCode: address["ligtIn:GBD.BRT.code"]
                 })
             )
-        )[0]["treeSpecies"];
+        )[0]["treeSpecies"] as number | undefined;
 
         if (numberOfTreeSpecies) {
             const treeSpeciesBuurtEntry: DistanceViewAggregateEntry = {
@@ -77,7 +77,7 @@ export async function getAggregates({
                     wijkCode: address["ligtIn:GBD.WIJK.code"]
                 })
             )
-        )[0]["trees"];
+        )[0]["trees"] as number | undefined;
         if (numberOfTrees) {
             const treesWijkEntry: DistanceViewAggregateEntry = {
                 type: "aggregate_trees",
@@ -104,7 +104,7 @@ export async function getAggregates({
                     sdlCode: address["ligtIn:GBD.SDL.code"]
                 })
             )
-        )[0]["bees"];
+        )[0]["bees"] as bigint | undefined;
 
         if (numberOfBees) {
             const beesStadsdeelEntry: DistanceViewAggregateEntry = {

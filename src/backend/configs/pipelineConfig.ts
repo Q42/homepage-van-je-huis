@@ -6,12 +6,20 @@ export type PipelineConfig = {
     // This allows you to break-off the generation process and pick up where you left off later on.
     skipExistingApiFiles: boolean;
 
-    // Where should the intermediate databases be stored.
-    intermediateOutputDirectory: string;
+    outputDirs: {
+        root: string;
+        intermediateDbs: string;
+        api: { root: string; apiResolver: string; apiRecords: string };
+        analytics: string;
+    };
 
-    apiOutputDirectory: string;
-    apiResoliverDirectory: string;
-    apiAddressFilesDirectory: string;
+    // If enabled, the analytics service will generate a simple analytics report on the generated api files.
+    analyticsEnabled: boolean;
+
+    // If the path to an analytics report is specified, that file will be used to generate a sample set of addresses.
+    // This way, you can measure the effects that changes to the pipeline have on a consistent, representative, set of addresses.
+    // This setting only takes effect in dev mode.
+    loadAnalyticsSampleSetFromReport?: string;
 
     // the number of rows to skip in the base table
     startOffset: number | undefined;
@@ -42,12 +50,17 @@ export type PipelineConfig = {
 };
 
 export const pipelineConfig: PipelineConfig = {
-    devMode: { enabled: true, limit: 10000 },
+    devMode: { enabled: true, limit: 500 },
     skipExistingApiFiles: false,
-    intermediateOutputDirectory: "./intermediate_output",
-    apiOutputDirectory: "./api_generated",
-    apiResoliverDirectory: "/resolve",
-    apiAddressFilesDirectory: "/address",
+    analyticsEnabled: true,
+    loadAnalyticsSampleSetFromReport:
+        "/Users/thomas/Projects/homepage-van-je-huis/src/backend/gen/analytics/analytics_api-generation-2024-02-22T09:48:33.json",
+    outputDirs: {
+        root: "./gen",
+        api: { root: "/api", apiResolver: "/resolve", apiRecords: "/address" },
+        analytics: "/analytics",
+        intermediateDbs: "/intermediate_dbs"
+    },
     startOffset: undefined,
     dbBatchInsertMinThreshold: 500,
     maxConsecutiveCrawlFailuresBeforeAbort: 25,

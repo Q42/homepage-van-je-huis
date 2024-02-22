@@ -16,7 +16,7 @@ export const defaultCrawlerRetryConfig: PRetryOptions = {
 
 export const crawlerConfigs: CrawlerConfigs = {
     publicArt: {
-        skip: true, // remove this flag to also run this crawler
+        // skip: true, // remove this flag to also run this crawler
         crawler: PublicArtCrawler,
         retryConfig: { ...defaultCrawlerRetryConfig, retries: 1 },
         outputTableName: "buitenkunst",

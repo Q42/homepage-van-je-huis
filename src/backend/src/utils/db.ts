@@ -12,20 +12,26 @@ export function getExportSelectQuery(
         if (inputColumns[column] && inputColumns[column].toLowerCase() === "geometry") {
             // also enclose the column name in double quotes to avoid issues with special characters in the column name
             return `ST_AsText("${column}") as "${column}"`;
-        } else {
-            return `"${column}"`;
         }
+        return `"${column}"`;
     });
 
     return `(SELECT ${parsedColumns.join(", ")} FROM ${tableName})`;
 }
 
-export async function loadFileToParquet(
-    dbService: DuckDBService,
-    csvIngestSource: CsvIngestSource,
-    pc: PipelineConfig,
-    dropTableAfterExport?: boolean
-) {
+export async function loadFileToParquet({
+    dbService,
+    csvIngestSource,
+    pc,
+    outputDir,
+    dropTableAfterExport
+}: {
+    dbService: DuckDBService;
+    csvIngestSource: CsvIngestSource;
+    pc: PipelineConfig;
+    outputDir: string;
+    dropTableAfterExport?: boolean;
+}) {
     await dbService.ingestCSV(csvIngestSource);
 
     if (csvIngestSource.geoTransformColumn !== undefined) {
@@ -44,7 +50,7 @@ export async function loadFileToParquet(
 
     await dbService.exportTable({
         tableName: csvIngestSource.outputTableName,
-        outputFile: `${pc.intermediateOutputDirectory}/${csvIngestSource.outputTableName}`,
+        outputFile: `${outputDir}/${csvIngestSource.outputTableName}`,
         outputColumns: csvIngestSource.outputColumns,
         columnDefenitions: csvIngestSource.inputColumns,
         outputFormat: "parquet"

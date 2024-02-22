@@ -1,5 +1,4 @@
-import { CrawlerConfig } from "../lib/types";
-import { BaseApiResponse } from "../lib/types";
+import { CrawlerConfig , BaseApiResponse } from "../lib/types";
 
 export abstract class AbstractCrawler<T extends BaseApiResponse, Y> {
     crawlerConfig: CrawlerConfig;

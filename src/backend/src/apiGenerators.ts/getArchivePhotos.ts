@@ -1,7 +1,6 @@
 import { TimelineEntry } from "../../../common/apiSchema/past";
 import { crawlerConfigs } from "../../configs/crawlerConfigs";
 import { csvIngestSources } from "../../configs/csvSourceConfigs";
-
 import { DuckDBService } from "../lib/duckDBService";
 import { queries } from "../lib/queries/queries";
 import { SparqlImage } from "../models/sparqlImages";
@@ -77,7 +76,7 @@ export async function getSurroundingsPhotos({
 }): Promise<{ result: TimelineEntry[]; uncertainty: number }> {
     let uncertainty = 1;
 
-    let dbResults = (await duckDBService.runQuery(
+    const dbResults = (await duckDBService.runQuery(
         queries.imageArchive.sqlGetNeighboringImages({
             addressTableName: csvIngestSources.adressen.outputTableName,
             archiveImagesTableName: crawlerConfigs.imageArchive.outputTableName,
