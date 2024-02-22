@@ -1,5 +1,5 @@
 import { useAutocompleteStore } from '@/store/autocompleteStore'
-import { referenceIds } from '~/config/referenceIds'
+import { referenceIds } from '@/config/referenceIds'
 
 // This composable is tightly coupled with the search component. But I wanted to put some
 // logic in a separate file to make the component more readable.
