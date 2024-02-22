@@ -11,7 +11,7 @@
     <div v-if="hasError" class="error">
       {{ $t(getTranslationKey(error as TranslationKey)) }}
     </div>
-    <form id="search-form" class="form" @submit.prevent="handleSubmit">
+    <form class="form" @submit.prevent="handleSubmit">
       <SharedInput
         v-model:value="street"
         input-id="street-input"
@@ -165,17 +165,21 @@ const handleSubmit = () => {
 }
 
 const handleKeyDown = (event: KeyboardEvent) => {
-  if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+  if (
+    event.key === 'ArrowDown' ||
+    event.key === 'ArrowUp' ||
+    event.key === 'Tab'
+  ) {
     if (streetAutocompleteIsOpen.value) {
       handleKeyboardFocus(
-        event.key,
+        event.key === 'Tab' ? 'ArrowDown' : event.key,
         focussedStreetIndex,
         filteredStreets,
         streetItems,
       )
     } else if (houseNumberAutocompleteIsOpen.value) {
       handleKeyboardFocus(
-        event.key,
+        event.key === 'Tab' ? 'ArrowDown' : event.key,
         focussedHouseNumberIndex,
         filteredHouseNumbers,
         houseNumberItems,
