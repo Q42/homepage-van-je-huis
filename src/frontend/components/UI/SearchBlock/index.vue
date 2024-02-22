@@ -11,7 +11,7 @@
     <div v-if="hasError" class="error">
       {{ $t(getTranslationKey(error as TranslationKey)) }}
     </div>
-    <form class="form" @submit.prevent="handleSubmit">
+    <form id="search-form" class="form" @submit.prevent="handleSubmit">
       <SharedInput
         v-model:value="street"
         input-id="street-input"
@@ -49,7 +49,10 @@
         </ul>
       </TransitionFade>
       <TransitionFade>
-        <ul v-if="houseNumberAutocompleteIsOpen" class="autocomplete-panel">
+        <ul
+          v-if="houseNumberAutocompleteIsOpen && !houseNumberIsSelected"
+          class="autocomplete-panel"
+        >
           <li
             v-for="(autocompleteHouseNumber, index) in filteredHouseNumbers"
             :key="index"
@@ -91,6 +94,7 @@ const street = ref('')
 const houseNumber = ref('')
 const error: Ref<TranslationKey | null> = ref(null)
 const hasError = computed(() => Boolean(error.value))
+const houseNumberIsSelected = ref(false)
 
 const focussedStreetIndex: Ref<number | null> = ref(null)
 const focussedHouseNumberIndex: Ref<number | null> = ref(null)
@@ -142,6 +146,11 @@ const selectStreet = (selectedStreet: string) => {
 const selectHouseNumber = (selectedHouseNumber: string) => {
   error.value = null
   houseNumber.value = selectedHouseNumber
+  const houseNumberInput = document.getElementById('house-number-input')
+  if (houseNumberInput) {
+    houseNumberInput.focus()
+  }
+  houseNumberIsSelected.value = true
 }
 
 const handleSubmit = () => {
@@ -175,8 +184,41 @@ const handleKeyDown = (event: KeyboardEvent) => {
   }
 }
 
+const handleHouseNumberInputInteraction = () => {
+  houseNumberIsSelected.value = false
+}
+
 onMounted(() => {
+  const houseNumberInput = document.getElementById('house-number-input')
+
+  if (houseNumberInput) {
+    houseNumberInput.addEventListener(
+      'focus',
+      handleHouseNumberInputInteraction,
+    )
+    houseNumberInput.addEventListener(
+      'change',
+      handleHouseNumberInputInteraction,
+    )
+  }
+
   window.addEventListener('keydown', handleKeyDown)
+})
+
+onUnmounted(() => {
+  const houseNumberInput = document.getElementById('house-number-input')
+
+  if (houseNumberInput) {
+    houseNumberInput.removeEventListener(
+      'focus',
+      handleHouseNumberInputInteraction,
+    )
+    houseNumberInput.removeEventListener(
+      'change',
+      handleHouseNumberInputInteraction,
+    )
+  }
+  window.removeEventListener('keydown', handleKeyDown)
 })
 </script>
 
