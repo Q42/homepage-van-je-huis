@@ -1,4 +1,5 @@
 import { useAutocompleteStore } from '@/store/autocompleteStore'
+import { referenceIds } from '~/config/referenceIds'
 
 // This composable is tightly coupled with the search component. But I wanted to put some
 // logic in a separate file to make the component more readable.
@@ -57,7 +58,9 @@ export const useSearchAutocomplete = (street: Ref, houseNumber: Ref) => {
         slugifyStreetName(street.value),
       )
       houseNumbers.value = autocompleteHouseNumbers
-      const houseNumbersInput = document.getElementById('house-number-input')
+      const houseNumbersInput = document.getElementById(
+        referenceIds.houseNumberInput,
+      )
       if (houseNumbersInput) {
         await nextTick()
         houseNumbersInput.focus()
@@ -69,7 +72,9 @@ export const useSearchAutocomplete = (street: Ref, houseNumber: Ref) => {
   })
 
   const handleFocusIn = () => {
-    const houseNumberInput = document.getElementById('house-number-input')
+    const houseNumberInput = document.getElementById(
+      referenceIds.houseNumberInput,
+    )
     houseNumberInputHasFocus.value = document.activeElement === houseNumberInput
   }
 
