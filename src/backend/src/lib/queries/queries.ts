@@ -9,14 +9,22 @@ export const queries = {
         addressTable,
         streetDescriptionTable,
         offset,
-        limit
+        limit,
+        sampleSet
     }: {
         addressTable: string;
         streetDescriptionTable: string;
         offset?: number;
         limit?: number;
-    }) =>
-        `
+        sampleSet?: string[];
+    }) => {
+        let sampleString = "";
+
+        if (sampleSet && sampleSet.length > 0) {
+            sampleString = `WHERE A.identificatie IN ('${sampleSet.join("','")}')`;
+        }
+
+        return `
         SELECT
             A.*,
             beschrijving AS straatnaamBeschrijving
@@ -25,6 +33,7 @@ export const queries = {
         JOIN ${streetDescriptionTable} AS B
                 ON
             (A."ligtAan:BAG.ORE.identificatieHoofdadres" = B.identificatie)
+        ${sampleString}
         ORDER BY
             A."ligtAan:BAG.ORE.naamHoofdadres",
             A.huisnummerHoofdadres,
@@ -32,7 +41,8 @@ export const queries = {
             A.huisnummertoevoegingHoofdadres ASC
         ${offset ? `OFFSET ${offset}` : ""}
         ${limit ? `LIMIT ${limit}` : ""}    
-        `,
+        `;
+    },
     sqlGetEventCalendar: (eventsTableName: string) => `SELECT * FROM ${eventsTableName} ORDER BY Date_start ASC`,
     sqlSelectDistinct: ({ tableName, column, columnAs }: { tableName: string; column: string; columnAs?: string }) =>
         `SELECT DISTINCT ${column === "*" ? "*" : `"${column}"`} ${columnAs ? "AS " + columnAs : ""} FROM ${tableName}`,

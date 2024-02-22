@@ -212,13 +212,15 @@ export class AnalyticsService {
         writeObjectToJsonFile(this.analyticsData, filePath, true);
     }
 
-    public loadSampleSetFromReportFile(filePath: string): string[] {
+    public static loadSampleSetFromReportFile(filePath: string): string[] {
         let jsonData: undefined | AnalyticsData;
         try {
             const data = fs.readFileSync(filePath, "utf-8");
             jsonData = JSON.parse(data) as AnalyticsData;
         } catch (error) {
-            console.error(`Error loading sample set from report file`);
+            console.error(
+                `Error loading sample set from analytics report file. Check the pipeline config to see if you have the correct file, and if you even want to load a sample from a report.`
+            );
             throw error;
         }
 

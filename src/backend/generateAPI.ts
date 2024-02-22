@@ -73,12 +73,20 @@ async function generateAPI() {
         console.log("---");
     }
 
+    const sampleSet: string[] = [];
+
+    if (pc.loadAnalyticsSampleSetFromReport && pc.devMode.enabled) {
+        sampleSet.push(...AnalyticsService.loadSampleSetFromReportFile(pc.loadAnalyticsSampleSetFromReport));
+        console.log("Using sample set from analytics report");
+    }
+
     const baseAdressList = (await duckDBService.runQuery(
         queries.sqlGetBaseTable({
             addressTable: cs.adressen.outputTableName,
             streetDescriptionTable: cs.straatOmschrijving.outputTableName,
             offset: pc.startOffset,
-            limit: pc.devMode.enabled ? pc.devMode.limit : undefined
+            limit: pc.devMode.enabled ? pc.devMode.limit : undefined,
+            sampleSet: sampleSet
         })
     )) as EnrichedDBAddress[];
 

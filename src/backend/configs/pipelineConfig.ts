@@ -16,6 +16,11 @@ export type PipelineConfig = {
     // If enabled, the analytics service will generate a simple analytics report on the generated api files.
     analyticsEnabled: boolean;
 
+    // If the path to an analytics report is specified, that file will be used to generate a sample set of addresses.
+    // This way, you can measure the effects that changes to the pipeline have on a consistent, representative, set of addresses.
+    // This setting only takes effect in dev mode.
+    loadAnalyticsSampleSetFromReport?: string;
+
     // the number of rows to skip in the base table
     startOffset: number | undefined;
 
@@ -48,6 +53,8 @@ export const pipelineConfig: PipelineConfig = {
     devMode: { enabled: true, limit: 500 },
     skipExistingApiFiles: false,
     analyticsEnabled: true,
+    loadAnalyticsSampleSetFromReport:
+        "/Users/thomas/Projects/homepage-van-je-huis/src/backend/gen/analytics/analytics_api-generation-2024-02-22T09:48:33.json",
     outputDirs: {
         root: "./gen",
         api: { root: "/api", apiResolver: "/resolve", apiRecords: "/address" },
