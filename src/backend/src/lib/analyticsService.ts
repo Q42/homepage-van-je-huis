@@ -1,6 +1,6 @@
+import fs from "fs";
 import { AddresDescription, AddressRecord } from "../../../common/apiSchema/addressRecord";
 import { writeObjectToJsonFile } from "../utils/general";
-import fs from "fs";
 
 type DistributionKey = `${number}`;
 type DistributionValue = { count: number; exampleId: string };
