@@ -48,18 +48,6 @@ export class DuckDBService {
         if (!this.db) {
             throw dbNotInitializedError;
         }
-        if (
-            pc.devMode.enabled &&
-            querystring.toLowerCase().includes("select") &&
-            !querystring.toLowerCase().includes("limit") &&
-            !querystring.toLowerCase().includes("copy") &&
-            !querystring.toLowerCase().includes("distinct")
-        ) {
-            if (querystring.trim().endsWith(";")) {
-                querystring = querystring.trim().slice(0, -1);
-            }
-            querystring += ` LIMIT ${pc.devMode.limit};`;
-        }
         return await this.db.all(querystring);
     }
     public async ingestCSV(source: CsvIngestSource) {

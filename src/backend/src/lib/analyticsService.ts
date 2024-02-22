@@ -1,10 +1,12 @@
 import { AddresDescription, AddressRecord } from "../../../common/apiSchema/addressRecord";
 import { writeObjectToJsonFile } from "../utils/general";
+import fs from "fs";
 
 type DistributionKey = `${number}`;
-type Distribution = Record<DistributionKey, number>;
+type DistributionValue = { count: number; exampleId: string };
+type Distribution = Record<DistributionKey, DistributionValue>;
 type Range = { start: number | undefined; end: number | undefined };
-type Ranking = { value: number | undefined; address: AddresDescription | undefined };
+type Ranking = { value: number | undefined; id: string | undefined; address: AddresDescription | undefined };
 
 type AnalyticsData = {
     lastAddressId: string;
@@ -30,20 +32,24 @@ export class AnalyticsService {
         pastDataDistribution: {},
         bestPast: {
             value: undefined,
-            address: undefined
+            address: undefined,
+            id: undefined
         },
         worstPast: {
             value: undefined,
-            address: undefined
+            address: undefined,
+            id: undefined
         },
         presentDataDistribution: {},
         bestPresent: {
             value: undefined,
-            address: undefined
+            address: undefined,
+            id: undefined
         },
         worstPresent: {
             value: undefined,
-            address: undefined
+            address: undefined,
+            id: undefined
         },
         averagePastRange: {
             start: undefined,
@@ -56,7 +62,8 @@ export class AnalyticsService {
         lastAddressId: "",
         worstOverall: {
             value: undefined,
-            address: undefined
+            address: undefined,
+            id: undefined
         }
     };
 
@@ -74,15 +81,21 @@ export class AnalyticsService {
     protected updateDistributions(record: AddressRecord) {
         const pastDataLength = record.pastData.timeline.length;
         if (!(String(pastDataLength) in this.analyticsData.pastDataDistribution)) {
-            this.analyticsData.pastDataDistribution[String(pastDataLength) as DistributionKey] = 0;
+            this.analyticsData.pastDataDistribution[String(pastDataLength) as DistributionKey] = {
+                count: 0,
+                exampleId: record.id
+            };
         }
-        this.analyticsData.pastDataDistribution[String(pastDataLength) as DistributionKey]++;
+        this.analyticsData.pastDataDistribution[String(pastDataLength) as DistributionKey].count++;
 
         const presentDataLength = record.presentData.slider.length;
         if (!(String(presentDataLength) in this.analyticsData.presentDataDistribution)) {
-            this.analyticsData.presentDataDistribution[String(presentDataLength) as DistributionKey] = 0;
+            this.analyticsData.presentDataDistribution[String(presentDataLength) as DistributionKey] = {
+                count: 0,
+                exampleId: record.id
+            };
         }
-        this.analyticsData.presentDataDistribution[String(presentDataLength) as DistributionKey]++;
+        this.analyticsData.presentDataDistribution[String(presentDataLength) as DistributionKey].count++;
     }
 
     protected updateAverages(record: AddressRecord) {
@@ -140,6 +153,7 @@ export class AnalyticsService {
         ) {
             this.analyticsData.bestPast.value = record.pastData.timeline.length;
             this.analyticsData.bestPast.address = record.address;
+            this.analyticsData.bestPast.id = record.id;
         }
 
         if (
@@ -148,6 +162,7 @@ export class AnalyticsService {
         ) {
             this.analyticsData.worstPast.value = record.pastData.timeline.length;
             this.analyticsData.worstPast.address = record.address;
+            this.analyticsData.worstPast.id = record.id;
         }
 
         if (
@@ -156,6 +171,7 @@ export class AnalyticsService {
         ) {
             this.analyticsData.bestPresent.value = record.presentData.slider.length;
             this.analyticsData.bestPresent.address = record.address;
+            this.analyticsData.bestPresent.id = record.id;
         }
 
         if (
@@ -164,6 +180,7 @@ export class AnalyticsService {
         ) {
             this.analyticsData.worstPresent.value = record.presentData.slider.length;
             this.analyticsData.worstPresent.address = record.address;
+            this.analyticsData.worstPresent.id = record.id;
         }
 
         if (
@@ -172,6 +189,7 @@ export class AnalyticsService {
         ) {
             this.analyticsData.worstOverall.value = record.pastData.timeline.length + record.presentData.slider.length;
             this.analyticsData.worstOverall.address = record.address;
+            this.analyticsData.worstOverall.id = record.id;
         }
     }
 
@@ -192,5 +210,28 @@ export class AnalyticsService {
             return;
         }
         writeObjectToJsonFile(this.analyticsData, filePath, true);
+    }
+
+    public loadSampleSetFromReportFile(filePath: string): string[] {
+        let jsonData: undefined | AnalyticsData;
+        try {
+            const data = fs.readFileSync(filePath, "utf-8");
+            jsonData = JSON.parse(data) as AnalyticsData;
+        } catch (error) {
+            console.error(`Error loading sample set from report file`);
+            throw error;
+        }
+
+        const sampleSet: Set<string> = new Set();
+
+        Object.values(jsonData.pastDataDistribution).forEach((value) => {
+            sampleSet.add(value.exampleId);
+        });
+
+        Object.values(jsonData.presentDataDistribution).forEach((value) => {
+            sampleSet.add(value.exampleId);
+        });
+
+        return Array.from(sampleSet);
     }
 }

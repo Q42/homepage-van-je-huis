@@ -77,7 +77,8 @@ async function generateAPI() {
         queries.sqlGetBaseTable({
             addressTable: cs.adressen.outputTableName,
             streetDescriptionTable: cs.straatOmschrijving.outputTableName,
-            offset: pc.startOffset
+            offset: pc.startOffset,
+            limit: pc.devMode.enabled ? pc.devMode.limit : undefined
         })
     )) as EnrichedDBAddress[];
 

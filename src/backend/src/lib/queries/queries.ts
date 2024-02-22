@@ -8,11 +8,13 @@ export const queries = {
     sqlGetBaseTable: ({
         addressTable,
         streetDescriptionTable,
-        offset
+        offset,
+        limit
     }: {
         addressTable: string;
         streetDescriptionTable: string;
         offset?: number;
+        limit?: number;
     }) =>
         `
         SELECT
@@ -29,7 +31,7 @@ export const queries = {
             A.huisletterHoofdadres,
             A.huisnummertoevoegingHoofdadres ASC
         ${offset ? `OFFSET ${offset}` : ""}
-            
+        ${limit ? `LIMIT ${limit}` : ""}    
         `,
     sqlGetEventCalendar: (eventsTableName: string) => `SELECT * FROM ${eventsTableName} ORDER BY Date_start ASC`,
     sqlSelectDistinct: ({ tableName, column, columnAs }: { tableName: string; column: string; columnAs?: string }) =>
