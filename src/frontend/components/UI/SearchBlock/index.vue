@@ -49,13 +49,16 @@
         </ul>
       </TransitionFade>
       <TransitionFade>
-        <ul v-if="houseNumberAutocompleteIsOpen" class="autocomplete-panel">
+        <ul
+          v-if="houseNumberAutocompleteIsOpen && !houseNumberIsSelected"
+          class="autocomplete-panel"
+        >
           <li
             v-for="(autocompleteHouseNumber, index) in filteredHouseNumbers"
             :key="index"
           >
             <button
-              ref="streetItems"
+              ref="houseNumberItems"
               :class="{
                 'autocomplete-item--focused':
                   index === focussedHouseNumberIndex,
@@ -86,40 +89,43 @@ const router = useRouter()
 const { locale } = useI18n()
 
 const streetItems = ref<HTMLButtonElement[] | null>(null)
+const houseNumberItems = ref<HTMLButtonElement[] | null>(null)
 const street = ref('')
 const houseNumber = ref('')
 const error: Ref<TranslationKey | null> = ref(null)
 const hasError = computed(() => Boolean(error.value))
+const houseNumberIsSelected = ref(false)
 
 const focussedStreetIndex: Ref<number | null> = ref(null)
 const focussedHouseNumberIndex: Ref<number | null> = ref(null)
 
 const handleKeyboardFocus = (
-  direction: 'down' | 'up',
+  direction: 'ArrowDown' | 'ArrowUp',
   focussedIdentifier: Ref<number | null>,
   list: Ref<string[] | undefined>,
+  focussableItems: Ref<HTMLButtonElement[] | null>,
 ) => {
-  if (!list.value || !streetItems.value) {
+  if (!list.value || !focussableItems.value) {
     return
   }
 
-  if (direction === 'down') {
+  if (direction === 'ArrowDown') {
     if (
       focussedIdentifier.value === null ||
       focussedIdentifier.value === list.value.length - 1
     ) {
       focussedIdentifier.value = 0
-      streetItems.value[0].focus()
     } else if (focussedIdentifier.value < list.value.length - 1) {
       focussedIdentifier.value++
-      streetItems.value[focussedIdentifier.value].focus()
     }
-  } else if (direction === 'up') {
+    focussableItems.value[focussedIdentifier.value].focus()
+  } else if (direction === 'ArrowUp') {
     if (focussedIdentifier.value === null || focussedIdentifier.value === 0) {
       focussedIdentifier.value = list.value.length - 1
     } else if (focussedIdentifier.value > 0) {
       focussedIdentifier.value--
     }
+    focussableItems.value[focussedIdentifier.value].focus()
   }
 }
 
@@ -140,6 +146,11 @@ const selectStreet = (selectedStreet: string) => {
 const selectHouseNumber = (selectedHouseNumber: string) => {
   error.value = null
   houseNumber.value = selectedHouseNumber
+  const houseNumberInput = document.getElementById('house-number-input')
+  if (houseNumberInput) {
+    houseNumberInput.focus()
+  }
+  houseNumberIsSelected.value = true
 }
 
 const handleSubmit = () => {
@@ -154,41 +165,64 @@ const handleSubmit = () => {
 }
 
 const handleKeyDown = (event: KeyboardEvent) => {
-  if (event.key === 'ArrowDown') {
+  if (
+    event.key === 'ArrowDown' ||
+    event.key === 'ArrowUp' ||
+    event.key === 'Tab'
+  ) {
     if (streetAutocompleteIsOpen.value) {
-      handleKeyboardFocus('down', focussedStreetIndex, filteredStreets)
+      handleKeyboardFocus(
+        event.key === 'Tab' ? 'ArrowDown' : event.key,
+        focussedStreetIndex,
+        filteredStreets,
+        streetItems,
+      )
     } else if (houseNumberAutocompleteIsOpen.value) {
       handleKeyboardFocus(
-        'down',
+        event.key === 'Tab' ? 'ArrowDown' : event.key,
         focussedHouseNumberIndex,
         filteredHouseNumbers,
+        houseNumberItems,
       )
-    }
-  } else if (event.key === 'ArrowUp') {
-    if (streetAutocompleteIsOpen.value) {
-      handleKeyboardFocus('up', focussedStreetIndex, filteredStreets)
-    } else if (houseNumberAutocompleteIsOpen.value) {
-      handleKeyboardFocus('up', focussedHouseNumberIndex, filteredHouseNumbers)
-    }
-  } else if (event.key === 'Enter') {
-    if (streetAutocompleteIsOpen.value) {
-      if (filteredStreets.value && focussedStreetIndex.value) {
-        selectStreet(filteredStreets.value[focussedStreetIndex.value])
-      }
-    } else if (houseNumberAutocompleteIsOpen.value) {
-      if (filteredHouseNumbers.value && focussedHouseNumberIndex.value) {
-        selectHouseNumber(
-          filteredHouseNumbers.value[focussedHouseNumberIndex.value],
-        )
-      }
-    } else {
-      handleSubmit()
     }
   }
 }
 
+const handleHouseNumberInputInteraction = () => {
+  houseNumberIsSelected.value = false
+}
+
 onMounted(() => {
+  const houseNumberInput = document.getElementById('house-number-input')
+
+  if (houseNumberInput) {
+    houseNumberInput.addEventListener(
+      'focus',
+      handleHouseNumberInputInteraction,
+    )
+    houseNumberInput.addEventListener(
+      'change',
+      handleHouseNumberInputInteraction,
+    )
+  }
+
   window.addEventListener('keydown', handleKeyDown)
+})
+
+onUnmounted(() => {
+  const houseNumberInput = document.getElementById('house-number-input')
+
+  if (houseNumberInput) {
+    houseNumberInput.removeEventListener(
+      'focus',
+      handleHouseNumberInputInteraction,
+    )
+    houseNumberInput.removeEventListener(
+      'change',
+      handleHouseNumberInputInteraction,
+    )
+  }
+  window.removeEventListener('keydown', handleKeyDown)
 })
 </script>
 

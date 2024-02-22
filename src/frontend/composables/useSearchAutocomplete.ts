@@ -9,9 +9,6 @@ export const useSearchAutocomplete = (street: Ref, houseNumber: Ref) => {
   const streetListContainsSelected = computed(() => {
     return streets.value?.includes(street.value)
   })
-  const houseNumberListContainsSelected = computed(() => {
-    return houseNumbers.value?.includes(houseNumber.value.toUpperCase())
-  })
 
   const streets = computed(() => autocompleteStore.autocompleteStreets)
   const filteredStreets = computed(() => {
@@ -29,7 +26,7 @@ export const useSearchAutocomplete = (street: Ref, houseNumber: Ref) => {
         ?.filter((autocompleteHouseNumber) =>
           autocompleteHouseNumber
             .toLowerCase()
-            .includes(houseNumber.value.toLowerCase()),
+            .startsWith(houseNumber.value.toLowerCase()),
         )
         .sort()
     }
@@ -43,10 +40,11 @@ export const useSearchAutocomplete = (street: Ref, houseNumber: Ref) => {
   )
 
   const houseNumberInputHasFocus = ref(false)
-  const houseNumberAutocompleteIsOpen = computed(
-    () =>
-      houseNumberInputHasFocus.value && !houseNumberListContainsSelected.value,
-  )
+  const houseNumberAutocompleteIsOpen = computed(() => {
+    const filterList = filteredHouseNumbers.value
+
+    return houseNumber.value && filterList && filterList.length > 1
+  })
 
   // We fetch the house numbers if we have a match with an autocomplete street
   onUpdated(async () => {
@@ -59,6 +57,11 @@ export const useSearchAutocomplete = (street: Ref, houseNumber: Ref) => {
         slugifyStreetName(street.value),
       )
       houseNumbers.value = autocompleteHouseNumbers
+      const houseNumbersInput = document.getElementById('house-number-input')
+      if (houseNumbersInput) {
+        await nextTick()
+        houseNumbersInput.focus()
+      }
     } else if (!streets.value?.includes(street.value)) {
       houseNumbers.value = undefined
       houseNumber.value = ''
