@@ -1,6 +1,11 @@
 <template>
   <div v-if="entries" class="entry-list">
-    <div v-for="(entry, index) in entries" :key="index" class="entry-wrapper">
+    <div
+      v-for="(entry, index) in entries"
+      :id="getId(entry)"
+      :key="index"
+      class="entry-wrapper"
+    >
       <div class="card-wrapper">
         <SharedAggregateCard
           v-if="entryIsAggregate(entry)"
@@ -48,6 +53,19 @@ export interface ListViewProps {
 }
 
 const props = defineProps<ListViewProps>()
+
+let lastId: number | null = null
+
+const getId = (
+  entry: TimelineEntry | DistanceViewAggregateEntry | DistanceViewEntry,
+) => {
+  if (entry.position === lastId) {
+    return undefined
+  } else {
+    lastId = entry.position
+    return lastId.toString()
+  }
+}
 
 const entryIsAggregate = (
   entry: DistanceViewEntry | DistanceViewAggregateEntry | TimelineEntry,
