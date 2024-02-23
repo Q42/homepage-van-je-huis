@@ -5,7 +5,7 @@
         <SharedAggregateCard
           v-if="entryIsAggregate(entry)"
           :type="entry.type as AggregateType"
-          :count="getAggregateCount(entry as DistanceViewAggregateEntry)"
+          :count="(entry as DistanceViewAggregateEntry).data.count"
         />
       </div>
       <SharedImage
@@ -57,10 +57,6 @@ const entryIsAggregate = (
     entry.type === 'aggregate_tree_species' ||
     entry.type === 'aggregate_bees'
   )
-}
-
-const getAggregateCount = (entry: DistanceViewAggregateEntry) => {
-  return entry.data[Object.keys(entry.data)[0]]
 }
 </script>
 
