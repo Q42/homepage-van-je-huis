@@ -14,14 +14,13 @@
     <form class="form" @submit.prevent="handleSubmit">
       <SharedInput
         v-model:value="street"
-        input-id="street-input"
         :disabled="!Boolean(streets)"
         class="street-input"
         :placeholder="$t(getTranslationKey('home.streetInputPlaceHolder'))"
       />
       <SharedInput
         v-model:value="houseNumber"
-        input-id="house-number-input"
+        :input-id="referenceIds.houseNumberInput"
         :disabled="!Boolean(houseNumbers)"
         class="house-number-input"
         :placeholder="$t(getTranslationKey('home.houseNumberInputPlaceHolder'))"
@@ -78,6 +77,7 @@
 </template>
 
 <script setup lang="ts">
+import { referenceIds } from '@/config/referenceIds'
 import { getTranslationKey, TranslationKey } from '@/translations'
 export interface SearchBlockProps {
   // TODO
@@ -146,7 +146,9 @@ const selectStreet = (selectedStreet: string) => {
 const selectHouseNumber = (selectedHouseNumber: string) => {
   error.value = null
   houseNumber.value = selectedHouseNumber
-  const houseNumberInput = document.getElementById('house-number-input')
+  const houseNumberInput = document.getElementById(
+    referenceIds.houseNumberInput,
+  )
   if (houseNumberInput) {
     houseNumberInput.focus()
   }
@@ -193,7 +195,9 @@ const handleHouseNumberInputInteraction = () => {
 }
 
 onMounted(() => {
-  const houseNumberInput = document.getElementById('house-number-input')
+  const houseNumberInput = document.getElementById(
+    referenceIds.houseNumberInput,
+  )
 
   if (houseNumberInput) {
     houseNumberInput.addEventListener(
@@ -210,7 +214,9 @@ onMounted(() => {
 })
 
 onUnmounted(() => {
-  const houseNumberInput = document.getElementById('house-number-input')
+  const houseNumberInput = document.getElementById(
+    referenceIds.houseNumberInput,
+  )
 
   if (houseNumberInput) {
     houseNumberInput.removeEventListener(

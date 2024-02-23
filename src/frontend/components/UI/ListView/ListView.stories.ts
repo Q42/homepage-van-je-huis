@@ -15,116 +15,185 @@ const Template: StoryFn<typeof ListView> = (args: ListViewProps) => ({
   template: '<ListView v-bind="args" />',
 })
 
-const images = [
+const entries = [
   {
     image: {
-      url: 'https://amsterdam.kunstwacht.nl/cache/f/7/8/f78fafcc62a48652bd13dfb91a39f960_700_540.jpg',
-      altText: 'Pauze',
+      url: 'https://images.memorix.nl/ams/thumb/1000x1000/dc7c2c01-de93-7447-b661-31d3be28bb9a.jpg',
+      altText: 'Looiersgracht 68-70',
     },
-    title: 'Pauze',
-    visitUrl: 'https://amsterdam.kunstwacht.nl/kunstwerken/bekijk/1384-pauze',
-  },
-  {
-    image: {
-      url: 'https://amsterdam.kunstwacht.nl/cache/7/1/2/712a4c926e524ac743d3ef72f3626d5b_700_540.jpg',
-      altText: 'Lusvormig object',
-    },
-    title: 'Lusvormig object',
     visitUrl:
-      'https://amsterdam.kunstwacht.nl/kunstwerken/bekijk/1417-lusvormig-object',
+      'https://archief.amsterdam/beeldbank/detail/387c16a0-c85c-3a99-c845-31f9dae245f0',
+    title: 'Looiersgracht 68-70',
+    position: 1866,
+    type: 'archiveImage',
   },
   {
     image: {
-      url: 'https://amsterdam.kunstwacht.nl/cache/d/2/7/d270165f07412de53c0d8ddc0ebbff74_700_540.jpg',
-      altText: 'Phoenix, oorlogsgedenkteken Slachtoffers Noord',
+      url: 'https://images.memorix.nl/ams/thumb/1000x1000/8987c08d-3f02-51c6-bbe1-ea91aa7eebc4.jpg',
+      altText: 'Looiersgracht 60-68',
     },
-    title: 'Phoenix, oorlogsgedenkteken Slachtoffers Noord',
     visitUrl:
-      'https://amsterdam.kunstwacht.nl/kunstwerken/bekijk/1406-phoenix-oorlogsgedenkteken-slachtoffers-noord',
+      'https://archief.amsterdam/beeldbank/detail/e9655bd0-2d04-3c43-a963-2e5dbc3dfbf5',
+    title: 'Looiersgracht 60-68',
+    position: 1953,
+    type: 'archiveImage',
   },
   {
     image: {
-      url: 'https://amsterdam.kunstwacht.nl/cache/a/f/c/afc75cf7af0c9530a3c66e89a3361c13_700_540.jpg',
-      altText: 'Zonder titel - Volten',
+      url: 'https://images.memorix.nl/ams/thumb/1000x1000/aebc77a0-bab4-ac5a-699b-d8f2b3e38591.jpg',
+      altText:
+        'Prinsengracht 334 - 338 (ged.) v.r.n.l. en rechts Looiersgracht 40 - ca. 80 v.r.n.l',
     },
-    title: 'Zonder titel - Volten',
     visitUrl:
-      'https://amsterdam.kunstwacht.nl/kunstwerken/bekijk/1427-zonder-titel-volten',
+      'https://archief.amsterdam/beeldbank/detail/1e21aacd-9cd0-e5cf-09c3-60cc1d290428',
+    title:
+      'Prinsengracht 334 - 338 (ged.) v.r.n.l. en rechts Looiersgracht 40 - ca. 80 v.r.n.l',
+    position: 1962,
+    type: 'archiveImage',
   },
   {
     image: {
-      url: 'https://amsterdam.kunstwacht.nl/cache/1/b/2/1b2dbf1c38841b219373efc463937de7_700_540.jpg',
-      altText: 'Ringvormig object met zwerfkei',
+      url: 'https://images.memorix.nl/ams/thumb/1000x1000/5a0742b0-b422-102c-ca8c-baff21e1061e.jpg',
+      altText:
+        'Brug 102 over het water van de Looiersgracht bij de Eerste Looiersdwarsstraat',
     },
-    title: 'Ringvormig object met zwerfkei',
     visitUrl:
-      'https://amsterdam.kunstwacht.nl/kunstwerken/bekijk/1408-ringvormig-object-met-zwerfkei',
+      'https://archief.amsterdam/beeldbank/detail/b044da1c-d913-6357-9efa-c4d0e56a7cd9',
+    title:
+      'Brug 102 over het water van de Looiersgracht bij de Eerste Looiersdwarsstraat',
+    position: 1974,
+    type: 'archiveImage',
   },
   {
     image: {
-      url: 'https://amsterdam.kunstwacht.nl/cache/8/b/6/8b6f37fdfab2c4c3f1a3dad5615b8bed_700_540.jpg',
-      altText: 'Tegeltableau Wingerdweg, Barmhartige Samaritaan',
+      url: 'https://images.memorix.nl/ams/thumb/1000x1000/bd800706-f5f5-8641-9f5d-1114354b4b9f.jpg',
+      altText:
+        'Eerste Passeerdersdwarsstraat 1 - 31 (ged.). Links in het verschiet Looiersgracht 68 (ged.)',
     },
-    title: 'Tegeltableau Wingerdweg, Barmhartige Samaritaan',
     visitUrl:
-      'https://amsterdam.kunstwacht.nl/kunstwerken/bekijk/1462-tegeltableau-wingerdweg-barmhartige-samaritaan',
+      'https://archief.amsterdam/beeldbank/detail/884dac3a-48ed-0b40-c390-ce8d40e5aa52',
+    title:
+      'Eerste Passeerdersdwarsstraat 1 - 31 (ged.). Links in het verschiet Looiersgracht 68 (ged.)',
+    position: 1975,
+    type: 'archiveImage',
   },
   {
     image: {
-      url: 'https://amsterdam.kunstwacht.nl/cache/5/4/c/54c609913c769ecd746b66b425b92620_700_540.jpg',
-      altText: 'Tegeltableau Wingerdweg, Spelende Kinderen',
+      url: 'https://images.memorix.nl/ams/thumb/1000x1000/37570ae1-30c5-f0d8-e22b-04bd3518a9c9.jpg',
+      altText:
+        'Eerste Passeerdersdwarsstraat 1 - 25 (ged.). In het verschiet Looiersgracht 68',
     },
-    title: 'Tegeltableau Wingerdweg, Spelende Kinderen',
     visitUrl:
-      'https://amsterdam.kunstwacht.nl/kunstwerken/bekijk/1463-tegeltableau-wingerdweg-spelende-kinderen',
+      'https://archief.amsterdam/beeldbank/detail/ebf52ac3-0aac-6306-884e-e7fc02b6e96d',
+    title:
+      'Eerste Passeerdersdwarsstraat 1 - 25 (ged.). In het verschiet Looiersgracht 68',
+    position: 1975,
+    type: 'archiveImage',
   },
   {
     image: {
-      url: 'https://amsterdam.kunstwacht.nl/cache/1/3/e/13e7ddd423ac612007c3048fae3b414f_700_540.jpg',
-      altText: 'Emaille platen',
+      url: 'https://images.memorix.nl/ams/thumb/1000x1000/d66d2719-92fe-3c34-0172-b483d735fa98.jpg',
+      altText: 'Looiersgracht 64-68 (v.r.n.l.). Architect: Erik Lopes Cardozo',
     },
-    title: 'Emaille platen',
     visitUrl:
-      'https://amsterdam.kunstwacht.nl/kunstwerken/bekijk/1396-emaille-platen',
+      'https://archief.amsterdam/beeldbank/detail/a88075d5-820c-de01-e506-c547a31e2afe',
+    title: 'Looiersgracht 64-68 (v.r.n.l.). Architect: Erik Lopes Cardozo',
+    position: 1985,
+    type: 'archiveImage',
   },
   {
     image: {
-      url: 'https://amsterdam.kunstwacht.nl/cache/f/e/2/fe29cc9353deead2a34559f2f5811e3f_700_540.jpg',
-      altText: 'Vrouwfiguren',
+      url: 'https://images.memorix.nl/ams/thumb/1000x1000/d8a04d22-8fd8-ee1d-b02f-808d6d9909bd.jpg',
+      altText: 'Looiersgracht 64-68 (v.r.n.l.). Architect: Erik Lopes Cardozo',
     },
-    title: 'Vrouwfiguren',
     visitUrl:
-      'https://amsterdam.kunstwacht.nl/kunstwerken/bekijk/1383-vrouwfiguren',
+      'https://archief.amsterdam/beeldbank/detail/cc7d5a88-a56d-ba6d-2e39-5396b5ae9513',
+    title: 'Looiersgracht 64-68 (v.r.n.l.). Architect: Erik Lopes Cardozo',
+    position: 1985,
+    type: 'archiveImage',
   },
   {
     image: {
-      url: 'https://amsterdam.kunstwacht.nl/cache/6/b/5/6b511b523f6a0bff97b8d5d43d6e986b_700_540.jpg',
-      altText: 'Ks 619',
+      url: 'https://images.memorix.nl/ams/thumb/1000x1000/29918713-00f8-ee54-e76c-5cb07785d38f.jpg',
+      altText: 'Looiersgracht 66 (ged.) - 70 v.r.n.l',
     },
-    title: 'Ks 619',
-    visitUrl: 'https://amsterdam.kunstwacht.nl/kunstwerken/bekijk/17692-ks-619',
-  },
-  {
-    image: {
-      url: 'https://amsterdam.kunstwacht.nl/cache/0/5/1/05158e8bdc3e13f20af7e75b9ab1c96a_700_540.jpg',
-      altText: 'Friendly Fire',
-    },
-    title: 'Friendly Fire',
     visitUrl:
-      'https://amsterdam.kunstwacht.nl/kunstwerken/bekijk/20943-friendly-fire',
+      'https://archief.amsterdam/beeldbank/detail/0d015b0e-9225-8f5c-a3e7-602e1ead28dc',
+    title: 'Looiersgracht 66 (ged.) - 70 v.r.n.l',
+    position: 1987,
+    type: 'archiveImage',
   },
   {
     image: {
-      url: 'https://amsterdam.kunstwacht.nl/cache/1/2/4/124acc756b0b6e76d2427b17685c6638_700_540.jpg',
-      altText: 'Zonder titel - Meursing',
+      url: 'https://images.memorix.nl/ams/thumb/1000x1000/91b2e0d6-aad4-2119-e4d0-6f1ba1f54c86.jpg',
+      altText:
+        'Prinsengracht 332, Looiersgracht 2-144, de Looierssluis (brug 103), Prinsengracht 334 (v.r.n.l.)',
     },
-    title: 'Zonder titel - Meursing',
     visitUrl:
-      'https://amsterdam.kunstwacht.nl/kunstwerken/bekijk/1415-zonder-titel-meursing',
+      'https://archief.amsterdam/beeldbank/detail/de748491-df35-64eb-ab73-8f4773f0f619',
+    title:
+      'Prinsengracht 332, Looiersgracht 2-144, de Looierssluis (brug 103), Prinsengracht 334 (v.r.n.l.)',
+    position: 1990,
+    type: 'archiveImage',
+  },
+  {
+    image: {
+      url: 'https://images.memorix.nl/ams/thumb/1000x1000/df33b794-b9cd-a0c4-0838-f580a2fdaeb5.jpg',
+      altText: 'Looiersgracht 62-58',
+    },
+    visitUrl:
+      'https://archief.amsterdam/beeldbank/detail/c9e2245b-9f05-42ed-0d92-285a0de753aa',
+    title: 'Looiersgracht 62-58',
+    position: 2000,
+    type: 'archiveImage',
+  },
+  {
+    image: {
+      url: 'https://images.memorix.nl/ams/thumb/1000x1000/95a48d73-8ab2-e956-01bf-12d397fe5635.jpg',
+      altText: 'Looiersgracht 62-58',
+    },
+    visitUrl:
+      'https://archief.amsterdam/beeldbank/detail/c7ae9859-3475-799f-e884-54bbe1e7ce24',
+    title: 'Looiersgracht 62-58',
+    position: 2000,
+    type: 'archiveImage',
+  },
+  {
+    image: {
+      url: 'https://images.memorix.nl/ams/thumb/1000x1000/6d4a8ffd-c661-780c-cff2-59497b297273.jpg',
+      altText: 'Looiersgracht 62-58',
+    },
+    visitUrl:
+      'https://archief.amsterdam/beeldbank/detail/ecb41ed6-b1af-431e-ff56-29ef783ab134',
+    title: 'Looiersgracht 62-58',
+    position: 2000,
+    type: 'archiveImage',
+  },
+  {
+    image: {
+      url: 'https://images.memorix.nl/ams/thumb/1000x1000/996bb84b-0afb-eade-a1b4-6cd54c93b4a5.jpg',
+      altText: 'Looiersgracht 52A-L (ged.)-66 (ged.) (v.r.n.l.) met nieuwbouw',
+    },
+    visitUrl:
+      'https://archief.amsterdam/beeldbank/detail/959c750f-b210-b564-8f45-68d0789e530a',
+    title: 'Looiersgracht 52A-L (ged.)-66 (ged.) (v.r.n.l.) met nieuwbouw',
+    position: 2007,
+    type: 'archiveImage',
+  },
+  {
+    image: {
+      url: 'https://images.memorix.nl/ams/thumb/1000x1000/950b0fae-58f6-2623-b14a-5d6823dfe2a0.jpg',
+      altText: 'Looiersgracht 62 (ged.)-72 (v.r.n.l.)',
+    },
+    visitUrl:
+      'https://archief.amsterdam/beeldbank/detail/490e8428-e096-1152-4449-d877a8460cb4',
+    title: 'Looiersgracht 62 (ged.)-72 (v.r.n.l.)',
+    position: 2007,
+    type: 'archiveImage',
   },
 ]
 
 export const ListViewStory = Template.bind({})
 ListViewStory.args = {
-  images,
+  entries,
 }

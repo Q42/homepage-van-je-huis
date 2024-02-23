@@ -38,6 +38,7 @@
         @click="() => (currentView = 'present')"
       />
     </div>
+    <SharedSlider />
   </div>
 </template>
 

@@ -1,0 +1,13 @@
+<script>
+  // General Nuxt composables/composables that are usually auto-imported from packages
+  // See composables/storybook for custom mock composables
+  window.global = window
+
+  window.useI18n = () => {
+    return {
+      t: (text) => 'Translated string: ' + text,
+    }
+  }
+
+  window.slugifyStreetName = () => {}
+</script>

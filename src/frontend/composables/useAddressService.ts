@@ -1,4 +1,5 @@
 import { useAutocompleteStore } from '@/store/autocompleteStore'
+import { configVars } from '@/config/vars'
 
 // TODO: better error handling (but wait till api is definitive)
 
@@ -6,8 +7,8 @@ export const useAddressService = () => {
   const autocompleteStore = useAutocompleteStore()
 
   const getAddressJSONandParse = async (addressSlug: string) => {
-    const filePath = `/api/address/${addressSlug}.json`
-    const response = await fetch(filePath)
+    const path = configVars.baseUrl + `/api/address/${addressSlug}.json`
+    const response = await fetch(path)
     if (!response.ok) {
       // TODO: Add error handling
       console.error('Error - Adress not found')
@@ -18,8 +19,8 @@ export const useAddressService = () => {
   }
 
   const getAutocompleteStreets = async () => {
-    const filePath = `/api/resolve/streetNames.json`
-    const response = await fetch(filePath)
+    const path = configVars.baseUrl + `/api/resolve/streetNames.json`
+    const response = await fetch(path)
     if (!response.ok) {
       // TODO: Add error handling
       console.error('Error - No autocomplete street names found')
@@ -30,8 +31,8 @@ export const useAddressService = () => {
   }
 
   const getHouseNumbers = async (streetSlug: string) => {
-    const filePath = `/api/resolve/numbers/${streetSlug}.json`
-    const response = await fetch(filePath)
+    const path = configVars.baseUrl + `/api/resolve/numbers/${streetSlug}.json`
+    const response = await fetch(path)
     if (!response.ok) {
       // TODO: Add error handling
       console.error('Error - No autocomplete house numbers names found')
