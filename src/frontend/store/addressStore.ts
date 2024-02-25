@@ -3,7 +3,8 @@ import { AddressRecord } from '../../common/apiSchema/addressRecord'
 
 import { PresentData } from '../../common/apiSchema/present'
 
-export const useAddress = (address: string) => {
+// TODO: make this a store to prevent lots of requests
+export const useAddressStore = (address: string) => {
   const addressService = useAddressService()
 
   const addressData: Ref<AddressRecord | null> = ref(null)
