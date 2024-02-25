@@ -38,12 +38,18 @@
         @click="() => (currentView = 'present')"
       />
     </div>
-    <SharedSlider />
+    <SharedSlider
+      v-if="currentDataSet && entries"
+      :range-max="currentDataSet.rangeEnd"
+      :range-min="currentDataSet.rangeStart"
+      :positions="getEntryPositions(entries)"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
 import { getTranslationKey } from '@/translations'
+import { useAddressStore } from '@/store/addressStore'
 
 defineI18nRoute({
   paths: {
@@ -53,13 +59,17 @@ defineI18nRoute({
 
 const { params } = useRoute()
 
-const { pastData, presentData } = useAddress(params.address as string)
+const { pastData, presentData } = useAddressStore(params.address as string)
 const currentView: Ref<'present' | 'past'> = ref('past')
 
 const entries = computed(() => {
   return currentView.value === 'past'
     ? pastData.value?.timeline
     : presentData.value?.slider
+})
+
+const currentDataSet = computed(() => {
+  return currentView.value === 'past' ? pastData.value : presentData.value
 })
 </script>
 

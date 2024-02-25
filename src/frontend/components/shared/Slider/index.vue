@@ -12,7 +12,9 @@
 
 <script setup lang="ts">
 export interface SliderProps {
-  // TODO
+  positions: number[] // the positions correspond with the ids of the entries
+  rangeMax: number
+  rangeMin: number
 }
 
 const props = defineProps<SliderProps>()
