@@ -1,9 +1,9 @@
 <template>
   <div class="slider">
-    <div class="pointer">
+    <div :style="cssProp" class="pointer">
       <div class="pointer-label">
         <SharedTypography variant="body-small" :compact="true">
-          1900
+          {{ currentPosition }}
         </SharedTypography>
       </div>
     </div>
@@ -11,13 +11,49 @@
 </template>
 
 <script setup lang="ts">
+import gsap from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { getPercentageInRange } from '@/utils/timelineUtils'
+gsap.registerPlugin(ScrollTrigger)
+
+const props = defineProps<SliderProps>()
+
 export interface SliderProps {
   positions: number[] // the positions correspond with the ids of the entries
   rangeMax: number
   rangeMin: number
 }
 
-const props = defineProps<SliderProps>()
+const currentPosition = ref(props.rangeMax)
+
+const cssProp = computed(() => {
+  const percentage = getPercentageInRange(
+    props.rangeMax,
+    props.rangeMin,
+    currentPosition.value,
+  )
+
+  return `top: calc(${100 - percentage}% - 12px)`
+})
+
+onMounted(() => {
+  // TODO: remove timeout and make this if all images are loaded
+  setTimeout(() => {
+    props.positions.forEach((position, index) => {
+      ScrollTrigger.create({
+        trigger: `[id="${position}"]`,
+        start: 'top 50%',
+        end: 'bottom 50%',
+        onEnter: () => {
+          currentPosition.value = position
+        },
+        onLeaveBack: () => {
+          currentPosition.value = props.positions[index - 1]
+        },
+      })
+    })
+  }, 500)
+})
 </script>
 
 <style lang="less" scoped>
@@ -36,6 +72,7 @@ const props = defineProps<SliderProps>()
   height: 12px;
   background: @primary-black;
   border-radius: 50%;
+  transition: top 0.5s ease-in-out;
   transform: translateX(-50%);
 }
 
