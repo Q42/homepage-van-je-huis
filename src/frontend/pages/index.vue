@@ -1,6 +1,7 @@
 <template>
   <div>
-    <UISearchBlock />
+    <!-- <UISearchBlock /> -->
+    <UIAnimatedView />
   </div>
 </template>
 
