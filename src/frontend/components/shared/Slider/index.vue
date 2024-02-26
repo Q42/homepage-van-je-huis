@@ -57,6 +57,7 @@ const setAnimation = () => {
   // TODO: make this not timeout but event based
   loading.value = true
   ScrollTrigger.killAll()
+  currentPosition.value = props.rangeMax
 
   setTimeout(() => {
     props.positions.forEach((position, index) => {
