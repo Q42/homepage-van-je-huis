@@ -16,4 +16,9 @@ const Template: StoryFn<typeof Slider> = (args: SliderProps) => ({
 })
 
 export const SliderStory = Template.bind({})
-SliderStory.args = {}
+SliderStory.args = {
+  positions: [100, 0],
+  rangeMax: 100,
+  rangeMin: 0,
+  isDistanceView: true,
+}

@@ -1,26 +1,26 @@
-import { BaseView, BaseDataEntity, BaseSliderEntry, ImageRef } from "./shared";
+import { BaseView, BaseDataEntity, BaseSliderEntry, ImageRef } from './shared';
 
-export type GeoLevel = "straat" | "buurt" | "wijk" | "stadsdeel";
+export type GeoLevel = 'straat' | 'buurt' | 'wijk' | 'stadsdeel';
 
 export type PresentEntityType =
-  | "outdoorArt"
-  | "cultureMulti"
-  | "musicVenue"
-  | "heritage"
-  | "dance"
-  | "visualArts"
-  | "photography"
-  | "cinema"
-  | "literary"
-  | "creativeIndustries"
-  | "theatre"
-  | "TVandRadio"
-  | "architecture"
-  | "newMedia"
-  | "debate"
-  | "aggregate_trees"
-  | "aggregate_tree_species"
-  | "aggregate_bees";
+  | 'outdoorArt'
+  | 'cultureMulti'
+  | 'musicVenue'
+  | 'heritage'
+  | 'dance'
+  | 'visualArts'
+  | 'photography'
+  | 'cinema'
+  | 'literary'
+  | 'creativeIndustries'
+  | 'theatre'
+  | 'TVandRadio'
+  | 'architecture'
+  | 'newMedia'
+  | 'debate'
+  | 'aggregate_trees'
+  | 'aggregate_tree_species'
+  | 'aggregate_bees';
 
 export interface PresentData extends BaseView {
   slider: (DistanceViewEntry | DistanceViewAggregateEntry)[]; // The entries for on the slider
@@ -35,9 +35,9 @@ export interface DistanceViewEntry extends BaseSliderEntry {
 }
 
 export interface DistanceViewAggregateEntry
-  extends Omit<DistanceViewEntry, "image" | "visitUrl"> {
-  data: Record<string, number>; // The data for the aggregate, where the key is the name of the buurt, wijk, stadsdeel etc.
-  type: "aggregate_trees" | "aggregate_tree_species" | "aggregate_bees";
+  extends Omit<DistanceViewEntry, 'image' | 'visitUrl'> {
+  data: { areaName: string; count: number };
+  type: 'aggregate_trees' | 'aggregate_tree_species' | 'aggregate_bees';
 }
 
 export interface AgendaItem extends BaseDataEntity {
