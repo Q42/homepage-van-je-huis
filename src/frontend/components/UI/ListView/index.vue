@@ -1,11 +1,16 @@
 <template>
   <div v-if="entries" class="entry-list">
-    <div v-for="(entry, index) in entries" :key="index" class="entry-wrapper">
+    <div
+      v-for="(entry, index) in entries"
+      :id="getId(entry)"
+      :key="index"
+      class="entry-wrapper"
+    >
       <div class="card-wrapper">
         <SharedAggregateCard
           v-if="entryIsAggregate(entry)"
           :type="entry.type as AggregateType"
-          :count="getAggregateCount(entry as DistanceViewAggregateEntry)"
+          :count="(entry as DistanceViewAggregateEntry).data.count"
         />
       </div>
       <SharedImage
@@ -49,6 +54,19 @@ export interface ListViewProps {
 
 const props = defineProps<ListViewProps>()
 
+let lastId: number | null = null
+
+const getId = (
+  entry: TimelineEntry | DistanceViewAggregateEntry | DistanceViewEntry,
+) => {
+  if (entry.position === lastId) {
+    return undefined
+  } else {
+    lastId = entry.position
+    return lastId.toString()
+  }
+}
+
 const entryIsAggregate = (
   entry: DistanceViewEntry | DistanceViewAggregateEntry | TimelineEntry,
 ) => {
@@ -57,10 +75,6 @@ const entryIsAggregate = (
     entry.type === 'aggregate_tree_species' ||
     entry.type === 'aggregate_bees'
   )
-}
-
-const getAggregateCount = (entry: DistanceViewAggregateEntry) => {
-  return entry.data[Object.keys(entry.data)[0]]
 }
 </script>
 
