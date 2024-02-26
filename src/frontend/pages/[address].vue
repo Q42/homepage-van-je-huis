@@ -43,6 +43,7 @@
       :range-max="currentDataSet.rangeEnd"
       :range-min="currentDataSet.rangeStart"
       :positions="getEntryPositions(entries)"
+      :is-distance-view="currentView === 'present'"
     />
   </div>
 </template>
