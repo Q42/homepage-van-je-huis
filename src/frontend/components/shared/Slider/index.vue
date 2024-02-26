@@ -65,7 +65,6 @@ const setAnimation = () => {
         trigger: `[id="${position}"]`,
         start: 'top 10%',
         end: 'top 10%',
-        markers: true,
         onEnter: () => {
           currentPosition.value = position
         },
