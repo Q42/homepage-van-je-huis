@@ -89,8 +89,6 @@ watch(() => props.positions, setAnimation)
   height: 90vh;
   border-right: 1px solid @primary-black;
   width: 1px;
-  opacity: 1;
-  transition: opacity 0.5s;
 }
 
 .pointer {
