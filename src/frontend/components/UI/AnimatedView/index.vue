@@ -1,13 +1,12 @@
 <template>
   <div class="animated-view">
-    <div v-for="item in 10" :key="item" class="item"></div>
+    <div v-for="item in 25" :key="item" class="item"></div>
   </div>
 </template>
 
 <script setup lang="ts">
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
-gsap.registerPlugin(ScrollTrigger)
 
 export interface AnimatedViewProps {
   // TODO
@@ -15,37 +14,40 @@ export interface AnimatedViewProps {
 
 const props = defineProps<AnimatedViewProps>()
 
-onMounted(() => {
-  function animateItem(item) {
-    gsap.to(item, {
-      x: 0,
-      y: 0,
-      opacity: 1,
-    })
+const getRandomNumber = () => {
+  if (Math.random() < 0.5) {
+    return Math.floor(Math.random() * (100 - 50)) + 50 + '%'
+  } else {
+    return Math.floor(Math.random() * (-100 - -50)) + -50 + '%'
   }
+}
+onMounted(() => {
+  gsap.registerPlugin(ScrollTrigger)
 
   document.querySelectorAll('.item').forEach((item) => {
-    gsap.set(item, {
-      x: -1000,
-      y: -1000,
-    })
-
-    // Define ScrollTrigger for each item
-    ScrollTrigger.create({
-      trigger: item,
-      start: 'top center', // Adjust as needed
-      end: 'bottom center', // Adjust as needed
-      scrub: true,
-      onUpdate: (self) => {
-        if (self.direction === 1) {
-          // Forward scrolling
-          animateItem(item)
-        } else if (self.direction === -1) {
-          // Reverse scrolling
-          //   animateItemBack(item)
-        }
+    gsap.fromTo(
+      item,
+      {
+        scrollTrigger: {
+          trigger: item,
+          scrub: true,
+        },
+        markers: true,
+        toggleActions: 'restart none none none',
+        x: getRandomNumber(),
+        scale: 3,
+        opacity: 1,
       },
-    })
+      {
+        scrollTrigger: {
+          trigger: item,
+          scrub: true,
+        },
+        x: '50%',
+        opacity: 0,
+        scale: 0,
+      },
+    )
   })
 })
 </script>
@@ -55,6 +57,10 @@ onMounted(() => {
   width: 400px;
   height: 300px;
   background-color: red;
-  margin: 40px auto;
+  margin: 30px;
+
+  :first-child {
+    margin-top: 100vh;
+  }
 }
 </style>
