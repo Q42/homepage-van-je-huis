@@ -74,7 +74,7 @@ const setAnimation = () => {
       })
     })
     loading.value = false
-  }, 1000)
+  }, 3002)
 }
 
 onMounted(setAnimation)

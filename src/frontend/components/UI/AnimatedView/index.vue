@@ -1,5 +1,5 @@
 <template>
-  <div v-if="entries" class="animated-view">
+  <div v-if="entries && !loading" class="animated-view">
     <SharedTypography class="header" variant="h1"
       >Admiraal de Ruijterweg 1</SharedTypography
     >
@@ -65,6 +65,8 @@ export interface AnimatedViewProps {
 
 const props = defineProps<AnimatedViewProps>()
 
+const loading = ref(true)
+
 let lastId: number | null = null
 
 const getId = (
@@ -106,6 +108,8 @@ const getStartPosition = () => {
 }
 
 const setAnimation = () => {
+  loading.value = true
+
   setTimeout(() => {
     const scrollTriggers = document.querySelectorAll('.trigger-item')
 
@@ -136,9 +140,8 @@ const setAnimation = () => {
         .to(item, { scale: 0.2, duration: 2 }, '-=2')
         .to(item, { opacity: 0, duration: 2 }, '-=1.5')
     })
-
-    console.log('Done')
-  }, 2000)
+    loading.value = false
+  }, 3000)
 }
 
 onMounted(() => {
@@ -168,6 +171,7 @@ watch(() => props.entries, setAnimation)
 }
 
 .header {
+  z-index: 1;
   position: fixed;
   top: 50%;
   left: 50%;
