@@ -16,9 +16,9 @@ const props = defineProps<AnimatedViewProps>()
 
 const getRandomNumber = () => {
   if (Math.random() < 0.5) {
-    return Math.floor(Math.random() * (100 - 50)) + 50 + '%'
+    return Math.floor(Math.random() * (1000 - 300)) + 300 + '%'
   } else {
-    return Math.floor(Math.random() * (-100 - -50)) + -50 + '%'
+    return Math.floor(Math.random() * (-1000 - -300)) + -300 + '%'
   }
 }
 onMounted(() => {
