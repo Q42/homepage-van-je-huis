@@ -1,17 +1,37 @@
 <template>
-  <div class="animated-view">
+  <div v-if="entries" class="animated-view">
     <div
-      v-for="item in 25"
-      :key="item"
+      v-for="(entry, index) in entries"
+      :key="index"
       :style="getStartPosition()"
-      class="item"
+      class="entry-wrapper item"
     >
-      {{ item }}
+      <div class="card-wrapper">
+        <SharedAggregateCard
+          v-if="entryIsAggregate(entry)"
+          :type="entry.type as AggregateType"
+          :count="(entry as DistanceViewAggregateEntry).data.count"
+        />
+      </div>
+      <SharedImage
+        v-if="!entryIsAggregate(entry) && (entry as EntryWithImage).image"
+        :image="(entry as EntryWithImage).image!"
+      />
+      <div class="entry-info">
+        <SharedTypography variant="body" :compact="true"
+          >{{ entry.title }}
+          <SharedLink
+            v-if="(entry as EntryWithImage).visitUrl"
+            :href="(entry as EntryWithImage).visitUrl!"
+            :label="$t(getTranslationKey('images.externalLink'))"
+          />
+        </SharedTypography>
+      </div>
     </div>
-
     <div
-      v-for="item in 25"
-      :key="item"
+      v-for="(entry, index) in entries"
+      :id="getId(entry)"
+      :key="index"
       class="trigger-item"
       aria-hidden="true"
     ></div>
@@ -21,58 +41,110 @@
 <script setup lang="ts">
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import {
+  DistanceViewEntry,
+  DistanceViewAggregateEntry,
+} from '../../../../common/apiSchema/present'
+import { TimelineEntry } from '../../../../common/apiSchema/past'
+import { getTranslationKey } from '@/translations'
+
+type EntryWithImage = DistanceViewEntry | TimelineEntry
+type AggregateType =
+  | 'aggregate_trees'
+  | 'aggregate_tree_species'
+  | 'aggregate_bees'
 
 export interface AnimatedViewProps {
-  // TODO
+  entries:
+    | (DistanceViewEntry | DistanceViewAggregateEntry | TimelineEntry)[]
+    | undefined
 }
 
 const props = defineProps<AnimatedViewProps>()
 
+let lastId: number | null = null
+
+const getId = (
+  entry: TimelineEntry | DistanceViewAggregateEntry | DistanceViewEntry,
+) => {
+  if (entry.position === lastId) {
+    return undefined
+  } else {
+    lastId = entry.position
+    return lastId.toString()
+  }
+}
+
+const entryIsAggregate = (
+  entry: DistanceViewEntry | DistanceViewAggregateEntry | TimelineEntry,
+) => {
+  return (
+    entry.type === 'aggregate_trees' ||
+    entry.type === 'aggregate_tree_species' ||
+    entry.type === 'aggregate_bees'
+  )
+}
+let index = 0
+
 const getStartPosition = () => {
   const startPositions = [
     'transform: translate(-100%, ' + Math.floor(Math.random() * 100) + 'vh)', // Willekeurig links
-    'transform: translate(' + Math.floor(Math.random() * 100) + 'px, -100%)', // Willekeurig boven
-    'transform: translate(' + Math.floor(Math.random() * 100) + 'px, 100vh)', // Willekeurig onder
+    'transform: translate(' +
+      Math.floor(Math.random() * 100) +
+      'px, calc(-100% - 3px))', // Willekeurig boven
     'transform: translate(100vw, ' + Math.floor(Math.random() * 100) + 'vh)', // Willekeurig rechts
+    'transform: translate(' + Math.floor(Math.random() * 100) + 'px, 100vh)', // Willekeurig onder
   ]
 
-  const randomIndex = Math.floor(Math.random() * startPositions.length)
+  const returnValue = startPositions[index]
 
-  return startPositions[randomIndex]
+  index = index === 3 ? 0 : index + 1
+  return returnValue
+}
+
+const setAnimation = () => {
+  setTimeout(() => {
+    const scrollTriggers = document.querySelectorAll('.trigger-item')
+
+    document.querySelectorAll('.item').forEach((item, index) => {
+      const getStartPos = () => {
+        if (index === 0) {
+          return 'top'
+        }
+        if (index > 0) {
+          return `-${index < 4 ? index - 1 : 3}${Math.floor(Math.random() * 20) + 50}%`
+        }
+      }
+
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: scrollTriggers[index],
+          scrub: 1,
+          start: `${getStartPos()} top`,
+        },
+      })
+
+      tl.to(item, {
+        x: '25vw',
+        y: 'calc(50vh - 200px)',
+        transformOrigin: 'center center',
+        duration: 1,
+      })
+        .to(item, { scale: 0.2, duration: 2 }, '-=1')
+        .to(item, { opacity: 0, duration: 2 }, '-=1')
+    })
+
+    console.log('Done')
+  }, 2000)
 }
 
 onMounted(() => {
   gsap.registerPlugin(ScrollTrigger)
 
-  const scrollTriggers = document.querySelectorAll('.trigger-item')
-
-  document.querySelectorAll('.item').forEach((item, index) => {
-    const getStartPos = () => {
-      if (index === 0) {
-        return 'top'
-      }
-      if (index > 0) {
-        return `-${index < 4 ? index - 1 : 3}${Math.floor(Math.random() * 20) + 50}%`
-      }
-    }
-
-    const tl = gsap.timeline({
-      scrollTrigger: {
-        trigger: scrollTriggers[index],
-        scrub: 1,
-        start: `${getStartPos()} top`,
-      },
-    })
-
-    tl.to(item, {
-      x: '100%',
-      y: '50%',
-      transformOrigin: 'center center',
-      duration: 3,
-      scale: 0.2,
-    }).to(item, { opacity: 0, duration: 2 }, '-=2')
-  })
+  setAnimation()
 })
+
+watch(() => props.entries, setAnimation)
 </script>
 
 <style lang="less" scoped>
@@ -85,16 +157,6 @@ onMounted(() => {
 }
 .item {
   position: fixed;
-  width: 500px;
-  height: 400px;
-  background: darkblue;
-  margin: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  font-size: larger;
-  font-weight: bold;
 }
 .trigger-item {
   width: 300px;

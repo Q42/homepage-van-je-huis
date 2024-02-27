@@ -60,6 +60,7 @@ const props = defineProps<AggregateCardProps>()
   gap: 20px;
   padding: 30px 20px;
   width: fit-content;
+  background: @primary-white;
 }
 .content {
   display: flex;

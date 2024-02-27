@@ -26,7 +26,9 @@
         />
       </div>
     </SharedSidePanel>
-    <UIListView :entries="entries" />
+    <!-- <UIListView :entries="entries" /> -->
+    <UIAnimatedView :entries="entries" />
+
     <!-- TODO: accessibility -->
     <div class="tab-buttons">
       <SharedButton
