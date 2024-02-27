@@ -128,10 +128,10 @@ const setAnimation = () => {
         x: '25vw',
         y: 'calc(50vh - 200px)',
         transformOrigin: 'center center',
-        duration: 1,
+        duration: 2,
       })
-        .to(item, { scale: 0.2, duration: 2 }, '-=1')
-        .to(item, { opacity: 0, duration: 2 }, '-=1')
+        .to(item, { scale: 0.2, duration: 2 }, '-=2')
+        .to(item, { opacity: 0, duration: 2 }, '-=1.5')
     })
 
     console.log('Done')
