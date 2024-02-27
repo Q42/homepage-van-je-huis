@@ -29,6 +29,6 @@ const IconType = computed(() => (isOnMobile.value ? 'logo--no-text' : 'logo'))
   padding: 20px;
   gap: 10px;
   align-items: center;
-  // position: fixed;
+  position: fixed;
 }
 </style>

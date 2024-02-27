@@ -1,5 +1,8 @@
 <template>
   <div v-if="entries" class="animated-view">
+    <SharedTypography class="header" variant="h1"
+      >Admiraal de Ruijterweg 1</SharedTypography
+    >
     <div
       v-for="(entry, index) in entries"
       :key="index"
@@ -162,5 +165,12 @@ watch(() => props.entries, setAnimation)
   width: 300px;
   height: 400px;
   opacity: 0;
+}
+
+.header {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 </style>
