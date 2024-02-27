@@ -30,31 +30,15 @@ const props = defineProps<AnimatedViewProps>()
 
 const getStartPosition = () => {
   const startPositions = [
-    'transform: translate(-100%, -100%)',
-    'transform: translate(100vw, -100%)', // Rechtsboven
-    'transform: translate(-100%, 100vh)', // Linksonder
-    'transform: translate(100vw, 100vh)', // Rechtsonder
-    'transform: translate(0, -100%)', // Bovenkant
-    'transform: translate(0, 100vh)', // Onderkant
-    'transform: translate(-100%, 0)', // Linkerkant
-    'transform: translate(100vw, 0)', // Rechterkant
-    'transform: translate(0, -100vh)', // Bovenkant (volledig uit zicht)
-    'transform: translate(-100vw, 0)', // Linkerkant (volledig uit zicht)
-    'transform: translate(-100%, ' + Math.floor(Math.random() * 100) + 'vh)', // Links met willekeurige verticale positie
-    'transform: translate(' + Math.floor(Math.random() * 100) + 'px, -100%)', // Boven met willekeurige horizontale positie
-    'transform: translate(' + Math.floor(Math.random() * 100) + 'px, 100vh)', // Onder met willekeurige horizontale positie
-    'transform: translate(100vw, ' + Math.floor(Math.random() * 100) + 'vh)', // Rechts met willekeurige verticale positie
+    'transform: translate(-100%, ' + Math.floor(Math.random() * 100) + 'vh)', // Willekeurig links
+    'transform: translate(' + Math.floor(Math.random() * 100) + 'px, -100%)', // Willekeurig boven
+    'transform: translate(' + Math.floor(Math.random() * 100) + 'px, 100vh)', // Willekeurig onder
+    'transform: translate(100vw, ' + Math.floor(Math.random() * 100) + 'vh)', // Willekeurig rechts
   ]
 
   const randomIndex = Math.floor(Math.random() * startPositions.length)
 
   return startPositions[randomIndex]
-}
-
-const getRandomYPos = () => {
-  const randomValue = Math.floor(Math.random() * -100)
-
-  return `transform: translateY(${randomValue}%)`
 }
 
 onMounted(() => {
