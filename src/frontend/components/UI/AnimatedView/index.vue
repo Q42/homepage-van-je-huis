@@ -1,8 +1,8 @@
 <template>
   <div v-if="entries && !loading" class="animated-view">
-    <SharedTypography class="header" variant="h1"
-      >Admiraal de Ruijterweg 1</SharedTypography
-    >
+    <SharedTypography class="header" variant="h1">
+      {{ slugToAddress(params.address as string) }}
+    </SharedTypography>
     <div
       v-for="(entry, index) in entries"
       :key="index"
@@ -64,6 +64,8 @@ export interface AnimatedViewProps {
 }
 
 const props = defineProps<AnimatedViewProps>()
+
+const { params } = useRoute()
 
 const loading = ref(true)
 
@@ -173,6 +175,7 @@ watch(() => props.entries, setAnimation)
 .header {
   z-index: 1;
   position: fixed;
+  text-transform: capitalize;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
