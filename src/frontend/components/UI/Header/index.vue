@@ -1,12 +1,13 @@
 <template>
   <div class="header">
-    <SharedIcon
-      :width="isOnMobile ? 12 : 155"
-      :height="40"
-      :type="IconType"
-      class="header__logo"
-    />
-
+    <NuxtLink :to="`/${locale}`">
+      <SharedIcon
+        :width="isOnMobile ? 12 : 155"
+        :height="40"
+        :type="IconType"
+        class="header__logo"
+      />
+    </NuxtLink>
     <SharedTypography variant="h1" :compact="true" class="header__title">
       {{ $t(getTranslationKey('home.title')) }}
     </SharedTypography>
@@ -17,6 +18,7 @@
 import { isTablet } from '@/utils/breakpoints'
 import { getTranslationKey } from '@/translations'
 
+const { locale } = useI18n()
 const screenWidth = useScreenWidth()
 const isOnMobile = computed(() => isTablet(screenWidth.value))
 const IconType = computed(() => (isOnMobile.value ? 'logo--no-text' : 'logo'))
