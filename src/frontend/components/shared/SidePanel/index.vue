@@ -26,9 +26,7 @@
     <div class="header">
       <SharedTypography variant="h3">{{ label }}</SharedTypography>
       <!-- TODO: add aria label -->
-      <button class="close-btn" @click="closePanel">
-        <SharedIcon :width="24" :height="24" type="close" />
-      </button>
+      <SharedIconButton class="close-btn" icon="close" @click="closePanel" />
     </div>
     <div
       class="content-wrapper"
