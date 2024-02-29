@@ -1,4 +1,4 @@
-import { ImageRef } from '../../../../common/apiSchema/shared'
+import { ImageRef } from '../../common/apiSchema/shared'
 
 export const mockImages: ImageRef[] = [
   {
