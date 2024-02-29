@@ -2,13 +2,13 @@
   <div>
     <SharedSidePanel
       :label="
-        currentView === 'past'
+        pastOrPresent === 'past'
           ? $t(getTranslationKey('sidePanel.storiesLabel'))
           : $t(getTranslationKey('sidePanel.calendarLabel'))
       "
-      :icon-type="currentView === 'past' ? 'stories' : 'calendar'"
+      :icon-type="pastOrPresent === 'past' ? 'stories' : 'calendar'"
     >
-      <div v-if="pastData && currentView === 'past'" class="side-panel-items">
+      <div v-if="pastData && pastOrPresent === 'past'" class="side-panel-items">
         <SharedStory
           v-for="(story, index) in pastData.stories"
           :key="index"
@@ -16,7 +16,7 @@
         />
       </div>
       <div
-        v-if="presentData && currentView === 'present'"
+        v-if="presentData && pastOrPresent === 'present'"
         class="side-panel-items side-panel-items--calendar"
       >
         <SharedCalendarItem
@@ -26,17 +26,21 @@
         />
       </div>
     </SharedSidePanel>
-    <!-- <UIListView :entries="entries" /> -->
-    <UIAnimatedView :entries="entries" />
+    <UIListView v-if="currentView === 'list'" :entries="entries" />
+    <UIAnimatedView
+      v-if="currentView === 'animated'"
+      :set-view="setView"
+      :entries="entries"
+    />
     <!-- TODO: accessibility -->
     <div class="tab-buttons">
       <SharedButton
         :label="$t(getTranslationKey('addressPage.pastLabel'))"
-        @click="() => (currentView = 'past')"
+        @click="() => (pastOrPresent = 'past')"
       />
       <SharedButton
         :label="$t(getTranslationKey('addressPage.presentLabel'))"
-        @click="() => (currentView = 'present')"
+        @click="() => (pastOrPresent = 'present')"
       />
     </div>
     <SharedSlider
@@ -44,7 +48,7 @@
       :range-max="currentDataSet.rangeEnd"
       :range-min="currentDataSet.rangeStart"
       :positions="getEntryPositions(entries)"
-      :is-distance-view="currentView === 'present'"
+      :is-distance-view="pastOrPresent === 'present'"
     />
   </div>
 </template>
@@ -62,16 +66,20 @@ defineI18nRoute({
 const { params } = useRoute()
 
 const { pastData, presentData } = useAddressStore(params.address as string)
-const currentView: Ref<'present' | 'past'> = ref('past')
+const pastOrPresent: Ref<'present' | 'past'> = ref('past')
+const currentView: Ref<'animated' | 'list'> = ref('animated')
+
+const setView = () =>
+  (currentView.value = currentView.value === 'animated' ? 'list' : 'animated')
 
 const entries = computed(() => {
-  return currentView.value === 'past'
+  return pastOrPresent.value === 'past'
     ? pastData.value?.timeline
     : presentData.value?.slider
 })
 
 const currentDataSet = computed(() => {
-  return currentView.value === 'past' ? pastData.value : presentData.value
+  return pastOrPresent.value === 'past' ? pastData.value : presentData.value
 })
 </script>
 
