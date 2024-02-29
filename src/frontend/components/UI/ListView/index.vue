@@ -39,13 +39,7 @@ import {
 import { TimelineEntry } from '../../../../common/apiSchema/past'
 
 import { getTranslationKey } from '@/translations'
-import { Entries } from '~/models/Entries'
-
-type EntryWithImage = DistanceViewEntry | TimelineEntry
-type AggregateType =
-  | 'aggregate_trees'
-  | 'aggregate_tree_species'
-  | 'aggregate_bees'
+import { Entries, EntryWithImage, AggregateType } from '~/models/Entries'
 
 export interface ListViewProps {
   entries: Entries

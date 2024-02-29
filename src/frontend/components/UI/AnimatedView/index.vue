@@ -50,15 +50,9 @@ import {
 } from '../../../../common/apiSchema/present'
 import { TimelineEntry } from '../../../../common/apiSchema/past'
 import { getTranslationKey } from '@/translations'
-import { Entries } from '@/models/Entries'
+import { Entries, AggregateType, EntryWithImage } from '@/models/Entries'
 
 gsap.registerPlugin(ScrollTrigger)
-
-type EntryWithImage = DistanceViewEntry | TimelineEntry
-type AggregateType =
-  | 'aggregate_trees'
-  | 'aggregate_tree_species'
-  | 'aggregate_bees'
 
 export interface AnimatedViewProps {
   entries: Entries
