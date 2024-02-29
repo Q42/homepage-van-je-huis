@@ -32,11 +32,7 @@
 </template>
 
 <script setup lang="ts">
-import {
-  DistanceViewEntry,
-  DistanceViewAggregateEntry,
-} from '../../../../common/apiSchema/present'
-import { TimelineEntry } from '../../../../common/apiSchema/past'
+import { DistanceViewAggregateEntry } from '../../../../common/apiSchema/present'
 
 import { getTranslationKey } from '@/translations'
 import { Entries, EntryWithImage, AggregateType } from '~/models/Entries'
@@ -46,29 +42,6 @@ export interface ListViewProps {
 }
 
 const props = defineProps<ListViewProps>()
-
-let lastId: number | null = null
-
-const getId = (
-  entry: TimelineEntry | DistanceViewAggregateEntry | DistanceViewEntry,
-) => {
-  if (entry.position === lastId) {
-    return undefined
-  } else {
-    lastId = entry.position
-    return lastId.toString()
-  }
-}
-
-const entryIsAggregate = (
-  entry: DistanceViewEntry | DistanceViewAggregateEntry | TimelineEntry,
-) => {
-  return (
-    entry.type === 'aggregate_trees' ||
-    entry.type === 'aggregate_tree_species' ||
-    entry.type === 'aggregate_bees'
-  )
-}
 </script>
 
 <style lang="less" scoped>

@@ -44,11 +44,7 @@
 <script setup lang="ts">
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import {
-  DistanceViewEntry,
-  DistanceViewAggregateEntry,
-} from '../../../../common/apiSchema/present'
-import { TimelineEntry } from '../../../../common/apiSchema/past'
+import { DistanceViewAggregateEntry } from '../../../../common/apiSchema/present'
 import { getTranslationKey } from '@/translations'
 import { Entries, AggregateType, EntryWithImage } from '@/models/Entries'
 
@@ -61,32 +57,8 @@ export interface AnimatedViewProps {
 const props = defineProps<AnimatedViewProps>()
 
 const route = useRoute()
-
 const loading = ref(true)
-
-let lastId: number | null = null
-
-const getId = (
-  entry: TimelineEntry | DistanceViewAggregateEntry | DistanceViewEntry,
-) => {
-  if (entry.position === lastId) {
-    return undefined
-  } else {
-    lastId = entry.position
-    return lastId.toString()
-  }
-}
-
-const entryIsAggregate = (
-  entry: DistanceViewEntry | DistanceViewAggregateEntry | TimelineEntry,
-) => {
-  return (
-    entry.type === 'aggregate_trees' ||
-    entry.type === 'aggregate_tree_species' ||
-    entry.type === 'aggregate_bees'
-  )
-}
-let index = 0
+const index = ref(0)
 
 const getStartPosition = () => {
   const startPositions = [
@@ -98,9 +70,9 @@ const getStartPosition = () => {
     'transform: translate(' + Math.floor(Math.random() * 100) + 'px, 100vh)', // Willekeurig onder
   ]
 
-  const returnValue = startPositions[index]
+  const returnValue = startPositions[index.value]
 
-  index = index === 3 ? 0 : index + 1
+  index.value = index.value === 3 ? 0 : index.value + 1
   return returnValue
 }
 
