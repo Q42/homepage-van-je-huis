@@ -19,3 +19,7 @@ logs
 .fleet
 .idea
 
+# deploy files
+*-app.zip
+
+
