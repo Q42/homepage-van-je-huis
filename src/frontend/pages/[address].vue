@@ -58,8 +58,12 @@
 </template>
 
 <script setup lang="ts">
+import gsap from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { getTranslationKey } from '@/translations'
 import { useAddressStore } from '@/store/addressStore'
+
+gsap.registerPlugin(ScrollTrigger)
 
 defineI18nRoute({
   paths: {
@@ -71,15 +75,19 @@ const { params } = useRoute()
 
 const { pastData, presentData } = useAddressStore(params.address as string)
 const pastOrPresent: Ref<'present' | 'past'> = ref('past')
-const currentView: Ref<'animated' | 'list'> = ref('list')
+const currentView: Ref<'animated' | 'list'> = ref('animated')
 
-const setView = () =>
-  (currentView.value = currentView.value === 'animated' ? 'list' : 'animated')
+const setView = () => {
+  ScrollTrigger.killAll()
+  currentView.value = currentView.value === 'animated' ? 'list' : 'animated'
+}
 
 const entries = computed(() => {
   return pastOrPresent.value === 'past'
     ? pastData.value?.timeline
-    : presentData.value?.slider
+    : presentData.value?.slider.filter((entry) => {
+        return entryIsAggregate(entry) || entry.image
+      })
 })
 
 const currentDataSet = computed(() => {

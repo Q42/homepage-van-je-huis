@@ -44,14 +44,11 @@
 </template>
 
 <script setup lang="ts">
-import debounce from 'lodash.debounce'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { DistanceViewAggregateEntry } from '../../../../common/apiSchema/present'
 import { getTranslationKey } from '@/translations'
 import { Entries, AggregateType, EntryWithImage } from '@/models/Entries'
-
-gsap.registerPlugin(ScrollTrigger)
 
 export interface AnimatedViewProps {
   entries: Entries
