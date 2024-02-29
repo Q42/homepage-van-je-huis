@@ -1,5 +1,5 @@
 <template>
-  <div v-if="entries && !loading" class="animated-view">
+  <div v-if="entries" class="animated-view">
     <SharedTypography class="header" variant="h1">
       {{ slugToAddress(route?.params?.address as string) }}
     </SharedTypography>
@@ -51,6 +51,8 @@ import {
 import { TimelineEntry } from '../../../../common/apiSchema/past'
 import { getTranslationKey } from '@/translations'
 import { Entries } from '@/models/Entries'
+
+gsap.registerPlugin(ScrollTrigger)
 
 type EntryWithImage = DistanceViewEntry | TimelineEntry
 type AggregateType =
@@ -109,6 +111,8 @@ const getStartPosition = () => {
 }
 
 const setAnimation = () => {
+  ScrollTrigger.killAll()
+
   loading.value = true
 
   setTimeout(() => {
@@ -145,12 +149,7 @@ const setAnimation = () => {
   }, 3000)
 }
 
-onMounted(() => {
-  gsap.registerPlugin(ScrollTrigger)
-
-  setAnimation()
-})
-
+onMounted(setAnimation)
 watch(() => props.entries, setAnimation)
 </script>
 
