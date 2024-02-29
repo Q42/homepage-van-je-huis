@@ -39,6 +39,7 @@ import {
 import { TimelineEntry } from '../../../../common/apiSchema/past'
 
 import { getTranslationKey } from '@/translations'
+import { Entries } from '~/models/Entries'
 
 type EntryWithImage = DistanceViewEntry | TimelineEntry
 type AggregateType =
@@ -47,9 +48,7 @@ type AggregateType =
   | 'aggregate_bees'
 
 export interface ListViewProps {
-  entries:
-    | (DistanceViewEntry | DistanceViewAggregateEntry | TimelineEntry)[]
-    | undefined
+  entries: Entries
 }
 
 const props = defineProps<ListViewProps>()

@@ -1,9 +1,10 @@
 import type { Meta, StoryFn } from '@storybook/vue3'
 
 import AnimatedView, { AnimatedViewProps } from './index.vue'
+import { mockEntries } from '@/mockdata/mockEntries'
 
 export default {
-  title: 'UI/Ui/AnimatedView',
+  title: 'Ui/AnimatedView',
   component: AnimatedView,
 } as Meta<typeof AnimatedView>
 
@@ -16,4 +17,6 @@ const Template: StoryFn<typeof AnimatedView> = (args: AnimatedViewProps) => ({
 })
 
 export const AnimatedViewStory = Template.bind({})
-AnimatedViewStory.args = {}
+AnimatedViewStory.args = {
+  entries: mockEntries,
+}

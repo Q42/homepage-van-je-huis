@@ -1,7 +1,7 @@
 <template>
   <div v-if="entries && !loading" class="animated-view">
     <SharedTypography class="header" variant="h1">
-      {{ slugToAddress(params.address as string) }}
+      {{ slugToAddress(route?.params?.address as string) }}
     </SharedTypography>
     <div
       v-for="(entry, index) in entries"
@@ -50,6 +50,7 @@ import {
 } from '../../../../common/apiSchema/present'
 import { TimelineEntry } from '../../../../common/apiSchema/past'
 import { getTranslationKey } from '@/translations'
+import { Entries } from '@/models/Entries'
 
 type EntryWithImage = DistanceViewEntry | TimelineEntry
 type AggregateType =
@@ -58,14 +59,12 @@ type AggregateType =
   | 'aggregate_bees'
 
 export interface AnimatedViewProps {
-  entries:
-    | (DistanceViewEntry | DistanceViewAggregateEntry | TimelineEntry)[]
-    | undefined
+  entries: Entries
 }
 
 const props = defineProps<AnimatedViewProps>()
 
-const { params } = useRoute()
+const route = useRoute()
 
 const loading = ref(true)
 

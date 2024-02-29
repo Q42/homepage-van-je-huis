@@ -45,7 +45,7 @@ const config = {
         AutoImport({
           imports: ['vue', 'vue-router'],
           dts: '.nuxt/auto-imports.d.ts',
-          dirs: ['.storybook/composables'],
+          dirs: ['.storybook/composables', '.storybook/utils'],
           vueTemplate: true,
         }),
         Components({
