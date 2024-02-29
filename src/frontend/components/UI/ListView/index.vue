@@ -1,4 +1,5 @@
 <template>
+  <SharedIconButton class="close-button" icon="close" @click="setView" />
   <div v-if="entries" class="entry-list">
     <div
       v-for="(entry, index) in entries"
@@ -39,12 +40,19 @@ import { Entries, EntryWithImage, AggregateType } from '~/models/Entries'
 
 export interface ListViewProps {
   entries: Entries
+  setView: () => void
 }
 
 const props = defineProps<ListViewProps>()
 </script>
 
 <style lang="less" scoped>
+.close-button {
+  position: fixed;
+  margin-top: 40px;
+  margin-left: calc(50vw + (678px / 2 + 25px));
+}
+
 .entry-list {
   width: 100%;
   height: 100%;
@@ -56,7 +64,7 @@ const props = defineProps<ListViewProps>()
 }
 
 .entry-wrapper {
-  width: 615px;
+  width: 678px;
   max-width: 75%;
 }
 

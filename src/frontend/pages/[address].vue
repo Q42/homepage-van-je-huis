@@ -26,14 +26,18 @@
         />
       </div>
     </SharedSidePanel>
-    <UIListView v-if="currentView === 'list'" :entries="entries" />
+    <UIListView
+      v-if="currentView === 'list'"
+      :set-view="setView"
+      :entries="entries"
+    />
     <UIAnimatedView
       v-if="currentView === 'animated'"
       :set-view="setView"
       :entries="entries"
     />
     <!-- TODO: accessibility -->
-    <div class="tab-buttons">
+    <div v-if="currentView === 'animated'" class="tab-buttons">
       <SharedButton
         :label="$t(getTranslationKey('addressPage.pastLabel'))"
         @click="() => (pastOrPresent = 'past')"
@@ -67,7 +71,7 @@ const { params } = useRoute()
 
 const { pastData, presentData } = useAddressStore(params.address as string)
 const pastOrPresent: Ref<'present' | 'past'> = ref('past')
-const currentView: Ref<'animated' | 'list'> = ref('animated')
+const currentView: Ref<'animated' | 'list'> = ref('list')
 
 const setView = () =>
   (currentView.value = currentView.value === 'animated' ? 'list' : 'animated')
