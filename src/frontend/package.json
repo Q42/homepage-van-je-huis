@@ -6,13 +6,15 @@
     "build": "nuxt build",
     "dev": "nuxt dev",
     "generate": "nuxt generate",
+    "generate:prod": "env-cmd -f .env.prod nuxt generate",
     "preview": "nuxt preview",
     "lint": "nuxt prepare && eslint --ext \".js,.ts,.vue\" --ignore-path .eslintignore .",
     "lint:fix": "nuxt prepare && eslint --ext \".js,.ts,.vue\" --ignore-path .eslintignore . --fix",
     "plop": "plop",
     "postinstall": "nuxt prepare",
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "build-storybook": "storybook build",
+    "deploy": "./deploy.sh"
   },
   "dependencies": {
     "@nuxtjs/robots": "^3.0.0",
@@ -27,6 +29,7 @@
     "vue-router": "^4.2.5"
   },
   "devDependencies": {
+    "@azure/static-web-apps-cli": "^1.1.6",
     "@nuxtjs/eslint-config-typescript": "^12.1.0",
     "@nuxtjs/i18n": "^8.1.0",
     "@storybook/addon-essentials": "^7.6.12",
@@ -36,6 +39,7 @@
     "@storybook/test": "^7.6.12",
     "@storybook/vue3": "^7.6.12",
     "@storybook/vue3-vite": "^7.6.12",
+    "env-cmd": "^10.1.0",
     "eslint": "^8.56.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-no-relative-import-paths": "^1.5.3",

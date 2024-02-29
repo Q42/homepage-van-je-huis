@@ -5,9 +5,12 @@ import { configVars } from '@/config/vars'
 
 export const useAddressService = () => {
   const autocompleteStore = useAutocompleteStore()
+  const runtimeConfig = useRuntimeConfig()
+
+  const baseUrl = runtimeConfig.public.baseUrl
 
   const getAddressJSONandParse = async (addressSlug: string) => {
-    const path = configVars.baseUrl + `/api/address/${addressSlug}.json`
+    const path = baseUrl + `/api/address/${addressSlug}.json`
     const response = await fetch(path)
     if (!response.ok) {
       // TODO: Add error handling
@@ -19,7 +22,7 @@ export const useAddressService = () => {
   }
 
   const getAutocompleteStreets = async () => {
-    const path = configVars.baseUrl + `/api/resolve/streetNames.json`
+    const path = baseUrl + `/api/resolve/streetNames.json`
     const response = await fetch(path)
     if (!response.ok) {
       // TODO: Add error handling
@@ -31,7 +34,7 @@ export const useAddressService = () => {
   }
 
   const getHouseNumbers = async (streetSlug: string) => {
-    const path = configVars.baseUrl + `/api/resolve/numbers/${streetSlug}.json`
+    const path = baseUrl + `/api/resolve/numbers/${streetSlug}.json`
     const response = await fetch(path)
     if (!response.ok) {
       // TODO: Add error handling
