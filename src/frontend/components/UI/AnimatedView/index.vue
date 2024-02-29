@@ -3,11 +3,12 @@
     <SharedTypography class="header" variant="h1">
       {{ slugToAddress(route?.params?.address as string) }}
     </SharedTypography>
-    <div
+    <button
       v-for="(entry, index) in entries"
       :key="index"
       :style="getStartPosition()"
       class="entry-wrapper item"
+      @click="setView"
     >
       <div class="card-wrapper">
         <SharedAggregateCard
@@ -17,6 +18,7 @@
         />
       </div>
       <SharedImage
+        class="image"
         v-if="!entryIsAggregate(entry) && (entry as EntryWithImage).image"
         :image="(entry as EntryWithImage).image!"
       />
@@ -30,7 +32,7 @@
           />
         </SharedTypography>
       </div>
-    </div>
+    </button>
     <div
       v-for="(entry, index) in entries"
       :id="getId(entry)"
@@ -42,6 +44,7 @@
 </template>
 
 <script setup lang="ts">
+import debounce from 'lodash.debounce'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { DistanceViewAggregateEntry } from '../../../../common/apiSchema/present'
@@ -52,14 +55,15 @@ gsap.registerPlugin(ScrollTrigger)
 
 export interface AnimatedViewProps {
   entries: Entries
+  setView: () => void
 }
 
 const props = defineProps<AnimatedViewProps>()
 
 const route = useRoute()
 const loading = ref(true)
-const index = ref(0)
 
+let index = 0
 const getStartPosition = () => {
   const startPositions = [
     'transform: translate(-100%, ' + Math.floor(Math.random() * 100) + 'vh)', // Willekeurig links
@@ -70,52 +74,56 @@ const getStartPosition = () => {
     'transform: translate(' + Math.floor(Math.random() * 100) + 'px, 100vh)', // Willekeurig onder
   ]
 
-  const returnValue = startPositions[index.value]
+  const returnValue = startPositions[index]
 
-  index.value = index.value === 3 ? 0 : index.value + 1
+  index = index === 3 ? 0 : index + 1
   return returnValue
 }
 
-const setAnimation = () => {
+const setAnimation = async () => {
   ScrollTrigger.killAll()
 
   loading.value = true
 
-  setTimeout(() => {
-    const scrollTriggers = document.querySelectorAll('.trigger-item')
+  // wait for the next tick to ensure the DOM is updated
+  await nextTick()
 
-    document.querySelectorAll('.item').forEach((item, index) => {
-      const getStartPos = () => {
-        if (index === 0) {
-          return 'top'
-        }
-        if (index > 0) {
-          return `-${index < 4 ? index - 1 : 3}${Math.floor(Math.random() * 20) + 50}%`
-        }
+  const scrollTriggers = document.querySelectorAll('.trigger-item')
+
+  document.querySelectorAll('.item').forEach((item, index) => {
+    const getStartPos = () => {
+      if (index === 0) {
+        return 'top'
       }
+      if (index > 0) {
+        return `-${index < 4 ? index - 1 : 3}${Math.floor(Math.random() * 20) + 50}%`
+      }
+    }
 
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: scrollTriggers[index],
-          scrub: 1,
-          start: `${getStartPos()} top`,
-        },
-      })
-
-      tl.to(item, {
-        x: '25vw',
-        y: 'calc(50vh - 200px)',
-        transformOrigin: 'center center',
-        duration: 2,
-      })
-        .to(item, { scale: 0.2, duration: 2 }, '-=2')
-        .to(item, { opacity: 0, duration: 2 }, '-=1.5')
+    const tl = gsap.timeline({
+      scrollTrigger: {
+        trigger: scrollTriggers[index],
+        scrub: 1,
+        start: `${getStartPos()} top`,
+      },
     })
-    loading.value = false
-  }, 3000)
+
+    tl.to(item, {
+      x: '25vw',
+      y: 'calc(50vh - 200px)',
+      transformOrigin: 'center center',
+      duration: 2,
+    })
+      .to(item, { scale: 0.2, duration: 2 }, '-=2')
+      .to(item, { opacity: 0, duration: 2 }, '-=1.5')
+  })
+  loading.value = false
 }
 
-onMounted(setAnimation)
+onMounted(() => {
+  setAnimation()
+  // TODO: fix resizing
+})
 watch(() => props.entries, setAnimation)
 </script>
 
@@ -127,6 +135,18 @@ watch(() => props.entries, setAnimation)
   top: 0;
   left: 0;
 }
+
+// TODO: check this with design
+.image {
+  height: 700px;
+  width: 1000px;
+}
+
+.entry-wrapper {
+  all: unset;
+  cursor: pointer;
+}
+
 .item {
   position: fixed;
 }
