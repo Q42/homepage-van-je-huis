@@ -1,7 +1,12 @@
 <template>
   <div v-if="entries" class="entry-list">
     <SharedIconButton class="close-button" icon="close" @click="setView" />
-    <div v-for="(entry, index) in entries" :id="getId(entry)" :key="index">
+    <div
+      v-for="(entry, index) in entries"
+      :id="getId(entry)"
+      :key="index"
+      class="entry-wrapper"
+    >
       <div class="card-wrapper">
         <SharedAggregateCard
           v-if="entryIsAggregate(entry)"
@@ -47,6 +52,10 @@ const props = defineProps<ListViewProps>()
   top: 120px;
   // TODO: Fix mobile position when fallback is 75%
   transform: translateX(calc(678px / 2 + 35px));
+}
+
+.entry-wrapper {
+  width: 100%;
 }
 
 .entry-list {
