@@ -234,8 +234,6 @@ onUnmounted(() => {
 
 <style lang="less" scoped>
 .search-block {
-  height: 100%;
-  margin: auto;
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
