@@ -10,12 +10,8 @@
 <script lang="ts" setup></script>
 
 <style lang="less" scoped>
-.page-wrapper {
-  position: relative;
-  min-height: 100vh;
-}
-
 .container {
+  margin-top: @header-height;
   padding: 0 20px;
 }
 </style>
