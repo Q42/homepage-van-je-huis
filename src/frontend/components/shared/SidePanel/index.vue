@@ -84,12 +84,17 @@ const handleMouseLeave = () => {
   top: 0;
   right: 0;
   height: 100vh;
-  width: 500px;
+  width: 100%;
   z-index: 1;
   background: @primary-black;
-  transform: translateX(90%);
+  transform: translateX(100%);
   transition: transform 0.3s;
   color: @primary-white;
+
+  @media @mq-from-tablet {
+    transform: translateX(90%);
+    width: 500px;
+  }
 }
 
 .close-btn {
@@ -103,7 +108,7 @@ const handleMouseLeave = () => {
 .header {
   height: @header-height;
   position: fixed;
-  padding: 40px;
+  padding: 20px;
   width: 100%;
   top: 0;
   left: 0;
@@ -113,6 +118,10 @@ const handleMouseLeave = () => {
   gap: 1rem;
   z-index: 1;
   background: @primary-black;
+
+  @media @mq-from-tablet {
+    padding: 40px;
+  }
 }
 
 .side-panel--hover {
@@ -134,9 +143,14 @@ const handleMouseLeave = () => {
   color: @primary-white;
   padding-inline: 20px;
   background: @primary-black;
-  transform: translate(calc(-100% + 1px), 12px);
+  transform: translate(calc(-100% + 48px + 1px), calc(100% + 100px))
+    rotate(-90deg);
   gap: 1rem;
   cursor: pointer;
+
+  @media @mq-from-tablet {
+    transform: translate(calc(-100% + 1px), 12px) rotate(0);
+  }
 }
 
 .side-panel__label__text {
@@ -148,9 +162,13 @@ const handleMouseLeave = () => {
   left: 0;
   top: 0;
   height: 100%;
-  padding-inline: 40px;
+  padding-inline: 20px;
   margin-top: @header-height;
   overflow: auto;
+
+  @media @mq-from-tablet {
+    padding-inline: 40px;
+  }
 }
 
 .content-wrapper--open {
