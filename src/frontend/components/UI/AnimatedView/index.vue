@@ -18,18 +18,13 @@
         />
       </div>
       <SharedImage
-        class="image"
         v-if="!entryIsAggregate(entry) && (entry as EntryWithImage).image"
+        class="image"
         :image="(entry as EntryWithImage).image!"
       />
       <div class="entry-info">
         <SharedTypography variant="body" :compact="true"
           >{{ entry.title }}
-          <SharedLink
-            v-if="(entry as EntryWithImage).visitUrl"
-            :href="(entry as EntryWithImage).visitUrl!"
-            :label="$t(getTranslationKey('images.externalLink'))"
-          />
         </SharedTypography>
       </div>
     </button>
@@ -144,13 +139,28 @@ watch(() => props.entries, setAnimation)
   cursor: pointer;
 }
 
+.entry-wrapper:hover {
+  .entry-info {
+    opacity: 1;
+  }
+}
+
+.entry-info {
+  transition: 0.2s;
+  opacity: 0;
+}
+
 .item {
   position: fixed;
 }
 .trigger-item {
   width: 300px;
   height: 400px;
+  pointer-events: none;
   opacity: 0;
+
+  // opacity: 0.3; // TODO: remove
+  // background: lightblue; // TODO: remove
 }
 
 .header {
