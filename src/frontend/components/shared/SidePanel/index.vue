@@ -161,8 +161,8 @@ const handleMouseLeave = () => {
   position: absolute;
   left: 0;
   top: 0;
-  height: 100%;
-  padding-inline: 20px;
+  height: calc(100% - @header-height);
+  padding: 20px;
   margin-top: @header-height;
   overflow: auto;
 
