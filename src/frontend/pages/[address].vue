@@ -8,19 +8,22 @@
       "
       :icon-type="pastOrPresent === 'past' ? 'stories' : 'calendar'"
     >
-      <div v-if="pastData && pastOrPresent === 'past'" class="side-panel-items">
+      <div
+        v-if="store.pastData && pastOrPresent === 'past'"
+        class="side-panel-items"
+      >
         <SharedStory
-          v-for="(story, index) in pastData.stories"
+          v-for="(story, index) in store.pastData.stories"
           :key="index"
           :story="story"
         />
       </div>
       <div
-        v-if="presentData && pastOrPresent === 'present'"
+        v-if="store.presentData && pastOrPresent === 'present'"
         class="side-panel-items side-panel-items--calendar"
       >
         <SharedCalendarItem
-          v-for="(calenderItem, index) in presentData.agenda"
+          v-for="(calenderItem, index) in store.presentData.agenda"
           :key="index"
           :calendar-item="calenderItem"
         />
@@ -73,7 +76,7 @@ defineI18nRoute({
 
 const { params } = useRoute()
 
-const { pastData, presentData } = useAddressStore(params.address as string)
+const store = useAddressStore()
 const pastOrPresent: Ref<'present' | 'past'> = ref('past')
 const currentView: Ref<'animated' | 'list'> = ref('animated')
 
@@ -82,16 +85,22 @@ const setView = () => {
   currentView.value = currentView.value === 'animated' ? 'list' : 'animated'
 }
 
+onMounted(() => {
+  if (!store.pastData || !store.presentData) {
+    store.fetchAddressData(params.address as string)
+  }
+})
+
 const entries = computed(() => {
   return pastOrPresent.value === 'past'
-    ? pastData.value?.timeline
-    : presentData.value?.slider.filter((entry) => {
+    ? store.pastData?.timeline
+    : store.presentData?.slider.filter((entry) => {
         return entryIsAggregate(entry) || entry.image
       })
 })
 
 const currentDataSet = computed(() => {
-  return pastOrPresent.value === 'past' ? pastData.value : presentData.value
+  return pastOrPresent.value === 'past' ? store.pastData : store.presentData
 })
 </script>
 
