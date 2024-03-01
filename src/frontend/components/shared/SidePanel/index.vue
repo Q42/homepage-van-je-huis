@@ -85,7 +85,7 @@ const handleMouseLeave = () => {
   right: 0;
   height: 100vh;
   width: 100%;
-  z-index: 1;
+  z-index: 2;
   background: @primary-black;
   transform: translateX(100%);
   transition: transform 0.3s;
@@ -116,7 +116,6 @@ const handleMouseLeave = () => {
   justify-content: space-between;
   align-items: center;
   gap: 1rem;
-  z-index: 1;
   background: @primary-black;
 
   @media @mq-from-tablet {
