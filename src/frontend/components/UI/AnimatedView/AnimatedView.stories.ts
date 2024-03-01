@@ -1,7 +1,7 @@
 import type { Meta, StoryFn } from '@storybook/vue3'
 
 import AnimatedView, { AnimatedViewProps } from './index.vue'
-import { mockEntries } from '@/mockdata/mockEntries'
+import { mockEntries } from '@/.storybook/mockdata/mockEntries'
 
 export default {
   title: 'Ui/AnimatedView',
