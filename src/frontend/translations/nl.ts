@@ -18,6 +18,7 @@ export const nl = {
   },
   search: {
     invalideAddress: 'Vul een geldig adres in',
+    addressNotFound: 'Dit adres is niet gevonden',
   },
   aggregateCard: {
     beeTotal: 'Jouw stadsdeel heeft {total} bijenvolken',

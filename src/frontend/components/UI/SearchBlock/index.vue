@@ -79,6 +79,7 @@
 <script setup lang="ts">
 import { referenceIds } from '@/config/referenceIds'
 import { getTranslationKey, TranslationKey } from '@/translations'
+import { useAddressStore } from '~/store/addressStore'
 export interface SearchBlockProps {
   // TODO
 }
@@ -87,6 +88,7 @@ const props = defineProps<SearchBlockProps>()
 
 const router = useRouter()
 const { locale } = useI18n()
+const { fetchAddressData } = useAddressStore()
 
 const streetItems = ref<HTMLButtonElement[] | null>(null)
 const houseNumberItems = ref<HTMLButtonElement[] | null>(null)
@@ -155,13 +157,21 @@ const selectHouseNumber = (selectedHouseNumber: string) => {
   houseNumberIsSelected.value = true
 }
 
-const handleSubmit = () => {
+const handleSubmit = async () => {
   if (!street.value || !houseNumber.value) {
     error.value = getTranslationKey('search.invalideAddress')
     return
   }
 
-  router.push(
+  try {
+    await fetchAddressData(slugifyAddress(street.value, houseNumber.value))
+  } catch (e) {
+    // TODO: mabye add a more specific error message
+    error.value = getTranslationKey('search.addressNotFound')
+    return
+  }
+
+  await router.push(
     '/' + locale.value + '/' + slugifyAddress(street.value, houseNumber.value),
   )
 }
