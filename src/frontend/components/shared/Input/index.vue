@@ -45,6 +45,7 @@ const props = defineProps<InputProps>()
   width: 100%;
   align-items: center;
   border-bottom: solid 1px @primary-black;
+  overflow: hidden; // TODO: remove
 }
 
 .input-wrapper--disabled {
@@ -54,7 +55,7 @@ const props = defineProps<InputProps>()
 .input {
   all: unset;
   padding: 1rem 0;
-  flex: 1;
+  width: 100%;
 }
 
 .input--disabled {
@@ -66,6 +67,7 @@ const props = defineProps<InputProps>()
   all: unset;
   padding: 1rem;
   cursor: pointer;
+  width: 24px;
 
   &:focus-visible {
     outline: 1px solid @neutral-grey2;

@@ -237,20 +237,24 @@ onUnmounted(() => {
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
-  width: fit-content;
+  width: 90%;
   justify-content: center;
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+
+  @media @mq-from-tablet {
+    width: fit-content;
+  }
 }
 
 .street-input {
-  flex: 100;
+  flex: 1;
 }
 
 .house-number-input {
-  flex: 2;
+  flex: 1;
 }
 
 .form {
