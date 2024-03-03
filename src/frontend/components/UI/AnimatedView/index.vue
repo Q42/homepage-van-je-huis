@@ -1,41 +1,43 @@
 <template>
-  <div v-if="entries" class="animated-view">
-    <SharedTypography class="header" variant="h1">
-      {{ slugToAddress(route?.params?.address as string) }}
-    </SharedTypography>
-    <button
-      v-for="(entry, index) in entries"
-      :key="index"
-      :style="getStartPosition()"
-      class="entry-wrapper item"
-      @click="setView"
-    >
-      <div class="card-wrapper">
-        <SharedAggregateCard
-          v-if="entryIsAggregate(entry)"
-          :type="entry.type as AggregateType"
-          :count="(entry as DistanceViewAggregateEntry).data.count"
+  <TransitionFade>
+    <div v-if="entries" class="animated-view">
+      <SharedTypography class="header" variant="h1">
+        {{ slugToAddress(route?.params?.address as string) }}
+      </SharedTypography>
+      <button
+        v-for="(entry, index) in entries"
+        :key="index"
+        :style="getStartPosition()"
+        class="entry-wrapper item"
+        @click="setView"
+      >
+        <div class="card-wrapper">
+          <SharedAggregateCard
+            v-if="entryIsAggregate(entry)"
+            :type="entry.type as AggregateType"
+            :count="(entry as DistanceViewAggregateEntry).data.count"
+          />
+        </div>
+        <SharedImage
+          v-if="!entryIsAggregate(entry) && (entry as EntryWithImage).image"
+          class="image"
+          :image="(entry as EntryWithImage).image!"
         />
-      </div>
-      <SharedImage
-        v-if="!entryIsAggregate(entry) && (entry as EntryWithImage).image"
-        class="image"
-        :image="(entry as EntryWithImage).image!"
-      />
-      <div class="entry-info">
-        <SharedTypography variant="body" :compact="true"
-          >{{ entry.title }}
-        </SharedTypography>
-      </div>
-    </button>
-    <div
-      v-for="(entry, index) in entries"
-      :id="getId(entry)"
-      :key="index"
-      class="trigger-item"
-      aria-hidden="true"
-    ></div>
-  </div>
+        <div class="entry-info">
+          <SharedTypography variant="body" :compact="true"
+            >{{ entry.title }}
+          </SharedTypography>
+        </div>
+      </button>
+      <div
+        v-for="(entry, index) in entries"
+        :id="getId(entry)"
+        :key="index"
+        class="trigger-item"
+        aria-hidden="true"
+      ></div>
+    </div>
+  </TransitionFade>
 </template>
 
 <script setup lang="ts">
@@ -56,26 +58,31 @@ const loading = ref(true)
 
 let index = 0
 
-const getStartPosition = () => {
-  const startPositions = [
-    'transform: translate(-100%, ' + Math.floor(Math.random() * 100) + 'vh)', // Willekeurig links
-    'transform: translate(' +
-      Math.floor(Math.random() * 100) +
-      'px, calc(-100% - 3px))', // Willekeurig boven
-    'transform: translate(100vw, ' + Math.floor(Math.random() * 100) + 'vh)', // Willekeurig rechts
-    'transform: translate(' + Math.floor(Math.random() * 100) + 'px, 100vh)', // Willekeurig onder
-  ]
+const getPosition = (index: number) => {
+  // the order of the positions is the order in which the items will be entering the screen
+  const positions = ['left', 'top', 'right', 'bottom'] as const
+  const positionIndex = index % 4
+  return positions[positionIndex] as (typeof positions)[number]
+}
 
-  const returnValue = startPositions[index]
+const getStartPosition = () => {
+  const startPositions = {
+    left:
+      'transform: translate(-100%, ' + Math.floor(Math.random() * 100) + 'vh)',
+    right:
+      'transform: translate(100vw, ' + Math.floor(Math.random() * 100) + 'vh)',
+    top:
+      'transform: translate(' +
+      Math.floor(Math.random() * 100) +
+      'px, calc(-100% - 3px))',
+    bottom:
+      'transform: translate(' + Math.floor(Math.random() * 100) + 'px, 100vh)',
+  }
+
+  const returnValue = startPositions[getPosition(index)]
 
   index = index === 3 ? 0 : index + 1
   return returnValue
-}
-
-const getPosition = (index) => {
-  const positions = ['left', 'top', 'right', 'bottom']
-  const positionIndex = index % 4
-  return positions[positionIndex]
 }
 
 const setAnimation = async () => {
