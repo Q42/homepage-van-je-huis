@@ -55,6 +55,7 @@ const route = useRoute()
 const loading = ref(true)
 
 let index = 0
+
 const getStartPosition = () => {
   const startPositions = [
     'transform: translate(-100%, ' + Math.floor(Math.random() * 100) + 'vh)', // Willekeurig links
@@ -69,6 +70,12 @@ const getStartPosition = () => {
 
   index = index === 3 ? 0 : index + 1
   return returnValue
+}
+
+const getPosition = (index) => {
+  const positions = ['left', 'top', 'right', 'bottom']
+  const positionIndex = index % 4
+  return positions[positionIndex]
 }
 
 const setAnimation = async () => {
@@ -99,10 +106,35 @@ const setAnimation = async () => {
       },
     })
 
+    const offset = 300
+
+    const getYOffset = () => {
+      const position = getPosition(index)
+      if (position === 'top') {
+        return offset
+      } else if (position === 'bottom') {
+        return -offset
+      } else {
+        return 0
+      }
+    }
+
+    const getXOffset = () => {
+      const position = getPosition(index)
+      if (position === 'left') {
+        return offset
+      } else if (position === 'right') {
+        return -offset
+      } else {
+        return 0
+      }
+    }
+
     tl.to(item, {
-      x: '25vw',
-      y: 'calc(50vh - 200px)',
-      transformOrigin: 'center center',
+      top: `calc(50vh - ${getYOffset()}px)`,
+      left: `calc(50vw - ${getXOffset()}px)`,
+      x: '-50%',
+      y: '-50%',
       duration: 2,
     })
       .to(item, { scale: 0.2, duration: 2 }, '-=2')
