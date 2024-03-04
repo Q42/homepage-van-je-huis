@@ -85,15 +85,31 @@ defineI18nRoute({
   },
 })
 
-const { params } = useRoute()
+const { params, query } = useRoute()
+
+const getViewFromQuery = () => {
+  if (query.view === 'past' || query.view === 'present') {
+    return query.view
+  }
+}
+
+const getCurrentModeFromQuery = () => {
+  if (query.mode === 'animated' || query.mode === 'list') {
+    return query.mode
+  }
+}
 
 const store = useAddressStore()
-const pastOrPresent: Ref<'present' | 'past'> = ref('present')
-const currentView: Ref<'animated' | 'list'> = ref('animated')
+const pastOrPresent: Ref<'present' | 'past'> = ref(getViewFromQuery() || 'past')
+const currentView: Ref<'animated' | 'list'> = ref(
+  getCurrentModeFromQuery() || 'animated',
+)
+const router = useRouter()
 
 const setView = () => {
   ScrollTrigger.killAll()
   currentView.value = currentView.value === 'animated' ? 'list' : 'animated'
+  router.push({ query: { view: pastOrPresent.value, mode: currentView.value } })
 }
 
 onMounted(() => {
@@ -105,6 +121,7 @@ onMounted(() => {
 const setDataSet = (value: 'past' | 'present') => {
   pastOrPresent.value = value
   window.scrollTo({ top: 0, behavior: 'smooth' })
+  router.push({ query: { view: value } })
 }
 
 // TODO: this is a temporary solution because we remove the

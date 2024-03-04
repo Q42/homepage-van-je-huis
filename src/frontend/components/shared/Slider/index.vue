@@ -66,6 +66,7 @@ const setAnimation = () => {
         return
       }
 
+      // TODO: it's not really exact. Look if this can be improved
       const getTriggerPosition = () => {
         if (index === props.positions.length - 2) {
           const elementAfter = document.getElementById(
@@ -91,8 +92,7 @@ const setAnimation = () => {
       ScrollTrigger.create({
         trigger: element,
         start: `top ${getTriggerPosition()}`,
-        end: `top ${getTriggerPosition()}`,
-        markers: true,
+        end: `bottom ${getTriggerPosition()}`,
         onEnter: () => {
           currentPosition.value = position
         },
