@@ -40,19 +40,6 @@ const cssProp = computed(() => {
   return `top: calc(${props.isDistanceView ? percentage : 100 - percentage}% - 12px)`
 })
 
-// TODO: implement this
-// const areImagesLoaded = () => {
-//   const images = document.getElementsByTagName('img')
-
-//   for (let i = 0; i < images.length; i++) {
-//     if (!images[i].complete) {
-//       return false
-//     }
-//   }
-
-//   return true
-// }
-
 const setAnimation = () => {
   // TODO: make this not timeout but event based
   loading.value = true

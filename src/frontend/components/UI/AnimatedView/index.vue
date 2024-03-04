@@ -204,10 +204,11 @@ watch(() => props.entries, setAnimation)
   font-weight: bolder;
   display: flex;
   justify-content: center;
+  opacity: 0;
 
-  opacity: 0.3; // TODO: remove
-  background: lightblue; // TODO: remove
-  border-top: black 1px solid; // TODO: remove
+  // opacity: 0.3; // TODO: remove
+  // background: lightblue; // TODO: remove
+  // border-top: black 1px solid; // TODO: remove
 }
 
 .header {
