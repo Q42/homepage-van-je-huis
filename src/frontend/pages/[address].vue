@@ -106,10 +106,15 @@ const currentView: Ref<'animated' | 'list'> = ref(
 )
 const router = useRouter()
 
-const setView = () => {
+const setView = async (elementId: string) => {
   ScrollTrigger.killAll()
   currentView.value = currentView.value === 'animated' ? 'list' : 'animated'
   router.push({ query: { view: pastOrPresent.value, mode: currentView.value } })
+  await nextTick()
+  window.scrollTo({
+    top: document.getElementById(elementId)?.offsetTop,
+    behavior: 'smooth',
+  })
 }
 
 onMounted(() => {

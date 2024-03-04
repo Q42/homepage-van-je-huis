@@ -9,7 +9,7 @@
         :key="index"
         :style="getStartPosition()"
         class="entry-wrapper item"
-        @click="setView"
+        @click="() => setView(elementIds[index])"
       >
         <div class="card-wrapper">
           <SharedAggregateCard
