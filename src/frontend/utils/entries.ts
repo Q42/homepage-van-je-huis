@@ -3,18 +3,24 @@ import {
   DistanceViewAggregateEntry,
 } from '../../common/apiSchema/present'
 import { TimelineEntry } from '../../common/apiSchema/past'
+import { Entries } from '@/models/Entries'
 
-let lastId: number | null = null
+export const generateIds = (entries: Entries) => {
+  let lastId: number | null = null
+  let lastSuffix: number | null = null
 
-export const getId = (
-  entry: TimelineEntry | DistanceViewAggregateEntry | DistanceViewEntry,
-) => {
-  if (entry.position === lastId) {
-    return undefined
-  } else {
-    lastId = entry.position
-    return lastId?.toString()
-  }
+  return (
+    entries?.map((entry) => {
+      if (entry.position === lastId) {
+        lastSuffix = lastSuffix ? lastSuffix + 1 : 1
+        return entry.position + '-' + lastSuffix
+      } else {
+        lastId = entry.position
+        lastSuffix = null
+        return lastId?.toString()
+      }
+    }) || []
+  )
 }
 
 export const entryIsAggregate = (

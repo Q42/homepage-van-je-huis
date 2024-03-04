@@ -3,7 +3,7 @@
     <SharedIconButton class="close-button" icon="close" @click="setView" />
     <div
       v-for="(entry, index) in entries"
-      :id="getId(entry)"
+      :id="elementIds[index]"
       :key="index"
       class="entry-wrapper"
     >
@@ -43,6 +43,7 @@ export interface ListViewProps {
   setView: () => void
 }
 
+const elementIds = computed(() => generateIds(props.entries))
 const props = defineProps<ListViewProps>()
 </script>
 

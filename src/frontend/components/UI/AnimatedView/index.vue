@@ -30,12 +30,14 @@
         </div>
       </button>
       <div
-        v-for="(entry, index) in entries"
-        :id="getId(entry)"
+        v-for="(_, index) in entries"
+        :id="elementIds[index]"
         :key="index"
         class="trigger-item"
         aria-hidden="true"
-      ></div>
+      >
+        {{ elementIds[index] }}
+      </div>
     </div>
   </TransitionFade>
 </template>
@@ -45,6 +47,7 @@ import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { DistanceViewAggregateEntry } from '../../../../common/apiSchema/present'
 import { Entries, AggregateType, EntryWithImage } from '@/models/Entries'
+import { generateIds } from '~/utils/entries'
 
 export interface AnimatedViewProps {
   entries: Entries
@@ -54,6 +57,7 @@ export interface AnimatedViewProps {
 const props = defineProps<AnimatedViewProps>()
 
 const route = useRoute()
+const elementIds = computed(() => generateIds(props.entries))
 const loading = ref(true)
 
 let index = 0
@@ -195,10 +199,15 @@ watch(() => props.entries, setAnimation)
   width: 300px;
   height: 400px;
   pointer-events: none;
-  opacity: 0;
+  // opacity: 0;
+  font-size: bigger;
+  font-weight: bolder;
+  display: flex;
+  justify-content: center;
 
-  // opacity: 0.3; // TODO: remove
-  // background: lightblue; // TODO: remove
+  opacity: 0.3; // TODO: remove
+  background: lightblue; // TODO: remove
+  border-top: black 1px solid; // TODO: remove
 }
 
 .header {
