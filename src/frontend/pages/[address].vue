@@ -42,12 +42,14 @@
     <!-- TODO: accessibility -->
     <div v-if="currentView === 'animated'" class="tab-buttons">
       <SharedButton
+        :active="pastOrPresent === 'past'"
         :label="$t(getTranslationKey('addressPage.pastLabel'))"
-        @click="() => (pastOrPresent = 'past')"
+        @click="() => setDataSet('past')"
       />
       <SharedButton
+        :active="pastOrPresent === 'present'"
         :label="$t(getTranslationKey('addressPage.presentLabel'))"
-        @click="() => (pastOrPresent = 'present')"
+        @click="() => setDataSet('present')"
       />
     </div>
     <SharedSlider
@@ -90,6 +92,11 @@ onMounted(() => {
     store.fetchAddressData(params.address as string)
   }
 })
+
+const setDataSet = (value: 'past' | 'present') => {
+  pastOrPresent.value = value
+  window.scrollTo({ top: 0, behavior: 'smooth' })
+}
 
 const entries = computed(() => {
   return pastOrPresent.value === 'past'
