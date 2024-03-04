@@ -4,7 +4,7 @@
       <SharedTypography class="header" variant="h1">
         {{ slugToAddress(route?.params?.address as string) }}
       </SharedTypography>
-      <button
+      <!-- <button
         v-for="(entry, index) in entries"
         :key="index"
         :style="getStartPosition()"
@@ -28,7 +28,7 @@
             >{{ entry.title }}
           </SharedTypography>
         </div>
-      </button>
+      </button> -->
       <div
         v-for="(_, index) in entries"
         :id="elementIds[index]"

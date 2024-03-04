@@ -60,10 +60,39 @@ const setAnimation = () => {
 
   setTimeout(() => {
     props.positions.forEach((position, index) => {
+      const element = document.getElementById(position.toString())
+
+      if (!element) {
+        return
+      }
+
+      const getTriggerPosition = () => {
+        if (index === props.positions.length - 2) {
+          const elementAfter = document.getElementById(
+            props.positions[index + 1].toString(),
+          )
+          if (!elementAfter) {
+            return '50%'
+          }
+
+          return (
+            window.innerHeight -
+            elementAfter.clientHeight -
+            element.clientHeight / 2 +
+            'px'
+          )
+        } else if (index === props.positions.length - 1) {
+          return window.innerHeight - element.clientHeight + 10 + 'px'
+        } else {
+          return element.clientHeight - 10 + 'px'
+        }
+      }
+
       ScrollTrigger.create({
-        trigger: `[id="${position}"]`,
-        start: 'top 10%',
-        end: 'top 10%',
+        trigger: element,
+        start: `top ${getTriggerPosition()}`,
+        end: `top ${getTriggerPosition()}`,
+        markers: true,
         onEnter: () => {
           currentPosition.value = position
         },
