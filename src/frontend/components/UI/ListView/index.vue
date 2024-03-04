@@ -61,7 +61,9 @@ const getClosestElementToTop = () => {
     }
   }
 
-  return closestElement.id
+  const index = Array.from(elements).indexOf(closestElement)
+
+  return elements[index === 0 ? index : index - 1].id
 }
 
 const elementIds = computed(() => generateIds(props.entries))
