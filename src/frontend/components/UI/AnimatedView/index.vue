@@ -51,7 +51,7 @@ import { generateIds } from '~/utils/entries'
 
 export interface AnimatedViewProps {
   entries: Entries
-  setView: () => void
+  setView: (id: string) => void
 }
 
 const props = defineProps<AnimatedViewProps>()

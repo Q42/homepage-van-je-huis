@@ -1,6 +1,10 @@
 <template>
   <div v-if="entries" class="entry-list">
-    <SharedIconButton class="close-button" icon="close" @click="setView" />
+    <SharedIconButton
+      class="close-button"
+      icon="close"
+      @click="() => setView(getClosestElementToTop())"
+    />
     <div
       v-for="(entry, index) in entries"
       :id="elementIds[index]"
@@ -40,7 +44,24 @@ import { Entries, EntryWithImage, AggregateType } from '~/models/Entries'
 
 export interface ListViewProps {
   entries: Entries
-  setView: () => void
+  setView: (id: string) => void
+}
+
+const getClosestElementToTop = () => {
+  const elements = document.getElementsByClassName('entry-wrapper')
+  let closestElement = elements[0]
+  let closestDistance = Math.abs(elements[0].getBoundingClientRect().top)
+
+  for (let i = 1; i < elements.length; i++) {
+    const distance = Math.abs(elements[i].getBoundingClientRect().top)
+
+    if (distance < closestDistance && !(distance < 0)) {
+      closestElement = elements[i]
+      closestDistance = distance
+    }
+  }
+
+  return closestElement.id
 }
 
 const elementIds = computed(() => generateIds(props.entries))
