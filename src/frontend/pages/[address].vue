@@ -54,8 +54,16 @@
     </div>
     <SharedSlider
       v-if="currentDataSet && entries"
-      :range-max="currentDataSet.rangeEnd"
-      :range-min="currentDataSet.rangeStart"
+      :range-max="
+        pastOrPresent === 'past'
+          ? currentDataSet.rangeEnd
+          : getRangeEnd(entries)
+      "
+      :range-min="
+        pastOrPresent === 'past'
+          ? currentDataSet.rangeStart
+          : getRangeStart(entries)
+      "
       :positions="getEntryPositions(entries)"
       :is-distance-view="pastOrPresent === 'present'"
     />
@@ -67,6 +75,7 @@ import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { getTranslationKey } from '@/translations'
 import { useAddressStore } from '@/store/addressStore'
+import { Entries } from '@/models/Entries'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -79,7 +88,7 @@ defineI18nRoute({
 const { params } = useRoute()
 
 const store = useAddressStore()
-const pastOrPresent: Ref<'present' | 'past'> = ref('past')
+const pastOrPresent: Ref<'present' | 'past'> = ref('present')
 const currentView: Ref<'animated' | 'list'> = ref('animated')
 
 const setView = () => {
@@ -98,12 +107,22 @@ const setDataSet = (value: 'past' | 'present') => {
   window.scrollTo({ top: 0, behavior: 'smooth' })
 }
 
+// TODO: this is a temporary solution because we remove the
+// entries with no images from the feed. So delete this
+// if we have a solution for that.
+const getRangeStart = (entries: Entries) => {
+  return entries![0].position
+}
+const getRangeEnd = (entries: Entries) => {
+  return entries![entries!.length - 1].position
+}
+
 const entries = computed(() => {
   return pastOrPresent.value === 'past'
     ? store.pastData?.timeline
     : store.presentData?.slider.filter((entry) => {
         return entryIsAggregate(entry) || entry.image
-      })
+      }) // TODO: this filters out all entries without images. Remove if we have a solution for that.
 })
 
 const currentDataSet = computed(() => {
