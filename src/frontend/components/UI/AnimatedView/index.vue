@@ -24,7 +24,7 @@
           :image="(entry as EntryWithImage).image!"
         />
         <div class="entry-info">
-          <SharedTypography variant="body" :compact="true"
+          <SharedTypography class="title" variant="body" :compact="true"
             >{{ entry.title }}
           </SharedTypography>
         </div>
@@ -223,5 +223,9 @@ watch(() => props.entries, setAnimation)
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+}
+
+.title {
+  text-align: center;
 }
 </style>
