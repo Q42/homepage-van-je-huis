@@ -24,7 +24,7 @@
           :image="(entry as EntryWithImage).image!"
         />
         <div class="entry-info">
-          <SharedTypography class="title" variant="body" :compact="true"
+          <SharedTypography variant="body" :compact="true"
             >{{ entry.title }}
           </SharedTypography>
         </div>
@@ -93,7 +93,6 @@ const setAnimation = async () => {
   ScrollTrigger.killAll()
 
   loading.value = true
-
   // wait for the next tick to ensure the DOM is updated
   await nextTick()
 
@@ -224,12 +223,9 @@ watch(() => props.entries, setAnimation)
   z-index: 1;
   position: fixed;
   text-transform: capitalize;
+  text-align: center;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-}
-
-.title {
-  text-align: center;
 }
 </style>
