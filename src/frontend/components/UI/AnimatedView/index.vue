@@ -156,6 +156,11 @@ const setAnimation = async () => {
 
 onMounted(() => {
   setAnimation()
+
+  setTimeout(() => {
+    window.scrollTo({ top: 150, behavior: 'smooth' })
+  }, 1000)
+
   // TODO: fix resizing
 })
 watch(() => props.entries, setAnimation)
