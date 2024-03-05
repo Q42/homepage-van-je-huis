@@ -117,7 +117,7 @@ const setAnimation = async () => {
       },
     })
 
-    const offset = 300
+    const offset = isTablet(window.innerWidth) ? 50 : 200
 
     const getYOffset = () => {
       const position = getPosition(index)
@@ -175,10 +175,14 @@ watch(() => props.entries, setAnimation)
   left: 0;
 }
 
-// TODO: check this with design
 .image {
-  height: calc(700px * 1);
-  width: calc(1000px * 1);
+  height: calc(700px * 0.75);
+  width: calc(1000px * 0.75);
+
+  @media @mq-from-tablet {
+    height: 700px;
+    width: 1000px;
+  }
 }
 
 .entry-wrapper {
@@ -211,9 +215,9 @@ watch(() => props.entries, setAnimation)
   justify-content: center;
   opacity: 0;
 
-  // opacity: 0.3; // TODO: remove
-  // background: lightblue; // TODO: remove
-  // border-top: black 1px solid; // TODO: remove
+  // opacity: 0.3; // debug value
+  // background: lightblue; // debug value
+  // border-top: black 1px solid; // debug value
 }
 
 .header {
