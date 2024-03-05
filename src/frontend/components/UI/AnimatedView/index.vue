@@ -149,7 +149,7 @@ const setAnimation = async () => {
       duration: 2,
     })
       .to(item, { scale: 0.2, duration: 2 }, '-=2')
-      .to(item, { opacity: 0, duration: 2 }, '-=1.5')
+      .to(item, { opacity: 0, duration: 2 }, '-=1')
   })
   loading.value = false
 }
@@ -177,8 +177,8 @@ watch(() => props.entries, setAnimation)
 
 // TODO: check this with design
 .image {
-  height: 700px;
-  width: 1000px;
+  height: calc(700px * 1);
+  width: calc(1000px * 1);
 }
 
 .entry-wrapper {
