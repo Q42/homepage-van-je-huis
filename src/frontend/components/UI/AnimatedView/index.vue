@@ -47,7 +47,7 @@ import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { DistanceViewAggregateEntry } from '../../../../common/apiSchema/present'
 import { Entries, AggregateType, EntryWithImage } from '@/models/Entries'
-import { generateIds } from '~/utils/entries'
+import { generateIds } from '@/utils/entries'
 
 export interface AnimatedViewProps {
   entries: Entries

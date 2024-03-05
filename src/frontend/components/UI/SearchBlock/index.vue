@@ -79,7 +79,7 @@
 <script setup lang="ts">
 import { referenceIds } from '@/config/referenceIds'
 import { getTranslationKey, TranslationKey } from '@/translations'
-import { useAddressStore } from '~/store/addressStore'
+import { useAddressStore } from '@/store/addressStore'
 export interface SearchBlockProps {
   // TODO
 }

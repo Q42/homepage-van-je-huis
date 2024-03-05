@@ -40,7 +40,7 @@
 import { DistanceViewAggregateEntry } from '../../../../common/apiSchema/present'
 
 import { getTranslationKey } from '@/translations'
-import { Entries, EntryWithImage, AggregateType } from '~/models/Entries'
+import { Entries, EntryWithImage, AggregateType } from '@/models/Entries'
 
 export interface ListViewProps {
   entries: Entries
