@@ -1,7 +1,7 @@
 <template>
-  <div>
+  <UIStartAnimation>
     <UISearchBlock />
-  </div>
+  </UIStartAnimation>
 </template>
 
 <script setup lang="ts">
