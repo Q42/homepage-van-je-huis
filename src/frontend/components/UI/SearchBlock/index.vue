@@ -8,14 +8,13 @@
         $t(getTranslationKey('home.subtitle'))
       }}</SharedTypography>
     </div>
-    <div v-if="hasError" class="error">
-      {{ $t(getTranslationKey(error as TranslationKey)) }}
-    </div>
+
     <form class="form" @submit.prevent="handleSubmit">
       <SharedInput
         v-model:value="street"
         :disabled="!Boolean(streets)"
         class="street-input"
+        :class="{ 'input-error': hasError }"
         :placeholder="$t(getTranslationKey('home.streetInputPlaceHolder'))"
       />
       <SharedInput
@@ -23,9 +22,11 @@
         :input-id="referenceIds.houseNumberInput"
         :disabled="!Boolean(houseNumbers)"
         class="house-number-input"
+        :class="{ 'input-error': hasError }"
         :placeholder="$t(getTranslationKey('home.houseNumberInputPlaceHolder'))"
         icon="search"
       />
+
       <TransitionFade>
         <ul v-if="streetAutocompleteIsOpen" class="autocomplete-panel">
           <li
@@ -73,6 +74,9 @@
         </ul>
       </TransitionFade>
     </form>
+    <div v-if="hasError" class="error">
+      {{ $t(getTranslationKey(error as TranslationKey)) }}
+    </div>
   </div>
 </template>
 
@@ -246,7 +250,6 @@ onUnmounted(() => {
 .search-block {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
   width: 90%;
   justify-content: center;
   position: absolute;
@@ -257,6 +260,14 @@ onUnmounted(() => {
   @media @mq-from-tablet {
     width: fit-content;
   }
+}
+
+.input-error {
+  border-color: @primary-red;
+}
+
+.error {
+  color: @primary-red;
 }
 
 .street-input {
@@ -271,15 +282,9 @@ onUnmounted(() => {
   position: relative;
   display: flex;
   gap: 5px;
+  margin-bottom: 0.5rem;
 }
 // TODO: temp styles, not designed
-.error {
-  padding: 10px 20px;
-  background: lighten(@primary-red, 50%);
-  border-radius: 5px;
-  color: @primary-black;
-  border: 2px solid @primary-red;
-}
 
 .autocomplete-panel {
   background: @primary-white;
@@ -320,5 +325,6 @@ onUnmounted(() => {
   display: flex;
   flex-direction: column;
   align-items: center;
+  margin-bottom: 1.5rem;
 }
 </style>
