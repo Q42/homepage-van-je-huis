@@ -8,7 +8,12 @@
         class="header__logo"
       />
     </NuxtLink>
-    <SharedTypography variant="h1" :compact="true" class="header__title">
+    <SharedTypography
+      v-if="!hideTitle"
+      variant="h1"
+      :compact="true"
+      class="header__title"
+    >
       {{ $t(getTranslationKey('home.title')) }}
     </SharedTypography>
   </div>
@@ -17,6 +22,12 @@
 <script setup lang="ts">
 import { isTablet } from '@/utils/breakpoints'
 import { getTranslationKey } from '@/translations'
+
+export interface HeaderProps {
+  hideTitle?: boolean
+}
+
+const props = defineProps<HeaderProps>()
 
 const { locale } = useI18n()
 const screenWidth = useScreenWidth()
