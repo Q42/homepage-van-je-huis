@@ -58,7 +58,7 @@ const props = defineProps<AggregateCardProps>()
   display: flex;
   align-items: center;
   gap: 20px;
-  padding: 30px 20px;
+  padding: 40px;
   width: fit-content;
   background: @primary-white;
 }
@@ -66,6 +66,6 @@ const props = defineProps<AggregateCardProps>()
   display: flex;
   flex-direction: column;
   gap: 20px;
-  max-width: 206px;
+  max-width: 240px;
 }
 </style>
