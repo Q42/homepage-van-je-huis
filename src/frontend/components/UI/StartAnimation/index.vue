@@ -1,9 +1,21 @@
 <template>
   <div class="start-animation">
-    <div class="item"></div>
-    <div class="item"></div>
-    <div class="item"></div>
-    <div class="item"></div>
+    <SharedImage
+      :image="{ url: getRandomImageUrl() }"
+      class="animate-item"
+    ></SharedImage>
+    <SharedImage
+      :image="{ url: getRandomImageUrl() }"
+      class="animate-item"
+    ></SharedImage>
+    <SharedImage
+      :image="{ url: getRandomImageUrl() }"
+      class="animate-item"
+    ></SharedImage>
+    <SharedImage
+      :image="{ url: getRandomImageUrl() }"
+      class="animate-item"
+    ></SharedImage>
     <slot />
   </div>
 </template>
@@ -11,26 +23,34 @@
 <script setup lang="ts">
 import gsap from 'gsap'
 
+const getRandomImageUrl = () => {
+  const randomNumber = Math.floor(Math.random() * 35) + 1
+
+  return `/startanimation/${randomNumber}.jpg`
+}
+
 onMounted(() => {
-  const items = document.getElementsByClassName('item')
+  const items = document.getElementsByClassName('animate-item')
   const height = window.innerHeight
   const width = window.innerWidth
 
-  Array.from(items).forEach((el, index) => {
-    const positions = [
-      { x: 100, y: 100 }, // top left
-      { x: width - el.clientWidth - 100, y: 100 }, // top right
-      { x: 100, y: height - el.clientHeight - 100 }, // bottom left
-      { x: width - el.clientWidth - 100, y: height - el.clientHeight - 100 }, // bottom right
-    ]
+  setTimeout(() => {
+    Array.from(items).forEach((el, index) => {
+      const positions = [
+        { x: 100, y: 70 }, // top left
+        { x: width - el.clientWidth - 200, y: 100 }, // top right
+        { x: 150, y: height - el.clientHeight - 150 }, // bottom left
+        { x: width - el.clientWidth - 180, y: height - el.clientHeight - 90 }, // bottom right
+      ]
 
-    gsap.to(el, {
-      x: positions[index].x,
-      y: positions[index].y,
-      opacity: 1,
-      duration: 1,
+      gsap.to(el, {
+        x: positions[index].x,
+        y: positions[index].y,
+        opacity: 1,
+        duration: 1,
+      })
     })
-  })
+  }, 1500)
 })
 
 export interface StartAnimationProps {
@@ -47,29 +67,29 @@ const props = defineProps<StartAnimationProps>()
   left: 0;
   width: 100%;
   height: 100vh;
+  z-index: -1;
 }
 
-.item {
+.animate-item {
   position: absolute;
   width: 300px;
   height: 200px;
-  background-color: salmon;
   opacity: 0;
 }
 
-.item:nth-child(1) {
+.animate-item:nth-child(1) {
   transform: translate(-100%, -100%);
 }
 
-.item:nth-child(2) {
+.animate-item:nth-child(2) {
   transform: translate(calc(100vw + 100%), -100%);
 }
 
-.item:nth-child(3) {
+.animate-item:nth-child(3) {
   transform: translate(-100%, calc(100vh + 100%));
 }
 
-.item:nth-child(4) {
-  transform: translate(calc(100vw + 80%), calc(100vh + 80%));
+.animate-item:nth-child(4) {
+  transform: translate(calc(100vw + 100%), calc(100vh + 100%));
 }
 </style>
