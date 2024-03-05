@@ -17,11 +17,21 @@ const props = defineProps<ButtonProps>()
 .button {
   all: unset;
   cursor: pointer;
-  border-bottom: 3px solid transparent;
-  padding-block: 0.25rem;
+  border-bottom: 2px solid transparent;
+  padding: 0.25rem;
   transition: border 0.5s;
+
+  &:hover {
+    border-bottom: 2px solid @primary-black;
+  }
 }
+
 .button--active {
-  border-bottom: 3px solid @primary-black;
+  border-bottom: 2px solid @primary-black;
+  transition: background 0.5s;
+
+  &:hover {
+    background: @neutral-grey1;
+  }
 }
 </style>
