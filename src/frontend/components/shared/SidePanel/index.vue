@@ -92,7 +92,7 @@ const handleMouseLeave = () => {
   color: @primary-white;
 
   @media @mq-from-tablet {
-    transform: translateX(90%);
+    transform: translateX(80%);
     width: 500px;
   }
 }
