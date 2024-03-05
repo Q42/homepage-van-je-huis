@@ -271,11 +271,19 @@ onUnmounted(() => {
 }
 
 .street-input {
-  flex: 1;
+  width: 60%;
+
+  @media @mq-from-tablet {
+    width: 70%;
+  }
 }
 
 .house-number-input {
-  flex: 1;
+  width: 40%;
+
+  @media @mq-from-tablet {
+    width: 30%;
+  }
 }
 
 .form {
