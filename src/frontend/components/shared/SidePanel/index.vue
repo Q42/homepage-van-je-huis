@@ -24,9 +24,16 @@
       </SharedTypography>
     </button>
     <div class="header">
-      <SharedTypography variant="h3">{{ label }}</SharedTypography>
+      <SharedTypography v-if="panelIsOpen" variant="h3">{{
+        label
+      }}</SharedTypography>
       <!-- TODO: add aria label -->
-      <SharedIconButton class="close-btn" icon="close" @click="closePanel" />
+      <SharedIconButton
+        v-if="panelIsOpen"
+        class="close-btn"
+        icon="close"
+        @click="closePanel"
+      />
     </div>
     <div
       class="content-wrapper"
@@ -161,7 +168,7 @@ const handleMouseLeave = () => {
   left: 0;
   top: 0;
   height: calc(100% - @header-height);
-  padding: 20px;
+  padding: 0 20px 20px 20px 20px;
   margin-top: @header-height;
   overflow: auto;
 
