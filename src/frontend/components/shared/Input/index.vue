@@ -65,7 +65,7 @@ const props = defineProps<InputProps>()
 }
 .icon-btn {
   all: unset;
-  padding: 1rem;
+  padding: 1rem 0;
   cursor: pointer;
   width: 24px;
 
