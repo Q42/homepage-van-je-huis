@@ -10,7 +10,7 @@
     </NuxtLink>
     <SharedTypography
       v-if="!hideTitle"
-      variant="h1"
+      variant="h2"
       :compact="true"
       class="header__title"
     >
