@@ -1,5 +1,4 @@
 import { useAutocompleteStore } from '@/store/autocompleteStore'
-import { configVars } from '@/config/vars'
 
 // TODO: better error handling (but wait till api is definitive)
 

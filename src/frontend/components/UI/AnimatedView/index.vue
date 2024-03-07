@@ -2,7 +2,7 @@
   <TransitionFade>
     <div v-if="entries" class="animated-view">
       <SharedTypography class="header" variant="h1">
-        {{ slugToAddress(route?.params?.address as string) }}
+        {{ addressInfo }}
       </SharedTypography>
       <button
         v-for="(entry, index) in entries"
@@ -43,6 +43,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { DistanceViewAggregateEntry } from '../../../../common/apiSchema/present'
 import { Entries, AggregateType, EntryWithImage } from '@/models/Entries'
 import { generateIds } from '@/utils/entries'
+import { useAddressStore } from '~/store/addressStore'
 
 export interface AnimatedViewProps {
   entries: Entries
@@ -51,11 +52,16 @@ export interface AnimatedViewProps {
 
 const props = defineProps<AnimatedViewProps>()
 
-const route = useRoute()
+const addresStore = useAddressStore()
 const elementIds = computed(() => generateIds(props.entries))
 const loading = ref(true)
 
 let index = 0
+
+const addressInfo = computed(() => {
+  const address = addresStore.addressData?.address
+  return address ? address.streetName + ' ' + address.houseNumber : ''
+})
 
 const getPosition = (index: number) => {
   // the order of the positions is the order in which the items will be entering the screen

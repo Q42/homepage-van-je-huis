@@ -4,7 +4,7 @@ import { createI18n } from 'vue-i18n'
 import { translations } from '../translations'
 import { setup } from '@storybook/vue3'
 import { createPinia } from 'pinia'
-import { slugToAddress, slugifyStreetName } from '../utils/slugifyAdress'
+import { slugifyStreetName } from '../utils/slugifyAdress'
 
 const i18n = createI18n({
   allowComposition: true,
