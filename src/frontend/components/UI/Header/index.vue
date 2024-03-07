@@ -27,7 +27,7 @@ export interface HeaderProps {
   hideTitle?: boolean
 }
 
-const props = defineProps<HeaderProps>()
+defineProps<HeaderProps>()
 
 const { locale } = useI18n()
 const screenWidth = useScreenWidth()

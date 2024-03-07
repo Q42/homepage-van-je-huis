@@ -58,7 +58,7 @@ const panelIsOpen = ref(false)
 
 let timeout: NodeJS.Timeout | null = null
 
-const props = defineProps<SidePanelProps>()
+defineProps<SidePanelProps>()
 
 const openPanel = () => {
   toggleIsHovered.value = false

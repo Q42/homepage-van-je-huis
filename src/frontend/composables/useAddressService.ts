@@ -41,7 +41,7 @@ export const useAddressService = () => {
       return
     }
     const jsonData = await response.json()
-    return jsonData.numbers as string[] //TODO: dit kan nog mis gaan
+    return jsonData.numbers as string[] // TODO: dit kan nog mis gaan
   }
 
   return {

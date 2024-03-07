@@ -10,7 +10,7 @@ export interface ButtonProps {
   active?: boolean
 }
 
-const props = defineProps<ButtonProps>()
+defineProps<ButtonProps>()
 </script>
 
 <style lang="less" scoped>

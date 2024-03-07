@@ -17,7 +17,7 @@ export interface IconButtonProps {
   iconWidth?: number
 }
 
-const props = defineProps<IconButtonProps>()
+defineProps<IconButtonProps>()
 </script>
 
 <style lang="less" scoped>

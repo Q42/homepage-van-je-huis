@@ -91,7 +91,7 @@ export interface SearchBlockProps {
   // TODO
 }
 
-const props = defineProps<SearchBlockProps>()
+defineProps<SearchBlockProps>()
 
 const router = useRouter()
 const { locale } = useI18n()

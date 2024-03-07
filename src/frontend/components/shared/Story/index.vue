@@ -28,7 +28,7 @@ export interface StoryProps {
   }
 }
 
-const props = defineProps<StoryProps>()
+defineProps<StoryProps>()
 </script>
 
 <style lang="less" scoped>

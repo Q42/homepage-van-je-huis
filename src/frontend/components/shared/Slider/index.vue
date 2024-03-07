@@ -18,14 +18,14 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { getPercentageInRange } from '@/utils/timelineUtils'
 gsap.registerPlugin(ScrollTrigger)
 
-const props = defineProps<SliderProps>()
-
 export interface SliderProps {
   positions: number[] // the positions correspond with the ids of the entries
   rangeMax: number
   rangeMin: number
   isDistanceView?: boolean
 }
+
+const props = defineProps<SliderProps>()
 
 const currentPosition = ref(props.rangeMax)
 const loading = ref(true)

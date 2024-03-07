@@ -57,7 +57,7 @@ export interface StartAnimationProps {
   // TODO
 }
 
-const props = defineProps<StartAnimationProps>()
+defineProps<StartAnimationProps>()
 </script>
 
 <style lang="less" scoped>

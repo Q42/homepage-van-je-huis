@@ -15,7 +15,7 @@ export interface LinkProps {
   hideIcon?: boolean
 }
 
-const props = defineProps<LinkProps>()
+defineProps<LinkProps>()
 </script>
 
 <style lang="less" scoped>
