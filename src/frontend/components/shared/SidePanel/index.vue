@@ -98,7 +98,7 @@ const handleMouseLeave = () => {
   transition: transform 0.3s;
   color: @primary-white;
 
-  @media @mq-from-tablet {
+  @media @mq-from-desktop-md {
     transform: translateX(80%);
     width: 500px;
   }
@@ -125,13 +125,13 @@ const handleMouseLeave = () => {
   gap: 1rem;
   background: @primary-black;
 
-  @media @mq-from-tablet {
+  @media @mq-from-desktop-md {
     padding: 40px;
   }
 }
 
 .side-panel--hover {
-  transform: translateX(80%);
+  transform: translateX(70%);
 }
 
 .side-panel--open {
@@ -154,7 +154,7 @@ const handleMouseLeave = () => {
   gap: 1rem;
   cursor: pointer;
 
-  @media @mq-from-tablet {
+  @media @mq-from-desktop-md {
     transform: translate(calc(-100% + 1px), 12px) rotate(0);
   }
 }
@@ -172,7 +172,7 @@ const handleMouseLeave = () => {
   margin-top: @header-height;
   overflow: auto;
 
-  @media @mq-from-tablet {
+  @media @mq-from-desktop-md {
     padding-inline: 40px;
   }
 }
