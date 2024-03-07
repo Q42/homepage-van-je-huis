@@ -178,10 +178,15 @@ watch(() => props.entries, setAnimation)
 .image {
   height: calc(700px * 0.75);
   width: calc(1000px * 0.75);
+  transition: transform 0.2s ease;
 
   @media @mq-from-tablet {
     height: 700px;
     width: 1000px;
+  }
+
+  &:hover {
+    transform: scale(1.1);
   }
 }
 
