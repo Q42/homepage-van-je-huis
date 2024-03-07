@@ -99,7 +99,7 @@ watch(() => props.positions, setAnimation)
 <style lang="less" scoped>
 .slider {
   position: fixed;
-  left: 30px;
+  left: 26px;
   top: 10vh;
   height: 90vh;
   border-right: 1px solid @primary-black;
