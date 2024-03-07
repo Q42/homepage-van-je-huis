@@ -24,8 +24,11 @@
         class="house-number-input"
         :class="{ 'input-error': hasError }"
         :placeholder="$t(getTranslationKey('home.houseNumberInputPlaceHolder'))"
-        icon="search"
       />
+      <!-- TODO: add aria label -->
+      <button type="submit" class="icon-btn">
+        <SharedIcon :height="24" :width="24" type="search" />
+      </button>
 
       <TransitionFade>
         <ul v-if="streetAutocompleteIsOpen" class="autocomplete-panel">
@@ -334,5 +337,16 @@ onUnmounted(() => {
   flex-direction: column;
   align-items: center;
   margin-bottom: 1.5rem;
+}
+
+.icon-btn {
+  all: unset;
+  padding: 0.5rem 0;
+  cursor: pointer;
+  width: 24px;
+
+  &:focus-visible {
+    outline: 1px solid @neutral-grey2;
+  }
 }
 </style>

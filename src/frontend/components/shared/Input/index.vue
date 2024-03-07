@@ -17,10 +17,6 @@
       :value="value"
       @input="$emit('update:value', ($event.target as HTMLInputElement).value)"
     />
-    <!-- TODO: add aria label -->
-    <button v-if="icon" type="submit" class="icon-btn">
-      <SharedIcon :height="24" :width="24" :type="icon" />
-    </button>
   </div>
 </template>
 
@@ -43,6 +39,7 @@ const props = defineProps<InputProps>()
 .input-wrapper {
   display: flex;
   width: 100%;
+  height: fit-content;
   align-items: center;
   border-bottom: solid 1px @primary-black;
   overflow: hidden; // TODO: remove
@@ -54,23 +51,13 @@ const props = defineProps<InputProps>()
 
 .input {
   all: unset;
-  padding: 1rem 0;
+  padding: 0.5rem 0;
   width: 100%;
 }
 
 .input--disabled {
   &::placeholder {
     color: lightgray;
-  }
-}
-.icon-btn {
-  all: unset;
-  padding: 1rem 0;
-  cursor: pointer;
-  width: 24px;
-
-  &:focus-visible {
-    outline: 1px solid @neutral-grey2;
   }
 }
 </style>
