@@ -11,13 +11,6 @@
       :key="index"
       class="entry-wrapper"
     >
-      <div class="card-wrapper">
-        <SharedAggregateCard
-          v-if="entryIsAggregate(entry)"
-          :type="entry.type as AggregateType"
-          :count="(entry as DistanceViewAggregateEntry).data.count"
-        />
-      </div>
       <SharedImage
         v-if="!entryIsAggregate(entry) && (entry as EntryWithImage).image"
         :image="(entry as EntryWithImage).image!"
