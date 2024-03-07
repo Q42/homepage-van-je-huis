@@ -68,6 +68,7 @@ const props = defineProps<ListViewProps>()
   position: fixed;
   top: 30px;
   right: 35px;
+  z-index: 1;
 
   @media @mq-from-desktop-md {
     top: 120px;
