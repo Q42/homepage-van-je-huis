@@ -3,10 +3,11 @@
     <SharedImage v-if="calendarItem.image" :image="calendarItem.image" />
     <div class="calendar-item-card__content">
       <SharedTypography variant="h5">{{ calendarItem.title }}</SharedTypography>
-      <SharedTypography variant="body" :compact="true">
+      <SharedTypography class="text-with-icon" variant="body" :compact="true">
         <span class="icon">
-          <SharedIcon :height="16" :width="16" type="calendar" />{{ date }}
+          <SharedIcon :height="16" :width="16" type="calendar" />
         </span>
+        {{ date }}
       </SharedTypography>
     </div>
   </div>
@@ -37,6 +38,13 @@ const props = defineProps<CalendarItemProps>()
 
 <style lang="less" scoped>
 .icon {
-  margin-right: 5px;
+  display: inline-flex;
+  align-items: center;
+  height: 100%;
+}
+.text-with-icon {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 </style>
