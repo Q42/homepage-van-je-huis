@@ -170,7 +170,7 @@ const handleMouseLeave = () => {
   height: calc(100% - @header-height);
   padding: 0 20px 20px 20px 20px;
   margin-top: @header-height;
-  overflow: auto;
+  overflow: hidden;
 
   @media @mq-from-desktop-md {
     padding-inline: 40px;
