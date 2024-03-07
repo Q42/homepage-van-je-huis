@@ -7,7 +7,7 @@
       <button
         v-for="(entry, index) in entries"
         :key="index"
-        :style="getStartPosition()"
+        :style="getStartPosition(entryIsAggregate(entry))"
         class="entry-wrapper item"
         @click="() => setView(elementIds[index])"
       >
@@ -15,6 +15,7 @@
           <SharedAggregateCard
             v-if="entryIsAggregate(entry)"
             :type="entry.type as AggregateType"
+            class="aggregate-card"
             :count="(entry as DistanceViewAggregateEntry).data.count"
           />
         </div>
@@ -70,18 +71,15 @@ const getPosition = (index: number) => {
   return positions[positionIndex] as (typeof positions)[number]
 }
 
-const getStartPosition = () => {
+const getStartPosition = (isAggregateCard: boolean) => {
+  const percentage = isAggregateCard ? 150 : 100
+  const right = isAggregateCard ? 'calc(100vw + 33%)' : '100vw'
+  const top = isAggregateCard ? 'calc(100vh + 50%)' : '100vh'
   const startPositions = {
-    left:
-      'transform: translate(-100%, ' + Math.floor(Math.random() * 100) + 'vh)',
-    right:
-      'transform: translate(100vw, ' + Math.floor(Math.random() * 100) + 'vh)',
-    top:
-      'transform: translate(' +
-      Math.floor(Math.random() * 100) +
-      'px, calc(-100% - 3px))',
-    bottom:
-      'transform: translate(' + Math.floor(Math.random() * 100) + 'px, 100vh)',
+    left: `transform: translate(-${percentage}%, ${Math.floor(Math.random() * 100)}vh)`,
+    right: `transform: translate(${right}, ${Math.floor(Math.random() * 100)}vh)`,
+    top: `transform: translate(${Math.floor(Math.random() * 100)}px, calc(-${percentage}% - 3px))`,
+    bottom: `transform: translate(${Math.floor(Math.random() * 100)}px, ${top})`,
   }
 
   const returnValue = startPositions[getPosition(index)]
@@ -173,6 +171,10 @@ watch(() => props.entries, setAnimation)
   width: 100%;
   top: 0;
   left: 0;
+}
+
+.aggregate-card {
+  transform: scale(2);
 }
 
 .image {
