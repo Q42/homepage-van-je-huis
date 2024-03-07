@@ -23,11 +23,6 @@
           class="image"
           :image="(entry as EntryWithImage).image!"
         />
-        <div class="entry-info">
-          <SharedTypography variant="body" :compact="true"
-            >{{ entry.title }}
-          </SharedTypography>
-        </div>
       </button>
       <div
         v-for="(_, index) in entries"
@@ -187,17 +182,6 @@ watch(() => props.entries, setAnimation)
 .entry-wrapper {
   all: unset;
   cursor: pointer;
-}
-
-.entry-wrapper:hover {
-  .entry-info {
-    opacity: 1;
-  }
-}
-
-.entry-info {
-  transition: 0.2s;
-  opacity: 0;
 }
 
 .item {
