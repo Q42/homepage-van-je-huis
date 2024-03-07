@@ -73,9 +73,14 @@ const props = defineProps<ListViewProps>()
 <style lang="less" scoped>
 .close-button {
   position: fixed;
-  top: 120px;
-  // TODO: Fix mobile position when fallback is 75%
-  transform: translateX(calc(678px / 2 + 35px));
+  top: 30px;
+  right: 35px;
+
+  @media @mq-from-desktop-md {
+    top: 120px;
+    right: unset;
+    transform: translateX(calc(678px / 2 + 35px));
+  }
 }
 
 .entry-wrapper {
