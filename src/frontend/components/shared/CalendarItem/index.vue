@@ -41,6 +41,7 @@ const props = defineProps<CalendarItemProps>()
   display: inline-flex;
   align-items: center;
   height: 100%;
+  transform: translateY(-1px); // The icon looks to far down otherwise
 }
 .text-with-icon {
   display: flex;
