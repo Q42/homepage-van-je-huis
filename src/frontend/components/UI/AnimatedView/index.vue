@@ -73,7 +73,7 @@ const getPosition = (index: number) => {
 
 const getStartPosition = (isAggregateCard: boolean) => {
   const percentage = isAggregateCard ? 150 : 100
-  const right = isAggregateCard ? 'calc(100vw + 33%)' : '100vw'
+  const right = isAggregateCard ? 'calc(100vw + 50%)' : '100vw'
   const top = isAggregateCard ? 'calc(100vh + 50%)' : '100vh'
   const startPositions = {
     left: `transform: translate(-${percentage}%, ${Math.floor(Math.random() * 100)}vh)`,
@@ -174,7 +174,7 @@ watch(() => props.entries, setAnimation)
 }
 
 .aggregate-card {
-  transform: scale(2);
+  transform: scale3d(2, 2, 1);
 }
 
 .image {
