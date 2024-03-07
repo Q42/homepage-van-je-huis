@@ -11,10 +11,6 @@
 const route = useRoute()
 
 const path = computed(() => route.path)
-
-onMounted(() => {
-  console.log('mounted')
-})
 </script>
 
 <style lang="less" scoped>
