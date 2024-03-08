@@ -122,6 +122,7 @@ defineProps<StartAnimationProps>()
   width: 100vw;
   height: 100vh;
   z-index: -1;
+  overflow: hidden;
 }
 
 .animate-item {
