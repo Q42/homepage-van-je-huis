@@ -109,7 +109,7 @@ defineProps<StartAnimationProps>()
 .animate-item {
   position: absolute;
   width: 30%;
-  min-width: 200px;
+  min-width: 180px;
   aspect-ratio: 3/2;
   opacity: 0;
 
