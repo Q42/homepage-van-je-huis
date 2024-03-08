@@ -10,6 +10,14 @@ export default defineNuxtConfig({
     strategy: 'prefix',
     vueI18n: './i18n.config.ts',
   },
+  app: {
+    head: {
+      meta: [
+        { name: 'viewport', content: 'width=device-width, initial-scale=1' },
+        { charset: 'utf-8' },
+      ],
+    },
+  },
   ssr: false,
   devtools: { enabled: true },
   css: ['@/assets/css/main.less'],
