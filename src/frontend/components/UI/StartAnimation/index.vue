@@ -84,7 +84,6 @@ const animate = async () => {
           duration: 1,
         })
         .then(() => {
-          console.log('Je Moer')
           randomImages.value = null
         })
     }, 5000)
