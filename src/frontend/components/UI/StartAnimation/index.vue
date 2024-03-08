@@ -13,7 +13,6 @@
 import gsap from 'gsap'
 
 const imagesIds = Array.from({ length: 35 }, (_, i) => i + 1)
-const between = ref(false)
 
 const getRandomImageUrl = () => {
   if (imagesIds.length === 4) {
@@ -27,7 +26,7 @@ const getRandomImageUrl = () => {
   return `/startanimation/${pickedItem}.jpg`
 }
 
-let randomImages: Ref<string[] | null> = ref(null)
+const randomImages: Ref<string[] | null> = ref(null)
 
 const setRandomImages = () => {
   randomImages.value = Array.from({ length: 4 }, () => getRandomImageUrl())
