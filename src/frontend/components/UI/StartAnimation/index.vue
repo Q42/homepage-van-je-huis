@@ -30,9 +30,7 @@ const getRandomImageUrl = () => {
 let randomImages: Ref<string[] | null> = ref(null)
 
 const setRandomImages = () => {
-  console.log('setRandomImages')
   randomImages.value = Array.from({ length: 4 }, () => getRandomImageUrl())
-  console.log('randomImages', randomImages.value)
 }
 
 const animate = async () => {
