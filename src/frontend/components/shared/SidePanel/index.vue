@@ -6,9 +6,9 @@
       'side-panel--open': panelIsOpen,
     }"
   >
-    <!-- TODO: add aria label -->
     <button
       v-if="!panelIsOpen"
+      :aria-label="$t(getTranslationKey('sidePanel.ariaOpenPanel'))"
       class="side-panel__label"
       @mouseenter="handleMousEnter"
       @mouseleave="handleMouseLeave"
@@ -27,9 +27,9 @@
       <SharedTypography v-if="panelIsOpen" variant="h3">{{
         label
       }}</SharedTypography>
-      <!-- TODO: add aria label -->
       <SharedIconButton
         v-if="panelIsOpen"
+        :aria-label="$t(getTranslationKey('sidePanel.ariaClosePanel'))"
         class="close-btn"
         icon="close"
         @click="closePanel"
@@ -48,6 +48,7 @@
 
 <script setup lang="ts">
 import { IconType } from '@/models/Icon'
+import { getTranslationKey } from '~/translations'
 
 export interface SidePanelProps {
   label: string

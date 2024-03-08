@@ -42,7 +42,6 @@ const props = defineProps<InputProps>()
   height: fit-content;
   align-items: center;
   border-bottom: solid 1px @primary-black;
-  overflow: hidden; // TODO: remove
 }
 
 .input-wrapper--disabled {

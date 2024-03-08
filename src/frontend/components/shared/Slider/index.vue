@@ -41,7 +41,6 @@ const cssProp = computed(() => {
 })
 
 const setAnimation = () => {
-  // TODO: make this not timeout but event based
   loading.value = true
   currentPosition.value = props.rangeMax
 
@@ -53,7 +52,7 @@ const setAnimation = () => {
         return
       }
 
-      // TODO: it's not really exact. Look if this can be improved
+      // This helps to set the positoions of the trigger so that the last element also scrolls trough a trigger
       const getTriggerPosition = () => {
         if (index === props.positions.length - 2) {
           const elementAfter = document.getElementById(

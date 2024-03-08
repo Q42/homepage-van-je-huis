@@ -106,12 +106,6 @@ const startAnimation = () => {
 }
 
 onMounted(startAnimation)
-
-export interface StartAnimationProps {
-  // TODO
-}
-
-defineProps<StartAnimationProps>()
 </script>
 
 <style lang="less" scoped>

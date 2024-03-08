@@ -25,8 +25,11 @@
         :class="{ 'input-error': hasError }"
         :placeholder="$t(getTranslationKey('home.houseNumberInputPlaceHolder'))"
       />
-      <!-- TODO: add aria label -->
-      <button type="submit" class="icon-btn">
+      <button
+        :aria-label="$t(getTranslationKey('home.ariaSearchButton'))"
+        type="submit"
+        class="icon-btn"
+      >
         <SharedIcon :height="24" :width="24" type="search" />
       </button>
 
@@ -87,11 +90,6 @@
 import { referenceIds } from '@/config/referenceIds'
 import { getTranslationKey, TranslationKey } from '@/translations'
 import { useAddressStore } from '@/store/addressStore'
-export interface SearchBlockProps {
-  // TODO
-}
-
-defineProps<SearchBlockProps>()
 
 const router = useRouter()
 const { locale } = useI18n()
@@ -173,7 +171,6 @@ const handleSubmit = async () => {
   try {
     await fetchAddressData(slugifyAddress(street.value, houseNumber.value))
   } catch (e) {
-    // TODO: mabye add a more specific error message
     error.value = getTranslationKey('search.addressNotFound')
     return
   }
@@ -296,8 +293,8 @@ onUnmounted(() => {
   gap: 5px;
   margin-bottom: 0.5rem;
 }
-// TODO: temp styles, not designed
 
+// TODO: temp styles, not designed
 .autocomplete-panel {
   background: @primary-white;
   position: absolute;
