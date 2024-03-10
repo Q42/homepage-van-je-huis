@@ -48,6 +48,7 @@
         @click="() => setDataSet('past')"
       />
       <SharedButton
+        v-if="presentHasData"
         :active="pastOrPresent === 'present'"
         :label="$t(getTranslationKey('addressPage.presentLabel'))"
         @click="() => setDataSet('present')"
@@ -101,6 +102,9 @@ const getCurrentModeFromQuery = () => {
 }
 
 const pastHasData = computed(() => store.pastData?.timeline.length)
+const presentHasData = computed(() =>
+  store.presentData?.slider.some((entry) => entry.image),
+)
 
 const store = useAddressStore()
 const pastOrPresent: Ref<'present' | 'past'> = ref(
