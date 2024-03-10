@@ -77,10 +77,10 @@ const getStartPosition = (isAggregateCard: boolean) => {
   const right = isAggregateCard ? 'calc(100vw + 50%)' : '100vw'
   const top = isAggregateCard ? 'calc(100vh + 50%)' : '100vh'
   const startPositions = {
-    left: `transform: translate(-${percentage}%, ${Math.floor(Math.random() * 100)}vh)`,
-    right: `transform: translate(${right}, ${Math.floor(Math.random() * 100)}vh)`,
-    top: `transform: translate(${Math.floor(Math.random() * 100)}px, calc(-${percentage}% - 3px))`,
-    bottom: `transform: translate(${Math.floor(Math.random() * 100)}px, ${top})`,
+    left: `transform: translate3d(-${percentage}%, ${Math.floor(Math.random() * 100)}vh, 0);`,
+    right: `transform: translate3d(${right}, ${Math.floor(Math.random() * 100)}vh, 0);`,
+    top: `transform: translate3d(${Math.floor(Math.random() * 100)}px, calc(-${percentage}% - 3px), 0);`,
+    bottom: `transform: translate3d(${Math.floor(Math.random() * 100)}px, ${top}, 0);`,
   }
 
   const returnValue = startPositions[getPosition(index)]
@@ -98,7 +98,9 @@ const setAnimation = async () => {
 
   const scrollTriggers = document.querySelectorAll('.trigger-item')
 
-  document.querySelectorAll('.item').forEach((item, index) => {
+  const items = gsap.utils.toArray('.item')
+
+  items.forEach((item, index) => {
     const getStartPos = () => {
       if (index === 0) {
         return 'top'
@@ -140,15 +142,24 @@ const setAnimation = async () => {
       }
     }
 
-    tl.to(item, {
-      top: `calc(50vh - ${getYOffset()}px)`,
-      left: `calc(50vw - ${getXOffset()}px)`,
-      x: '-50%',
-      y: '-50%',
+    const screenWidth = window.innerWidth
+    const screenHeight = window.innerHeight
+
+    const translateValue = `translate3d(calc(-50% + ${screenWidth / 2 - getXOffset()}px), calc(-50% + ${screenHeight / 2 - getYOffset()}px), 0)`
+
+    tl.to(item as HTMLElement, {
+      transform: `${translateValue} scale3d(1, 1, 1)`,
       duration: 2,
     })
-      .to(item, { scale: 0.2, duration: 2 }, '-=2')
-      .to(item, { opacity: 0, duration: 2 }, '-=1')
+      .to(
+        item as HTMLElement,
+        {
+          transform: `${translateValue} scale3d(0.2, 0.2, 1)`,
+          duration: 2,
+        },
+        '-=2',
+      )
+      .to(item as HTMLElement, { opacity: 0, duration: 2 }, '-=1')
   })
   await nextTick()
   loading.value = false
@@ -196,13 +207,15 @@ watch(() => props.entries, setAnimation)
   }
 
   &:hover {
-    transform: scale(1.1);
+    transform: scale3d(1.1, 1.1, 1);
   }
 }
 
 .entry-wrapper {
   all: unset;
   cursor: pointer;
+  will-change: transform;
+  will-change: opacity;
 }
 
 .item {
@@ -231,6 +244,6 @@ watch(() => props.entries, setAnimation)
   text-align: center;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%);
+  transform: translate3d(-50%, -50%, 0);
 }
 </style>
