@@ -14,6 +14,7 @@
 
 <script setup lang="ts">
 import gsap from 'gsap'
+import debounce from 'lodash.debounce'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { getPercentageInRange } from '@/utils/timelineUtils'
 gsap.registerPlugin(ScrollTrigger)
@@ -44,7 +45,7 @@ const setAnimation = () => {
   loading.value = true
   currentPosition.value = props.rangeMax
 
-  setTimeout(() => {
+  setTimeout(async () => {
     props.positions.forEach((position, index) => {
       const element = document.getElementById(position.toString())
 
@@ -87,14 +88,16 @@ const setAnimation = () => {
         },
       })
     })
+
+    await nextTick()
     loading.value = false
   }, 500)
 }
 
-const handleResize = () => {
+const handleResize = debounce(() => {
   setAnimation()
   window.scrollTo(0, 0)
-}
+}, 50)
 
 onMounted(() => {
   setAnimation()
