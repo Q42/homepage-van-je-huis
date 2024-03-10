@@ -152,15 +152,21 @@ const setAnimation = async () => {
   loading.value = false
 }
 
+const handleResize = () => {
+  setAnimation()
+  window.scrollTo(0, 0)
+}
+
 onMounted(() => {
   setAnimation()
 
-  setTimeout(() => {
-    window.scrollTo({ top: 150, behavior: 'smooth' })
-  }, 1000)
-
-  // TODO: fix resizing
+  window.addEventListener('resize', handleResize)
 })
+
+onUnmounted(() => {
+  window.removeEventListener('resize', handleResize)
+})
+
 watch(() => props.entries, setAnimation)
 </script>
 

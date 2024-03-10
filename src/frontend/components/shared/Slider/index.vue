@@ -91,7 +91,20 @@ const setAnimation = () => {
   }, 500)
 }
 
-onMounted(setAnimation)
+const handleResize = () => {
+  setAnimation()
+  window.scrollTo(0, 0)
+}
+
+onMounted(() => {
+  setAnimation()
+  window.addEventListener('resize', handleResize)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('resize', handleResize)
+})
+
 watch(() => props.positions, setAnimation)
 </script>
 
