@@ -42,6 +42,7 @@
     <!-- TODO: accessibility -->
     <div v-if="currentView === 'animated'" class="tab-buttons">
       <SharedButton
+        v-if="pastHasData"
         :active="pastOrPresent === 'past'"
         :label="$t(getTranslationKey('addressPage.pastLabel'))"
         @click="() => setDataSet('past')"
@@ -99,8 +100,12 @@ const getCurrentModeFromQuery = () => {
   }
 }
 
+const pastHasData = computed(() => store.pastData?.timeline.length)
+
 const store = useAddressStore()
-const pastOrPresent: Ref<'present' | 'past'> = ref(getViewFromQuery() || 'past')
+const pastOrPresent: Ref<'present' | 'past'> = ref(
+  getViewFromQuery() || pastHasData.value ? 'past' : 'present',
+)
 const currentView: Ref<'animated' | 'list'> = ref(
   getCurrentModeFromQuery() || 'animated',
 )
