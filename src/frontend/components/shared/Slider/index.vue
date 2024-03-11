@@ -46,6 +46,7 @@ const currentStyle = computed(() => {
 })
 
 const setAnimation = () => {
+  ScrollTrigger.killAll()
   loading.value = true
   currentPosition.value = props.rangeMax
 
