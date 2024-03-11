@@ -1,7 +1,7 @@
 <template>
   <TransitionFade>
-    <div v-if="!loading" class="slider">
-      <div :style="cssProp" class="pointer">
+    <div v-if="!loading" id="slider" class="slider">
+      <div :style="currentStyle" class="pointer">
         <div class="pointer-label">
           <SharedTypography variant="body-small" :compact="true">
             {{ currentPosition + (isDistanceView ? 'm' : '') }}
@@ -31,14 +31,18 @@ const props = defineProps<SliderProps>()
 const currentPosition = ref(props.rangeMax)
 const loading = ref(true)
 
-const cssProp = computed(() => {
+const currentStyle = computed(() => {
   const percentage = getPercentageInRange(
     props.rangeMax,
     props.rangeMin,
     currentPosition.value,
   )
 
-  return `top: calc(${props.isDistanceView ? percentage : 100 - percentage}% - 12px)`
+  const slider = document.getElementById('slider')
+  const sliderheight = slider ? slider.clientHeight : 0
+  const topOfset = (sliderheight / 100) * percentage
+
+  return `transform: translateY(calc(${props.isDistanceView ? topOfset : sliderheight - topOfset}px - 12px)) translateX(-50%)`
 })
 
 const setAnimation = () => {
@@ -127,8 +131,7 @@ watch(() => props.positions, setAnimation)
   height: 12px;
   background: @primary-black;
   border-radius: 50%;
-  transition: top 0.5s;
-  transform: translateX(-50%);
+  transition: transform 0.5s;
 }
 
 .pointer-label {
