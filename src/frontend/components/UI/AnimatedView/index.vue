@@ -45,7 +45,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { DistanceViewAggregateEntry } from '../../../../common/apiSchema/present'
 import { Entries, AggregateType, EntryWithImage } from '@/models/Entries'
 import { generateIds } from '@/utils/entries'
-import { useAddressStore } from '~/store/addressStore'
+import { useAddressStore } from '@/store/addressStore'
 
 export interface AnimatedViewProps {
   entries: Entries
@@ -165,19 +165,20 @@ const setAnimation = async () => {
   loading.value = false
 }
 
-const handleResize = debounce(() => {
-  setAnimation()
-  window.scrollTo(0, 0)
-}, 50)
+// const handleResize = debounce(() => {
+//   setAnimation()
+//   window.scrollTo(0, 0)
+// }, 50)
 
 onMounted(() => {
+  ScrollTrigger.normalizeScroll(true)
   setAnimation()
 
-  window.addEventListener('resize', handleResize)
+  // window.addEventListener('resize', handleResize)
 })
 
 onUnmounted(() => {
-  window.removeEventListener('resize', handleResize)
+  // window.removeEventListener('resize', handleResize)
 })
 
 watch(() => props.entries, setAnimation)

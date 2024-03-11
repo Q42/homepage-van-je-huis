@@ -40,7 +40,10 @@
       :entries="entries"
     />
     <!-- TODO: accessibility -->
-    <div v-if="currentView === 'animated'" class="tab-buttons">
+    <div
+      v-if="currentView === 'animated' || isSafariOniPhone()"
+      class="tab-buttons"
+    >
       <SharedButton
         v-if="pastHasData"
         :active="pastOrPresent === 'past'"
@@ -78,6 +81,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { getTranslationKey } from '@/translations'
 import { useAddressStore } from '@/store/addressStore'
 import { Entries } from '@/models/Entries'
+import { isSafariOniPhone } from '~/utils/breakpoints'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -97,7 +101,7 @@ const getViewFromQuery = () => {
 
 const getCurrentModeFromQuery = () => {
   if (query.mode === 'animated' || query.mode === 'list') {
-    return query.mode
+    return isSafariOniPhone() ? 'list' : query.mode
   }
 }
 
@@ -111,7 +115,7 @@ const pastOrPresent: Ref<'present' | 'past'> = ref(
   getViewFromQuery() || pastHasData.value ? 'past' : 'present',
 )
 const currentView: Ref<'animated' | 'list'> = ref(
-  getCurrentModeFromQuery() || 'animated',
+  getCurrentModeFromQuery() || isSafariOniPhone() ? 'list' : 'animated',
 )
 const router = useRouter()
 

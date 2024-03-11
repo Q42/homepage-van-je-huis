@@ -1,6 +1,7 @@
 <template>
   <div v-if="entries" class="entry-list">
     <SharedIconButton
+      v-if="!isSafariOniPhone()"
       class="close-button"
       icon="close"
       @click="() => setView(getClosestElementToTop())"
@@ -32,6 +33,7 @@
 <script setup lang="ts">
 import { getTranslationKey } from '@/translations'
 import { Entries, EntryWithImage } from '@/models/Entries'
+import { isSafariOniPhone } from '~/utils/breakpoints'
 
 export interface ListViewProps {
   entries: Entries
