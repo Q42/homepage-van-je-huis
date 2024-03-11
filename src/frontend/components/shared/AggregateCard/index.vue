@@ -46,13 +46,13 @@ const titleKey = computed(() => {
   }
 })
 
-const linkLabelKey = computed(() => {
-  if (props.type === 'aggregate_tree_species') {
-    return getTranslationKey('aggregateCard.seeWhichTreeSpecies')
-  }
+// const linkLabelKey = computed(() => {
+//   if (props.type === 'aggregate_tree_species') {
+//     return getTranslationKey('aggregateCard.seeWhichTreeSpecies')
+//   }
 
-  return getTranslationKey('aggregateCard.seeWhere')
-})
+//   return getTranslationKey('aggregateCard.seeWhere')
+// })
 
 const props = defineProps<AggregateCardProps>()
 </script>
