@@ -33,9 +33,10 @@ const setRandomImages = () => {
 }
 
 const animate = async () => {
-  setRandomImages()
-  await nextTick()
-
+  if (count < numberOfRepetitions) {
+    setRandomImages()
+    await nextTick()
+  }
   const items = document.getElementsByClassName('animate-item')
   const windowHeight = window.innerHeight
   const windowWidth = window.innerWidth
@@ -77,7 +78,6 @@ const animate = async () => {
         y: windowHeight - elementHeight - percentageToPx(40, 'y'),
       }, // bottom right
     ]
-
     gsap.to(el, {
       x: toPositions[index].x,
       y: toPositions[index].y,
@@ -85,21 +85,24 @@ const animate = async () => {
       duration: 2,
     })
 
-    setTimeout(() => {
-      gsap
-        .to(el, {
-          x: fromPositions[index].x,
-          y: fromPositions[index].y,
-          opacity: 0,
-          duration: 1,
-        })
-        .then(() => {
-          randomImages.value = null
-        })
-    }, 5000)
+    if (count < numberOfRepetitions) {
+      setTimeout(() => {
+        gsap
+          .to(el, {
+            x: fromPositions[index].x,
+            y: fromPositions[index].y,
+            opacity: 0,
+            duration: 1,
+          })
+          .then(() => {
+            randomImages.value = null
+          })
+      }, 5000)
+    }
   })
 }
 
+const numberOfRepetitions = 5
 let count = 2
 let interval: NodeJS.Timeout | null = null
 
@@ -107,7 +110,7 @@ const startAnimation = () => {
   setTimeout(() => {
     animate()
     interval = setInterval(() => {
-      if (count === 5 && interval) {
+      if (count === numberOfRepetitions && interval) {
         clearInterval(interval)
       }
       animate()
