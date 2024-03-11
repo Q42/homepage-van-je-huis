@@ -17,6 +17,7 @@ import gsap from 'gsap'
 import debounce from 'lodash.debounce'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { getPercentageInRange } from '@/utils/timelineUtils'
+import { isSafariOniPhone } from '~/utils/breakpoints'
 gsap.registerPlugin(ScrollTrigger)
 
 export interface SliderProps {
@@ -46,6 +47,9 @@ const currentStyle = computed(() => {
 })
 
 const setAnimation = () => {
+  if (isSafariOniPhone()) {
+    ScrollTrigger.killAll()
+  }
   loading.value = true
   currentPosition.value = props.rangeMax
 
