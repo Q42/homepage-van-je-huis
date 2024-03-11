@@ -5,7 +5,12 @@
       <SharedTypography variant="h5">{{
         $t(titleKey, { total: count })
       }}</SharedTypography>
-      <SharedLink href="/bees" :label="$t(linkLabelKey)" :hide-icon="true" />
+      <!-- TODO: there is no visit url in the data -->
+      <!-- <SharedLink
+        :href="visitUrl"
+        :label="$t(linkLabelKey)"
+        :hide-icon="true"
+      /> -->
     </div>
   </div>
 </template>
@@ -16,6 +21,7 @@ import { getTranslationKey } from '@/translations'
 export interface AggregateCardProps {
   type: 'aggregate_trees' | 'aggregate_tree_species' | 'aggregate_bees'
   count: number
+  visitUrl: string
 }
 
 const iconType = computed(() => {
