@@ -85,10 +85,10 @@ const setAnimation = () => {
         start: `top ${getTriggerPosition()}`,
         end: `bottom ${getTriggerPosition()}`,
         onEnter: () => {
-          currentPosition.value = position
+          currentPosition.value = position || props.rangeMax
         },
         onLeaveBack: () => {
-          currentPosition.value = props.positions[index - 1]
+          currentPosition.value = props.positions[index - 1] || props.rangeMax
         },
       })
     })
@@ -132,6 +132,7 @@ watch(() => props.positions, setAnimation)
   background: @primary-black;
   border-radius: 50%;
   transition: transform 0.5s;
+  transform: translateX(-50%);
 }
 
 .pointer-label {
