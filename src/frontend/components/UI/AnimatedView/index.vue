@@ -171,7 +171,6 @@ const setAnimation = async () => {
 // }, 50)
 
 onMounted(() => {
-  ScrollTrigger.normalizeScroll(true)
   setAnimation()
 
   // window.addEventListener('resize', handleResize)
