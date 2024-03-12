@@ -1,11 +1,12 @@
 <template>
   <div v-if="randomImages" class="start-animation">
-    <SharedImage
+    <div
       v-for="(image, index) in randomImages"
       :key="index"
-      :image="{ url: image }"
       class="animate-item"
-    />
+    >
+      <SharedImage :image="{ url: image }" />
+    </div>
   </div>
 </template>
 
@@ -33,7 +34,10 @@ const setRandomImages = () => {
 }
 
 const animate = async () => {
-  if (count < numberOfRepetitions) {
+  const round = count
+  const shouldAnimate = round <= numberOfRepetitions
+  count += 1
+  if (shouldAnimate) {
     setRandomImages()
     await nextTick()
   }
@@ -45,37 +49,41 @@ const animate = async () => {
     const elementWidth = el.clientWidth
     const elementHeight = el.clientHeight
 
-    const percentageToPx = (percentage: number, axis: 'x' | 'y') => {
-      const measurement = axis === 'x' ? elementWidth : elementHeight
-
-      return measurement * (percentage / 100)
-    }
-
     const fromPositions = [
-      { x: 0, y: 0 }, // top left
       {
-        x: windowWidth - elementWidth,
-        y: 0,
-      }, // top right
-      { x: 0, y: windowHeight - elementHeight }, // bottom left
-      { x: windowWidth - elementWidth, y: windowHeight - elementHeight }, // bottom right
-    ]
-
-    const highest = isTablet(windowWidth) ? 160 : 210
-
-    const toPositions = [
-      { x: percentageToPx(20, 'x'), y: percentageToPx(30, 'y') }, // top left
+        x: definePositions([0, 0, 0, 0, 0]),
+        y: definePositions([0, 0, 0, 0, 0]),
+      }, // top left
       {
-        x: windowWidth - elementWidth - percentageToPx(20, 'x'),
-        y: percentageToPx(10, 'y'),
+        x: windowWidth - elementWidth - definePositions([0, 0, 0, 0, 0]),
+        y: definePositions([0, 0, 0, 0, 0]),
       }, // top right
       {
-        x: percentageToPx(40, 'x'),
-        y: windowHeight - elementHeight - percentageToPx(15, 'y'),
+        x: definePositions([0, 0, 0, 0, 0]),
+        y: windowHeight - elementHeight - definePositions([0, 0, 0, 0, 0]),
       }, // bottom left
       {
-        x: windowWidth - elementWidth - percentageToPx(10, 'x'),
-        y: windowHeight - elementHeight - percentageToPx(40, 'y'),
+        x: windowWidth - elementWidth - definePositions([0, 0, 0, 0, 0]),
+        y: windowHeight - elementHeight - definePositions([0, 0, 0, 0, 0]),
+      }, // bottom right
+    ]
+
+    const toPositions = [
+      {
+        x: definePositions([0, 0, 0, 0, 0]),
+        y: definePositions([0, 0, 0, 0, 0]),
+      }, // top left
+      {
+        x: windowWidth - elementWidth - definePositions([0, 0, 0, 0, 0]),
+        y: definePositions([0, 0, 0, 0, 0]),
+      }, // top right
+      {
+        x: definePositions([0, 0, 0, 0, 0]),
+        y: windowHeight - elementHeight - definePositions([0, 0, 0, 0, 0]),
+      }, // bottom left
+      {
+        x: windowWidth - elementWidth - definePositions([0, 0, 0, 0, 0]),
+        y: windowHeight - elementHeight - definePositions([0, 0, 0, 0, 0]),
       }, // bottom right
     ]
     gsap.to(el, {
@@ -85,7 +93,9 @@ const animate = async () => {
       duration: 2,
     })
 
-    if (count < numberOfRepetitions) {
+    // This sets the back animation
+    const shouldAnimateBack = round < numberOfRepetitions
+    if (shouldAnimateBack) {
       setTimeout(() => {
         gsap
           .to(el, {
@@ -102,8 +112,17 @@ const animate = async () => {
   })
 }
 
+const definePositions = (
+  positions: [number, number, number, number, number],
+) => {
+  if (count > numberOfRepetitions) {
+    return positions[0]
+  }
+  return positions[count - 1]
+}
+
 const numberOfRepetitions = 5
-let count = 2
+let count = 1
 let interval: NodeJS.Timeout | null = null
 
 const startAnimation = () => {
@@ -114,7 +133,6 @@ const startAnimation = () => {
         clearInterval(interval)
       }
       animate()
-      count += 1
     }, 8000)
   }, 1000)
 }
@@ -141,11 +159,16 @@ onMounted(startAnimation)
   width: 30%;
   min-width: 180px;
   aspect-ratio: 3/2;
+  overflow: hidden;
   opacity: 0;
 
   @media @mq-from-desktop-md {
-    width: 20%;
+    width: 400px;
   }
+}
+
+.animate-item img {
+  aspect-ratio: 3/2;
 }
 
 .animate-item:nth-child(1) {
