@@ -4,7 +4,13 @@
       v-if="!isOnTablet"
       class="close-button"
       icon="close"
-      @click="() => setView(getClosestElementToTop())"
+      @click="
+        () => {
+          // Prevents that the views scrolls to top offset
+          mountedStore.animatedViewHasBeenMounted = true
+          setView(getClosestElementToTop())
+        }
+      "
     />
     <div
       v-for="(entry, index) in entries"
@@ -42,6 +48,9 @@
 import { DistanceViewAggregateEntry } from '../../../../common/apiSchema/present'
 import { getTranslationKey } from '@/translations'
 import { Entries, AggregateType, EntryWithImage } from '@/models/Entries'
+import { useMountStore } from '~/store/mountStore'
+
+const mountedStore = useMountStore()
 
 export interface ListViewProps {
   entries: Entries
