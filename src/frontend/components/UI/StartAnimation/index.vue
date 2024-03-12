@@ -51,39 +51,39 @@ const animate = async () => {
 
     const fromPositions = [
       {
-        x: definePositions([0, 0, 0, 0, 0]),
-        y: definePositions([0, 0, 0, 0, 0]),
+        x: definePositions([0, 0, 0], round),
+        y: definePositions([0, 0, 0], round),
       }, // top left
       {
-        x: windowWidth - elementWidth - definePositions([0, 0, 0, 0, 0]),
-        y: definePositions([0, 0, 0, 0, 0]),
+        x: windowWidth - elementWidth - definePositions([0, 0, 0], round),
+        y: definePositions([-100, 0, 0], round),
       }, // top right
       {
-        x: definePositions([0, 0, 0, 0, 0]),
-        y: windowHeight - elementHeight - definePositions([0, 0, 0, 0, 0]),
+        x: definePositions([0, 0, 0], round),
+        y: windowHeight - elementHeight - definePositions([-100, 0, 0], round),
       }, // bottom left
       {
-        x: windowWidth - elementWidth - definePositions([0, 0, 0, 0, 0]),
-        y: windowHeight - elementHeight - definePositions([0, 0, 0, 0, 0]),
+        x: windowWidth - elementWidth - definePositions([0, 0, 0], round),
+        y: windowHeight - elementHeight - definePositions([0, 0, 0], round),
       }, // bottom right
     ]
 
     const toPositions = [
       {
-        x: definePositions([0, 0, 0, 0, 0]),
-        y: definePositions([0, 0, 0, 0, 0]),
+        x: definePositions([100, 0, 0], round),
+        y: definePositions([0, 0, 0], round),
       }, // top left
       {
-        x: windowWidth - elementWidth - definePositions([0, 0, 0, 0, 0]),
-        y: definePositions([0, 0, 0, 0, 0]),
+        x: windowWidth - elementWidth - definePositions([0, 0, 0], round),
+        y: definePositions([0, 0, 0], round),
       }, // top right
       {
-        x: definePositions([0, 0, 0, 0, 0]),
-        y: windowHeight - elementHeight - definePositions([0, 0, 0, 0, 0]),
+        x: definePositions([0, 0, 0], round),
+        y: windowHeight - elementHeight - definePositions([0, 0, 0], round),
       }, // bottom left
       {
-        x: windowWidth - elementWidth - definePositions([0, 0, 0, 0, 0]),
-        y: windowHeight - elementHeight - definePositions([0, 0, 0, 0, 0]),
+        x: windowWidth - elementWidth - definePositions([100, 0, 0], round),
+        y: windowHeight - elementHeight - definePositions([0, 0, 0], round),
       }, // bottom right
     ]
     gsap.to(el, {
@@ -113,15 +113,16 @@ const animate = async () => {
 }
 
 const definePositions = (
-  positions: [number, number, number, number, number],
+  positions: [number, number, number],
+  count: number,
 ) => {
-  if (count > numberOfRepetitions) {
-    return positions[0]
-  }
+  // if (count > numberOfRepetitions) {
+  //   return positions[0]
+  // }
   return positions[count - 1]
 }
 
-const numberOfRepetitions = 5
+const numberOfRepetitions = 3
 let count = 1
 let interval: NodeJS.Timeout | null = null
 
@@ -149,7 +150,7 @@ onMounted(startAnimation)
   top: 0;
   left: 0;
   width: 100vw;
-  height: 100vh;
+  height: 100dvh;
   z-index: -1;
   overflow: hidden;
 }
@@ -176,11 +177,11 @@ onMounted(startAnimation)
 }
 
 .animate-item:nth-child(2) {
-  transform: translate(calc(100vw - 100%), 0);
+  transform: translate(calc(100vw - 100%), -100px);
 }
 
 .animate-item:nth-child(3) {
-  transform: translate(0, calc(100vh - 100%));
+  transform: translate(0, calc(100vh - 100% + 100px));
 }
 
 .animate-item:nth-child(4) {
