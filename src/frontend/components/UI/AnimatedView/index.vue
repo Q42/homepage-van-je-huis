@@ -46,6 +46,7 @@ import { DistanceViewAggregateEntry } from '../../../../common/apiSchema/present
 import { Entries, AggregateType, EntryWithImage } from '@/models/Entries'
 import { generateIds } from '@/utils/entries'
 import { useAddressStore } from '@/store/addressStore'
+import { useMountStore } from '@/store/mountStore'
 
 export interface AnimatedViewProps {
   entries: Entries
@@ -55,6 +56,7 @@ export interface AnimatedViewProps {
 const props = defineProps<AnimatedViewProps>()
 
 const addresStore = useAddressStore()
+const mountedStore = useMountStore()
 const elementIds = computed(() => generateIds(props.entries))
 const loading = ref(true)
 
@@ -172,6 +174,13 @@ const setAnimation = async () => {
 
 onMounted(() => {
   setAnimation()
+
+  if (!mountedStore.animatedViewHasBeenMounted) {
+    setTimeout(() => {
+      window.scrollTo({ top: 150, behavior: 'smooth' })
+      mountedStore.animatedViewHasBeenMounted = true
+    }, 1000)
+  }
 
   // window.addEventListener('resize', handleResize)
 })
