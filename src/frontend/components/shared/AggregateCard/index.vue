@@ -21,7 +21,6 @@ import { getTranslationKey } from '@/translations'
 export interface AggregateCardProps {
   type: 'aggregate_trees' | 'aggregate_tree_species' | 'aggregate_bees'
   count: number
-  visitUrl: string
 }
 
 const iconType = computed(() => {
