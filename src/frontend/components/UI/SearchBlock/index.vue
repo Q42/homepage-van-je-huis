@@ -302,7 +302,7 @@ onUnmounted(() => {
 .autocomplete-panel {
   background: @primary-white;
   position: absolute;
-  max-height: 300px;
+  max-height: 140px;
   width: 100%;
   top: 100%;
   box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
@@ -310,6 +310,10 @@ onUnmounted(() => {
   overflow-y: auto;
   border: solid 1px @neutral-grey1;
   z-index: 1;
+
+  @media @mq-from-tablet {
+    max-height: 300px;
+  }
 }
 
 .autocomplete-panel button {
