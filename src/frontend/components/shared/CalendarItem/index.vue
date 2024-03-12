@@ -1,6 +1,12 @@
 <template>
   <div class="calendar-item-card">
-    <SharedImage v-if="calendarItem.image" :image="calendarItem.image" />
+    <!-- <SharedImage v-if="calendarItem.image" :image="calendarItem.image" /> -->
+    <SharedImage
+      class="image"
+      :image="{
+        url: `/startanimation/${Math.floor(Math.random() * 10) + 1}.jpg`,
+      }"
+    />
     <div class="calendar-item-card__content">
       <SharedTypography variant="h5">{{ calendarItem.title }}</SharedTypography>
       <SharedTypography class="text-with-icon" variant="body" :compact="true">
@@ -47,5 +53,9 @@ const props = defineProps<CalendarItemProps>()
   display: flex;
   align-items: center;
   gap: 10px;
+}
+
+.image {
+  aspect-ratio: 3 / 2;
 }
 </style>
