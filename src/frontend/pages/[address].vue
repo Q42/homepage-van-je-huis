@@ -100,8 +100,12 @@ const getViewFromQuery = () => {
 }
 
 const getCurrentModeFromQuery = () => {
-  if (query.mode === 'animated' || query.mode === 'list') {
-    return isSafariOniPhone() ? 'list' : query.mode
+  if (isSafariOniPhone()) {
+    return 'list'
+  } else if (query.mode === 'animated' || query.mode === 'list') {
+    return query.mode
+  } else {
+    return 'animated'
   }
 }
 
@@ -114,9 +118,7 @@ const store = useAddressStore()
 const pastOrPresent: Ref<'present' | 'past'> = ref(
   getViewFromQuery() || pastHasData.value ? 'past' : 'present',
 )
-const currentView: Ref<'animated' | 'list'> = ref(
-  getCurrentModeFromQuery() || isSafariOniPhone() ? 'list' : 'animated',
-)
+const currentView: Ref<'animated' | 'list'> = ref(getCurrentModeFromQuery())
 const router = useRouter()
 
 const setView = async (elementId: string) => {
