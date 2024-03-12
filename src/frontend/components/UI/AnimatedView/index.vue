@@ -232,7 +232,7 @@ watch(() => props.entries, setAnimation)
 }
 .trigger-item {
   width: 300px;
-  height: 400px;
+  height: 900px;
   pointer-events: none;
   // opacity: 0;
   font-size: bigger;
