@@ -12,7 +12,7 @@
     <form class="form" @submit.prevent="handleSubmit">
       <SharedInput
         v-model:value="street"
-        :disabled="!Boolean(streets)"
+        :disabled="!Boolean(streets) || inputsAreDisabled"
         class="street-input"
         :class="{ 'input-error': hasError }"
         :placeholder="$t(getTranslationKey('home.streetInputPlaceHolder'))"
@@ -20,7 +20,7 @@
       <SharedInput
         v-model:value="houseNumber"
         :input-id="referenceIds.houseNumberInput"
-        :disabled="!Boolean(houseNumbers)"
+        :disabled="!Boolean(houseNumbers) || inputsAreDisabled"
         class="house-number-input"
         :class="{ 'input-error': hasError }"
         :placeholder="$t(getTranslationKey('home.houseNumberInputPlaceHolder'))"
@@ -102,6 +102,7 @@ const houseNumber = ref('')
 const error: Ref<TranslationKey | null> = ref(null)
 const hasError = computed(() => Boolean(error.value))
 const houseNumberIsSelected = ref(false)
+const inputsAreDisabled = ref(true)
 
 const focussedStreetIndex: Ref<number | null> = ref(null)
 const focussedHouseNumberIndex: Ref<number | null> = ref(null)
@@ -225,6 +226,10 @@ onMounted(() => {
   }
 
   window.addEventListener('keydown', handleKeyDown)
+
+  setTimeout(() => {
+    inputsAreDisabled.value = false
+  }, 1000)
 })
 
 onUnmounted(() => {

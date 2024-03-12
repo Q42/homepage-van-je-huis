@@ -30,7 +30,10 @@ const getRandomImageUrl = () => {
 const randomImages: Ref<string[] | null> = ref(null)
 
 const setRandomImages = () => {
-  randomImages.value = Array.from({ length: 4 }, () => getRandomImageUrl())
+  randomImages.value = Array.from(
+    { length: isDesktopMd(window.innerWidth) ? 3 : 4 },
+    () => getRandomImageUrl(),
+  )
 }
 
 const animate = async () => {
@@ -49,44 +52,83 @@ const animate = async () => {
     const elementWidth = el.clientWidth
     const elementHeight = el.clientHeight
 
+    const bottomOffsetPhone = 55
+
     const fromPositions = [
       {
-        x: definePositions([0, 0, 0], round),
-        y: definePositions([0, -100, 0], round),
+        x: definePositions([0, 0, 0], [0, 0, 0], round),
+        y: definePositions([0, -100, 0], [-100, -100, -100], round),
       }, // top left
       {
-        x: windowWidth - elementWidth - definePositions([0, -100, 0], round),
-        y: definePositions([-100, 0, -100], round),
+        x:
+          windowWidth -
+          elementWidth -
+          definePositions([0, -100, 0], [-200, -200, -200], round),
+        y: definePositions(
+          [-100, 0, -100],
+          [
+            windowHeight - elementHeight - bottomOffsetPhone,
+            windowHeight - elementHeight - bottomOffsetPhone,
+            windowHeight - elementHeight - bottomOffsetPhone,
+          ],
+          round,
+        ),
       }, // top right
       {
-        x: definePositions([0, -100, 0], round),
+        x: definePositions([0, -100, 0], [-50, -50, -50], round),
         y:
           windowHeight -
           elementHeight -
-          definePositions([-100, 0, -100], round),
+          definePositions([-100, 0, -100], [-150, -159, -150], round),
       }, // bottom left
       {
-        x: windowWidth - elementWidth - definePositions([0, 0, 0], round),
-        y: windowHeight - elementHeight - definePositions([0, -170, 0], round),
+        x:
+          windowWidth -
+          elementWidth -
+          definePositions([0, 0, 0], [0, 0, 0], round),
+        y:
+          windowHeight -
+          elementHeight -
+          definePositions([0, -170, 0], [0, 0, 0], round),
       }, // bottom right
     ]
 
     const toPositions = [
       {
-        x: definePositions([100, 0, 100], round),
-        y: definePositions([0, 0, 0], round),
+        x: definePositions([100, 0, 100], [0, 0, 0], round),
+        y: definePositions([0, 0, 0], [0, 0, 0], round),
       }, // top left
       {
-        x: windowWidth - elementWidth - definePositions([0, 0, 0], round),
-        y: definePositions([0, 0, 0], round),
+        x:
+          windowWidth -
+          elementWidth -
+          definePositions([0, 0, 0], [-100, -100, -100], round),
+        y: definePositions(
+          [0, 0, 0],
+          [
+            windowHeight - elementHeight - bottomOffsetPhone,
+            windowHeight - elementHeight - bottomOffsetPhone,
+            windowHeight - elementHeight - bottomOffsetPhone,
+          ],
+          round,
+        ),
       }, // top right
       {
-        x: definePositions([0, 110, 0], round),
-        y: windowHeight - elementHeight - definePositions([0, 0, 0], round),
+        x: definePositions([0, 110, 0], [-50, -50, -50], round),
+        y:
+          windowHeight -
+          elementHeight -
+          definePositions([0, 0, 0], [0, 0, 0], round),
       }, // bottom left
       {
-        x: windowWidth - elementWidth - definePositions([150, 0, 150], round),
-        y: windowHeight - elementHeight - definePositions([0, -70, 0], round),
+        x:
+          windowWidth -
+          elementWidth -
+          definePositions([150, 0, 150], [0, 0, 0], round),
+        y:
+          windowHeight -
+          elementHeight -
+          definePositions([0, -70, 0], [0, 0, 0], round),
       }, // bottom right
     ]
     gsap.fromTo(
@@ -124,28 +166,30 @@ const animate = async () => {
 }
 
 const definePositions = (
-  positions: [number, number, number],
+  desktopPositions: [number, number, number],
+  mobilePositions: [number, number, number],
   count: number,
 ) => {
-  // if (count > numberOfRepetitions) {
-  //   return positions[0]
-  // }
-  return positions[count - 1]
+  return isDesktopMd(window.innerWidth)
+    ? mobilePositions[count - 1]
+    : desktopPositions[count - 1]
 }
 
-const numberOfRepetitions = 3
+const numberOfRepetitions = isDesktopMd(window.innerWidth) ? 1 : 3
 let count = 1
 let interval: NodeJS.Timeout | null = null
 
 const startAnimation = () => {
   setTimeout(() => {
     animate()
-    interval = setInterval(() => {
-      if (count === numberOfRepetitions && interval) {
-        clearInterval(interval)
-      }
-      animate()
-    }, 8000)
+    if (numberOfRepetitions > 1) {
+      interval = setInterval(() => {
+        if (count === numberOfRepetitions && interval) {
+          clearInterval(interval)
+        }
+        animate()
+      }, 8000)
+    }
   }, 1000)
 }
 
@@ -168,8 +212,7 @@ onMounted(startAnimation)
 
 .animate-item {
   position: absolute;
-  width: 300px;
-  min-width: 180px;
+  width: 60%;
   aspect-ratio: 3/2;
   overflow: hidden;
   opacity: 0;
@@ -183,37 +226,36 @@ onMounted(startAnimation)
   aspect-ratio: 3/2;
 }
 
-.animate-item:nth-child(1) {
-  transform: translate(0, 0);
-}
-
-.animate-item:nth-child(2) {
-  transform: translate(calc(100vw - 100%), -100px);
-}
-
-.animate-item:nth-child(3) {
-  transform: translate(0, calc(100vh - 100% + 100px));
-}
-
-.animate-item:nth-child(4) {
-  transform: translate(calc(100vw - 100%), calc(100vh - 100%));
-}
-
-// TODO: test for to positions
-
+// // left
 // .animate-item:nth-child(1) {
-//   transform: translate(20%, 30%);
+//   transform: translate(0, 0);
 // }
 
+// // right middle
 // .animate-item:nth-child(2) {
-//   transform: translate(calc(100vw - 100% - 40%), 10%);
+//   transform: translate(0, 300px);
 // }
 
+// // bottom left
 // .animate-item:nth-child(3) {
-//   transform: translate(40%, calc(100vh - 100% - 15%));
+//   transform: translate(0, 300px);
 // }
 
-// .animate-item:nth-child(4) {
-//   transform: translate(calc(100vw - 100% - 10%), calc(100vh - 100% - 40%));
-// }
+@media @mq-from-desktop-md {
+  .animate-item:nth-child(1) {
+    transform: translate(0, 0);
+  }
+
+  .animate-item:nth-child(2) {
+    transform: translate(calc(100vw - 100%), -100px);
+  }
+
+  .animate-item:nth-child(3) {
+    transform: translate(0, calc(100vh - 100% + 100px));
+  }
+
+  .animate-item:nth-child(4) {
+    transform: translate(calc(100vw - 100%), calc(100vh - 100%));
+  }
+}
 </style>
