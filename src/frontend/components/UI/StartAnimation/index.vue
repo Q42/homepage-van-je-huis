@@ -52,25 +52,28 @@ const animate = async () => {
     const fromPositions = [
       {
         x: definePositions([0, 0, 0], round),
-        y: definePositions([0, 0, 0], round),
+        y: definePositions([0, -100, 0], round),
       }, // top left
       {
-        x: windowWidth - elementWidth - definePositions([0, 0, 0], round),
-        y: definePositions([-100, 0, 0], round),
+        x: windowWidth - elementWidth - definePositions([0, -100, 0], round),
+        y: definePositions([-100, 0, -100], round),
       }, // top right
       {
-        x: definePositions([0, 0, 0], round),
-        y: windowHeight - elementHeight - definePositions([-100, 0, 0], round),
+        x: definePositions([0, -100, 0], round),
+        y:
+          windowHeight -
+          elementHeight -
+          definePositions([-100, 0, -100], round),
       }, // bottom left
       {
         x: windowWidth - elementWidth - definePositions([0, 0, 0], round),
-        y: windowHeight - elementHeight - definePositions([0, 0, 0], round),
+        y: windowHeight - elementHeight - definePositions([0, -170, 0], round),
       }, // bottom right
     ]
 
     const toPositions = [
       {
-        x: definePositions([100, 0, 0], round),
+        x: definePositions([100, 0, 100], round),
         y: definePositions([0, 0, 0], round),
       }, // top left
       {
@@ -78,20 +81,28 @@ const animate = async () => {
         y: definePositions([0, 0, 0], round),
       }, // top right
       {
-        x: definePositions([0, 0, 0], round),
+        x: definePositions([0, 110, 0], round),
         y: windowHeight - elementHeight - definePositions([0, 0, 0], round),
       }, // bottom left
       {
-        x: windowWidth - elementWidth - definePositions([100, 0, 0], round),
-        y: windowHeight - elementHeight - definePositions([0, 0, 0], round),
+        x: windowWidth - elementWidth - definePositions([150, 0, 150], round),
+        y: windowHeight - elementHeight - definePositions([0, -70, 0], round),
       }, // bottom right
     ]
-    gsap.to(el, {
-      x: toPositions[index].x,
-      y: toPositions[index].y,
-      opacity: 1,
-      duration: 2,
-    })
+    gsap.fromTo(
+      el,
+      {
+        x: fromPositions[index].x,
+        y: fromPositions[index].y,
+        opacity: 0,
+      },
+      {
+        x: toPositions[index].x,
+        y: toPositions[index].y,
+        opacity: 1,
+        duration: 2,
+      },
+    )
 
     // This sets the back animation
     const shouldAnimateBack = round < numberOfRepetitions
@@ -157,14 +168,14 @@ onMounted(startAnimation)
 
 .animate-item {
   position: absolute;
-  width: 30%;
+  width: 300px;
   min-width: 180px;
   aspect-ratio: 3/2;
   overflow: hidden;
   opacity: 0;
 
   @media @mq-from-desktop-md {
-    width: 400px;
+    width: 28%;
   }
 }
 

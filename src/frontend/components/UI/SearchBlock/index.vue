@@ -248,7 +248,6 @@ onUnmounted(() => {
 
 <style lang="less" scoped>
 .search-block {
-  background: @primary-white;
   display: flex;
   flex-direction: column;
   width: 90%;
