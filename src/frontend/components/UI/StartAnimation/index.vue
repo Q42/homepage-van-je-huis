@@ -1,11 +1,12 @@
 <template>
   <div v-if="randomImages" class="start-animation">
-    <SharedImage
+    <div
       v-for="(image, index) in randomImages"
       :key="index"
-      :image="{ url: image }"
       class="animate-item"
-    />
+    >
+      <SharedImage :image="{ url: image }" />
+    </div>
   </div>
 </template>
 
@@ -33,9 +34,13 @@ const setRandomImages = () => {
 }
 
 const animate = async () => {
-  setRandomImages()
-  await nextTick()
-
+  const round = count
+  const shouldAnimate = round <= numberOfRepetitions
+  count += 1
+  if (shouldAnimate) {
+    setRandomImages()
+    await nextTick()
+  }
   const items = document.getElementsByClassName('animate-item')
   const windowHeight = window.innerHeight
   const windowWidth = window.innerWidth
@@ -45,28 +50,42 @@ const animate = async () => {
     const elementHeight = el.clientHeight
 
     const fromPositions = [
-      { x: -elementWidth, y: -elementHeight }, // top left
       {
-        x: windowWidth + elementWidth,
-        y: -elementHeight,
+        x: definePositions([0, 0, 0, 0, 0]),
+        y: definePositions([0, 0, 0, 0, 0]),
+      }, // top left
+      {
+        x: windowWidth - elementWidth - definePositions([0, 0, 0, 0, 0]),
+        y: definePositions([0, 0, 0, 0, 0]),
       }, // top right
-      { x: -elementWidth, y: windowHeight + elementHeight }, // bottom left
-      { x: windowWidth + elementWidth, y: windowHeight + elementHeight }, // bottom right
-    ]
-
-    const highest = isTablet(windowWidth) ? 160 : 210
-    const lowest = highest - 140
-
-    const toPositions = [
-      { x: windowWidth * 0.1, y: lowest }, // top left
-      { x: windowWidth - elementWidth - windowWidth * 0.1, y: highest }, // top right
-      { x: windowWidth * 0.1, y: windowHeight - elementHeight - highest }, // bottom left
       {
-        x: windowWidth - elementWidth - windowWidth * 0.1,
-        y: windowHeight - elementHeight - lowest,
+        x: definePositions([0, 0, 0, 0, 0]),
+        y: windowHeight - elementHeight - definePositions([0, 0, 0, 0, 0]),
+      }, // bottom left
+      {
+        x: windowWidth - elementWidth - definePositions([0, 0, 0, 0, 0]),
+        y: windowHeight - elementHeight - definePositions([0, 0, 0, 0, 0]),
       }, // bottom right
     ]
 
+    const toPositions = [
+      {
+        x: definePositions([0, 0, 0, 0, 0]),
+        y: definePositions([0, 0, 0, 0, 0]),
+      }, // top left
+      {
+        x: windowWidth - elementWidth - definePositions([0, 0, 0, 0, 0]),
+        y: definePositions([0, 0, 0, 0, 0]),
+      }, // top right
+      {
+        x: definePositions([0, 0, 0, 0, 0]),
+        y: windowHeight - elementHeight - definePositions([0, 0, 0, 0, 0]),
+      }, // bottom left
+      {
+        x: windowWidth - elementWidth - definePositions([0, 0, 0, 0, 0]),
+        y: windowHeight - elementHeight - definePositions([0, 0, 0, 0, 0]),
+      }, // bottom right
+    ]
     gsap.to(el, {
       x: toPositions[index].x,
       y: toPositions[index].y,
@@ -74,38 +93,54 @@ const animate = async () => {
       duration: 2,
     })
 
-    setTimeout(() => {
-      gsap
-        .to(el, {
-          x: fromPositions[index].x,
-          y: fromPositions[index].y,
-          opacity: 0,
-          duration: 1,
-        })
-        .then(() => {
-          randomImages.value = null
-        })
-    }, 5000)
+    // This sets the back animation
+    const shouldAnimateBack = round < numberOfRepetitions
+    if (shouldAnimateBack) {
+      setTimeout(() => {
+        gsap
+          .to(el, {
+            x: fromPositions[index].x,
+            y: fromPositions[index].y,
+            opacity: 0,
+            duration: 1,
+          })
+          .then(() => {
+            randomImages.value = null
+          })
+      }, 5000)
+    }
   })
 }
 
-let count = 2
+const definePositions = (
+  positions: [number, number, number, number, number],
+) => {
+  if (count > numberOfRepetitions) {
+    return positions[0]
+  }
+  return positions[count - 1]
+}
+
+const numberOfRepetitions = 5
+let count = 1
 let interval: NodeJS.Timeout | null = null
 
 const startAnimation = () => {
   setTimeout(() => {
     animate()
     interval = setInterval(() => {
-      if (count === 5 && interval) {
+      if (count === numberOfRepetitions && interval) {
         clearInterval(interval)
       }
       animate()
-      count += 1
     }, 8000)
   }, 1000)
 }
 
 onMounted(startAnimation)
+
+// TODO: remove. Only to test end positions
+// onMounted(setRandomImages)
 </script>
 
 <style lang="less" scoped>
@@ -124,26 +159,49 @@ onMounted(startAnimation)
   width: 30%;
   min-width: 180px;
   aspect-ratio: 3/2;
+  overflow: hidden;
   opacity: 0;
 
   @media @mq-from-desktop-md {
-    width: 20%;
+    width: 400px;
   }
 }
 
+.animate-item img {
+  aspect-ratio: 3/2;
+}
+
 .animate-item:nth-child(1) {
-  transform: translate(-100%, -100%);
+  transform: translate(0, 0);
 }
 
 .animate-item:nth-child(2) {
-  transform: translate(calc(100vw + 100%), -100%);
+  transform: translate(calc(100vw - 100%), 0);
 }
 
 .animate-item:nth-child(3) {
-  transform: translate(-100%, calc(100vh + 100%));
+  transform: translate(0, calc(100vh - 100%));
 }
 
 .animate-item:nth-child(4) {
-  transform: translate(calc(100vw + 100%), calc(100vh + 100%));
+  transform: translate(calc(100vw - 100%), calc(100vh - 100%));
 }
+
+// TODO: test for to positions
+
+// .animate-item:nth-child(1) {
+//   transform: translate(20%, 30%);
+// }
+
+// .animate-item:nth-child(2) {
+//   transform: translate(calc(100vw - 100% - 40%), 10%);
+// }
+
+// .animate-item:nth-child(3) {
+//   transform: translate(40%, calc(100vh - 100% - 15%));
+// }
+
+// .animate-item:nth-child(4) {
+//   transform: translate(calc(100vw - 100% - 10%), calc(100vh - 100% - 40%));
+// }
 </style>
