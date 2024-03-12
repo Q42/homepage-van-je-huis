@@ -41,7 +41,7 @@
     />
     <!-- TODO: accessibility -->
     <div
-      v-if="currentView === 'animated' || isSafariOniPhone()"
+      v-if="currentView === 'animated' || listViewOnMobile"
       class="tab-buttons"
     >
       <SharedButton
@@ -81,7 +81,6 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { getTranslationKey } from '@/translations'
 import { useAddressStore } from '@/store/addressStore'
 import { Entries } from '@/models/Entries'
-import { isSafariOniPhone } from '~/utils/breakpoints'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -99,8 +98,10 @@ const getViewFromQuery = () => {
   }
 }
 
+const listViewOnMobile = ref(false)
 const getCurrentModeFromQuery = () => {
-  if (isSafariOniPhone()) {
+  if (isTablet(window.innerWidth)) {
+    listViewOnMobile.value = true
     return 'list'
   } else if (query.mode === 'animated' || query.mode === 'list') {
     return query.mode
@@ -181,7 +182,6 @@ const currentDataSet = computed(() => {
   z-index: 1;
   position: fixed;
   bottom: 20px;
-  margin-left: 50%;
-  transform: translatex(-50%);
+  transform: translatex(calc(50vw - 50% - 1.125rem));
 }
 </style>
