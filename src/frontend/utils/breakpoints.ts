@@ -17,11 +17,3 @@ export function isDesktopLg(screenWidth: number) {
 export function isDesktopXl(screenWidth: number) {
   return screenWidth < 1920
 }
-
-export function isSafariOniPhone() {
-  const userAgent = window.navigator.userAgent
-  const isSafari = /^((?!chrome|android).)*safari/i.test(userAgent)
-  const isiPhone = /iPhone/i.test(userAgent)
-
-  return isSafari && isiPhone
-}

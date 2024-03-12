@@ -1,7 +1,7 @@
 <template>
   <div v-if="entries" class="entry-list">
     <SharedIconButton
-      v-if="!isSafariOniPhone()"
+      v-if="!isOnTablet"
       class="close-button"
       icon="close"
       @click="() => setView(getClosestElementToTop())"
@@ -12,6 +12,14 @@
       :key="index"
       class="entry-wrapper"
     >
+      <div class="card-wrapper">
+        <SharedAggregateCard
+          v-if="entryIsAggregate(entry) && isOnTablet"
+          :type="entry.type as AggregateType"
+          class="aggregate-card"
+          :count="(entry as DistanceViewAggregateEntry).data.count"
+        />
+      </div>
       <SharedImage
         v-if="!entryIsAggregate(entry) && (entry as EntryWithImage).image"
         :image="(entry as EntryWithImage).image!"
@@ -31,14 +39,17 @@
 </template>
 
 <script setup lang="ts">
+import { DistanceViewAggregateEntry } from '../../../../common/apiSchema/present'
 import { getTranslationKey } from '@/translations'
-import { Entries, EntryWithImage } from '@/models/Entries'
-import { isSafariOniPhone } from '~/utils/breakpoints'
+import { Entries, AggregateType, EntryWithImage } from '@/models/Entries'
 
 export interface ListViewProps {
   entries: Entries
   setView: (id: string) => void
 }
+
+const innerWidth = useScreenWidth()
+const isOnTablet = computed(() => isTablet(innerWidth.value))
 
 const getClosestElementToTop = () => {
   const elements = document.getElementsByClassName('entry-wrapper')
@@ -99,5 +110,10 @@ const props = defineProps<ListViewProps>()
   width: 100%;
   display: flex;
   justify-content: center;
+}
+
+.aggregate-card {
+  max-width: 100%;
+  padding: 20px 5px;
 }
 </style>

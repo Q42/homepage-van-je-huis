@@ -17,7 +17,6 @@ import gsap from 'gsap'
 import debounce from 'lodash.debounce'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { getPercentageInRange } from '@/utils/timelineUtils'
-import { isSafariOniPhone } from '~/utils/breakpoints'
 gsap.registerPlugin(ScrollTrigger)
 
 export interface SliderProps {
@@ -46,8 +45,11 @@ const currentStyle = computed(() => {
   return `transform: translateY(calc(${props.isDistanceView ? topOfset : sliderheight - topOfset}px - 12px)) translateX(-50%)`
 })
 
+const innerWidth = useScreenWidth()
+const isOnTablet = computed(() => isTablet(innerWidth.value))
+
 const setAnimation = () => {
-  if (isSafariOniPhone()) {
+  if (isOnTablet.value) {
     ScrollTrigger.killAll()
   }
   loading.value = true
