@@ -12,6 +12,7 @@ export default defineNuxtConfig({
   },
   app: {
     head: {
+      title: 'Homepage van je Huis',
       meta: [
         { name: 'viewport', content: 'width=device-width, initial-scale=1' },
         { charset: 'utf-8' },
