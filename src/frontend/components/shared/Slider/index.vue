@@ -123,8 +123,8 @@ watch(() => props.positions, setAnimation)
 .slider {
   position: fixed;
   left: 26px;
-  top: 10vh;
-  height: 90vh;
+  top: 10dvh;
+  height: 90dvh;
   border-right: 1px solid @primary-black;
   width: 1px;
 }
