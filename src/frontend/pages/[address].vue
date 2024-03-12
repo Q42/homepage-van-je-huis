@@ -40,10 +40,7 @@
       :entries="entries"
     />
     <!-- TODO: accessibility -->
-    <div
-      v-if="currentView === 'animated' || listViewOnMobile"
-      class="tab-buttons"
-    >
+    <div v-if="currentView === 'animated' || isOnTablet" class="tab-buttons">
       <SharedButton
         v-if="pastHasData"
         :active="pastOrPresent === 'past'"
@@ -82,6 +79,9 @@ import { getTranslationKey } from '@/translations'
 import { useAddressStore } from '@/store/addressStore'
 import { Entries } from '@/models/Entries'
 
+const innerWidth = useScreenWidth()
+const isOnTablet = computed(() => isTablet(innerWidth.value))
+
 gsap.registerPlugin(ScrollTrigger)
 
 defineI18nRoute({
@@ -94,14 +94,20 @@ const { params, query } = useRoute()
 
 const getViewFromQuery = () => {
   if (query.view === 'past' || query.view === 'present') {
-    return query.view
+    if (!pastHasData.value) {
+      return 'present'
+    } else if (!presentHasData.value) {
+      return 'past'
+    } else {
+      return query.view
+    }
+  } else {
+    return pastHasData.value ? 'past' : 'present'
   }
 }
 
-const listViewOnMobile = ref(false)
 const getCurrentModeFromQuery = () => {
-  if (isTablet(window.innerWidth)) {
-    listViewOnMobile.value = true
+  if (isOnTablet.value) {
     return 'list'
   } else if (query.mode === 'animated' || query.mode === 'list') {
     return query.mode
@@ -116,9 +122,7 @@ const presentHasData = computed(() =>
 )
 
 const store = useAddressStore()
-const pastOrPresent: Ref<'present' | 'past'> = ref(
-  getViewFromQuery() || pastHasData.value ? 'past' : 'present',
-)
+const pastOrPresent: Ref<'present' | 'past'> = ref(getViewFromQuery())
 const currentView: Ref<'animated' | 'list'> = ref(getCurrentModeFromQuery())
 const router = useRouter()
 
