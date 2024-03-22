@@ -1,8 +1,10 @@
 import { DistanceViewEntry } from "../../../common/apiSchema/present";
-import { crawlerConfigs as cc, csvIngestSources as cs, pipelineConfig as pc } from "../../pipelineConfig";
+import { crawlerConfigs as cc } from "../../configs/crawlerConfigs";
+import { csvIngestSources as cs } from "../../configs/csvSourceConfigs";
+import { pipelineConfig as pc } from "../../configs/pipelineConfig";
 import { DuckDBService } from "../lib/duckDBService";
-import { CustomizedPublicArtRecord } from "../models/publicArtRecord";
 import { queries } from "../lib/queries/queries";
+import { CustomizedPublicArtRecord } from "../models/publicArtRecord";
 
 export async function getPublicArt(duckDBService: DuckDBService, addressId: string): Promise<DistanceViewEntry[]> {
     const customArtRecords = (await duckDBService.runQuery(

@@ -1,11 +1,5 @@
-import {
-    checkFilePaths,
-    createDirectory,
-    generateSessionName,
-    getIngestFilePathsFromSources,
-    measureExecutionTime
-} from "./src/utils/general";
-import { crawlerConfigs as cc, pipelineConfig as pc } from "./pipelineConfig";
+import { createDirectory, generateSessionName, measureExecutionTime } from "./src/utils/general";
+import { pipelineConfig as pc } from "./configs/pipelineConfig";
 
 import { AbstractCrawler } from "./src/crawlers/abstractCrawler";
 
@@ -15,8 +9,14 @@ import { appendObjectToFile } from "./src/lib/failureLog";
 import { DuckDBService } from "./src/lib/duckDBService";
 import { PublicArtCrawler } from "./src/crawlers/publicArtCrawler";
 import { SparqlImageArchiveCrawler } from "./src/crawlers/sparqlImageCrawler";
+import { crawlerConfigs as cc } from "./configs/crawlerConfigs";
 
 const duckDBService = new DuckDBService();
+
+const intermediateDbDir = pc.outputDirs.root + pc.outputDirs.intermediateDbs;
+const duckDbDir = intermediateDbDir + "/duckDb";
+const failureLogDir = `${pc.outputDirs.root}/crawl_failureLogs`;
+const directoriesToBeCreated: string[] = [pc.outputDirs.root, intermediateDbDir, duckDbDir, failureLogDir];
 
 async function manageDbProcess() {
     try {
@@ -30,12 +30,10 @@ async function runCrawlers() {
     console.log("starting");
     const sessionName = generateSessionName("crawler-run");
     // system initialization
-    checkFilePaths(getIngestFilePathsFromSources(cc));
-    createDirectory(pc.intermediateOutputDirectory);
-    createDirectory(pc.intermediateOutputDirectory + "/db");
-    createDirectory(`${pc.intermediateOutputDirectory}/failureLogs`);
 
-    await duckDBService.initDb({ dbLocation: `${pc.intermediateOutputDirectory}/db/${sessionName}.duckdb` });
+    directoriesToBeCreated.forEach((dir) => createDirectory(dir));
+
+    await duckDBService.initDb({ dbLocation: `${duckDbDir}/${sessionName}.duckdb` });
 
     const instantiatedCrawlers = {
         imageArchive: new cc.imageArchive.crawler(cc.imageArchive, duckDBService) as SparqlImageArchiveCrawler,
@@ -91,11 +89,13 @@ async function runCrawler(
         } catch (e) {
             if (!(e instanceof AbortError)) {
                 consecutiveFailures++;
+            } else {
+                statusBar.increment();
             }
 
             appendObjectToFile(
                 row,
-                `${pc.intermediateOutputDirectory}/failureLogs/${sessionName}_${instantiatedCrawler.crawlerConfig.outputTableName}-failed.json`
+                `${failureLogDir}/${sessionName}_${instantiatedCrawler.crawlerConfig.outputTableName}-failed.json`
             );
         }
 
@@ -120,9 +120,8 @@ async function runCrawler(
     await instantiatedCrawler.teardown();
     dbService.exportTable({
         tableName: instantiatedCrawler.crawlerConfig.outputTableName,
-        outputFile: `${pc.intermediateOutputDirectory}/${instantiatedCrawler.crawlerConfig.outputTableName}`,
+        outputFile: `${intermediateDbDir}/${instantiatedCrawler.crawlerConfig.outputTableName}`,
         columnDefenitions: instantiatedCrawler.crawlerConfig.outputColumns,
-        outputColumns: undefined,
         outputFormat: "parquet"
     });
 }

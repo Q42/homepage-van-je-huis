@@ -1,8 +1,9 @@
 import { TimelineEntry } from "../../../common/apiSchema/past";
-import { crawlerConfigs } from "../../pipelineConfig";
+import { crawlerConfigs } from "../../configs/crawlerConfigs";
+import { csvIngestSources } from "../../configs/csvSourceConfigs";
 import { DuckDBService } from "../lib/duckDBService";
 import { queries } from "../lib/queries/queries";
-import { ImageApiResponse } from "../lib/types";
+import { SparqlImage } from "../models/sparqlImages";
 
 function getDatePosition(date1?: Date, date2?: Date) {
     if (!date1 && !date2) {
@@ -25,14 +26,8 @@ function getDatePosition(date1?: Date, date2?: Date) {
     return averageYear;
 }
 
-export async function getArchivePhotosForBuilding(
-    duckDBService: DuckDBService,
-    pandId: string
-): Promise<TimelineEntry[]> {
-    const dbResults = (await duckDBService.runQuery(
-        queries.sqlSelectArchivePhotos({ photoTableName: crawlerConfigs.imageArchive.outputTableName, pandId: pandId })
-    )) as ImageApiResponse[];
-    return dbResults
+function mapImageRecord(images: SparqlImage[]): TimelineEntry[] {
+    return images
         .map((image) => {
             try {
                 const entry: TimelineEntry = {
@@ -45,11 +40,90 @@ export async function getArchivePhotosForBuilding(
                     position: getDatePosition(image.startDate, image.endDate),
                     type: "archiveImage"
                 };
-
                 return entry;
             } catch {
                 return;
             }
         })
         .filter((entry) => entry !== undefined) as TimelineEntry[];
+}
+
+export async function getArchivePhotosForBuilding(
+    duckDBService: DuckDBService,
+    pandId: string
+): Promise<TimelineEntry[]> {
+    const dbResults = (await duckDBService.runQuery(
+        queries.imageArchive.sqlSelectArchivePhotos({
+            photoTableName: crawlerConfigs.imageArchive.outputTableName,
+            pandId: pandId
+        })
+    )) as SparqlImage[];
+    return mapImageRecord(dbResults);
+}
+
+export async function getSurroundingsPhotos({
+    duckDBService,
+    addressId,
+    maxDistance,
+    limit,
+    excludeImages
+}: {
+    duckDBService: DuckDBService;
+    addressId: string;
+    maxDistance: number;
+    limit: number;
+    excludeImages?: string[];
+}): Promise<{ result: TimelineEntry[]; uncertainty: number }> {
+    let uncertainty = 1;
+
+    const dbResults = (await duckDBService.runQuery(
+        queries.imageArchive.sqlGetNeighboringImages({
+            addressTableName: csvIngestSources.adressen.outputTableName,
+            archiveImagesTableName: crawlerConfigs.imageArchive.outputTableName,
+            addressId: addressId,
+            maxDistance: maxDistance,
+            limit: limit,
+            excludeImages: excludeImages
+        })
+    )) as SparqlImage[];
+
+    excludeImages?.push(...dbResults.map((photo) => photo.imgUrl));
+    let remainingLimit = limit - dbResults.length;
+
+    if (remainingLimit > 0) {
+        const intermediate_results = (await duckDBService.runQuery(
+            queries.imageArchive.sqlStreetIdSearch({
+                addressTableName: csvIngestSources.adressen.outputTableName,
+                archiveImagesTableName: crawlerConfigs.imageArchive.outputTableName,
+                addressId: addressId,
+                limit: remainingLimit,
+                excludeImages: excludeImages
+            })
+        )) as SparqlImage[];
+
+        if (intermediate_results.length > 0) {
+            uncertainty = 2;
+            dbResults.push(...intermediate_results);
+            excludeImages?.push(...intermediate_results.map((photo) => photo.imgUrl));
+            remainingLimit = limit - dbResults.length;
+        }
+    }
+
+    if (remainingLimit > 0) {
+        const intermediate_results = (await duckDBService.runQuery(
+            queries.imageArchive.sqlAddressTitleSearch({
+                addressTableName: csvIngestSources.adressen.outputTableName,
+                archiveImagesTableName: crawlerConfigs.imageArchive.outputTableName,
+                addressId: addressId,
+                limit: remainingLimit,
+                excludeImages: excludeImages
+            })
+        )) as SparqlImage[];
+
+        if (intermediate_results.length > 0) {
+            uncertainty = 3;
+            dbResults.push(...intermediate_results);
+        }
+    }
+    return { result: mapImageRecord(dbResults), uncertainty };
 }

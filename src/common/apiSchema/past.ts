@@ -3,6 +3,7 @@ import { BaseDataEntity, ImageRef, BaseSliderEntry, BaseView } from "./shared";
 export interface PastData extends BaseView {
   timeline: TimelineEntry[]; // The timeline itself
   stories: Story[]; // The stories
+  timelineUncertainty?: number; // The accuracy of the timeline, the lower, the better
 }
 
 export interface TimelineEntry extends BaseSliderEntry {

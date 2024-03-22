@@ -7,27 +7,36 @@ import {
 } from "./src/utils/general";
 import { loadFileToParquet } from "./src/utils/db";
 import { DuckDBService } from "./src/lib/duckDBService";
-import { csvIngestSources, pipelineConfig as pc } from "./pipelineConfig";
+import { pipelineConfig as pc } from "./configs/pipelineConfig";
+import { csvIngestSources } from "./configs/csvSourceConfigs";
 
 const duckDBService = new DuckDBService();
+const intermediateDbDir = pc.outputDirs.root + pc.outputDirs.intermediateDbs;
+const duckDbDir = `${intermediateDbDir}/duckDb`;
+const directoriesToBeCreated: string[] = [pc.outputDirs.root, intermediateDbDir, duckDbDir];
 
 async function ingestFileSources() {
     const sessionName = generateSessionName("csv-ingest-run");
-    const dbDir = `${pc.intermediateOutputDirectory}/db`;
 
     console.log("starting");
     // system initialization
 
     checkFilePaths(getIngestFilePathsFromSources(csvIngestSources));
-    createDirectory(pc.intermediateOutputDirectory);
-    createDirectory(dbDir);
 
-    await duckDBService.initDb({ dbLocation: `${dbDir}/${sessionName}.duckdb` });
+    directoriesToBeCreated.forEach((dir) => createDirectory(dir));
+
+    await duckDBService.initDb({ dbLocation: `${duckDbDir}/${sessionName}.duckdb` });
 
     // create intermediary table files
     for (const source of Object.values(csvIngestSources)) {
         console.log(`Ingesting ${source.ingestSourcePath}`);
-        await loadFileToParquet(duckDBService, source, pc);
+        await loadFileToParquet({
+            dbService: duckDBService,
+            csvIngestSource: source,
+            pc: pc,
+            outputDir: intermediateDbDir,
+            dropTableAfterExport: true
+        });
     }
 }
 

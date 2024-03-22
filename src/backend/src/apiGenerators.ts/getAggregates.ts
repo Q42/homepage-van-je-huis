@@ -1,5 +1,5 @@
-import { DistanceViewAggregateEntry, DistanceViewEntry } from "../../../common/apiSchema/present";
-import { pipelineConfig } from "../../pipelineConfig";
+import { DistanceViewAggregateEntry } from "../../../common/apiSchema/present";
+import { pipelineConfig } from "../../configs/pipelineConfig";
 import { DuckDBService } from "../lib/duckDBService";
 import { queries } from "../lib/queries/queries";
 import { DBAddress } from "../models/adresses";
@@ -49,7 +49,7 @@ export async function getAggregates({
                     brtCode: address["ligtIn:GBD.BRT.code"]
                 })
             )
-        )[0]["treeSpecies"];
+        )[0]["treeSpecies"] as number | undefined;
 
         if (numberOfTreeSpecies) {
             const treeSpeciesBuurtEntry: DistanceViewAggregateEntry = {
@@ -57,10 +57,11 @@ export async function getAggregates({
                 title: "",
                 geoLevel: "buurt",
                 position: 0,
-                data: {}
+                data: {
+                    areaName: address["ligtIn:GBD.BRT.naam"],
+                    count: Number(numberOfTreeSpecies)
+                }
             };
-
-            treeSpeciesBuurtEntry.data[address["ligtIn:GBD.BRT.naam"]] = Number(numberOfTreeSpecies);
 
             aggregateEntries.push(treeSpeciesBuurtEntry);
         }
@@ -76,17 +77,18 @@ export async function getAggregates({
                     wijkCode: address["ligtIn:GBD.WIJK.code"]
                 })
             )
-        )[0]["trees"];
+        )[0]["trees"] as number | undefined;
         if (numberOfTrees) {
             const treesWijkEntry: DistanceViewAggregateEntry = {
                 type: "aggregate_trees",
                 title: "",
                 geoLevel: "wijk",
                 position: 0,
-                data: {}
+                data: {
+                    areaName: address["ligtIn:GBD.WIJK.naam"],
+                    count: Number(numberOfTrees)
+                }
             };
-
-            treesWijkEntry.data[address["ligtIn:GBD.WIJK.naam"]] = Number(numberOfTrees);
 
             aggregateEntries.push(treesWijkEntry);
         }
@@ -102,7 +104,7 @@ export async function getAggregates({
                     sdlCode: address["ligtIn:GBD.SDL.code"]
                 })
             )
-        )[0]["bees"];
+        )[0]["bees"] as bigint | undefined;
 
         if (numberOfBees) {
             const beesStadsdeelEntry: DistanceViewAggregateEntry = {
@@ -110,10 +112,11 @@ export async function getAggregates({
                 title: "",
                 geoLevel: "stadsdeel",
                 position: 0,
-                data: {}
+                data: {
+                    areaName: address["ligtIn:GBD.SDL.naam"],
+                    count: Number(numberOfBees)
+                }
             };
-
-            beesStadsdeelEntry.data[address["ligtIn:GBD.SDL.naam"]] = Number(numberOfBees);
 
             aggregateEntries.push(beesStadsdeelEntry);
         }

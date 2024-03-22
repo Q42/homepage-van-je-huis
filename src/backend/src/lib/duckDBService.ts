@@ -1,8 +1,9 @@
 import { Database } from "duckdb-async";
-import { BaseApiResponse, ColumnDefenitions, CrawlerConfig, CsvIngestSource, IntermediateOutputFormats } from "./types";
-import { parseValueForDbInsert } from "../utils/general";
-import { devMode, pipelineConfig as pc } from "../../pipelineConfig";
+import { pipelineConfig as pc } from "../../configs/pipelineConfig";
 import { getExportSelectQuery } from "../utils/db";
+import { parseValueForDbInsert } from "../utils/general";
+import { queries } from "./queries/queries";
+import { BaseApiResponse, ColumnDefenitions, CrawlerConfig, CsvIngestSource, IntermediateOutputFormats } from "./types";
 
 type DuckDBConfig = {
     dbLocation?: string;
@@ -47,18 +48,6 @@ export class DuckDBService {
         if (!this.db) {
             throw dbNotInitializedError;
         }
-        if (
-            devMode.enabled &&
-            querystring.toLowerCase().includes("select") &&
-            !querystring.toLowerCase().includes("limit") &&
-            !querystring.toLowerCase().includes("copy") &&
-            !querystring.toLowerCase().includes("distinct")
-        ) {
-            if (querystring.trim().endsWith(";")) {
-                querystring = querystring.trim().slice(0, -1);
-            }
-            querystring += ` LIMIT ${devMode.limit};`;
-        }
         return await this.db.all(querystring);
     }
     public async ingestCSV(source: CsvIngestSource) {
@@ -100,12 +89,16 @@ export class DuckDBService {
         return this.runQuery(`DROP TABLE ${tableName}`);
     }
 
-    public async loadIntermediateSource(source: CsvIngestSource | CrawlerConfig, tempTable?: boolean) {
+    public async loadIntermediateSource(
+        source: CsvIngestSource | CrawlerConfig,
+        intermediateDir: string,
+        tempTable?: boolean
+    ) {
         if (!this.db) {
             throw dbNotInitializedError;
         }
 
-        const parquetFile = `${pc.intermediateOutputDirectory}/${source.outputTableName}.parquet`;
+        const parquetFile = `${intermediateDir}/${source.outputTableName}.parquet`;
         console.log(`loading intermediate source: ${parquetFile} into table ${source.outputTableName}`);
 
         const querystring = `CREATE ${tempTable ? "TEMP " : ""}TABLE ${source.outputTableName} AS FROM read_parquet('${parquetFile}')`;
@@ -173,7 +166,7 @@ export class DuckDBService {
                 .join(",")})`;
         });
 
-        let querystring = `INSERT INTO ${tableName}(${columnNames.join(", ")}) VALUES ${valuesArray.join(", ")} `;
+        const querystring = `INSERT INTO ${tableName}(${columnNames.join(", ")}) VALUES ${valuesArray.join(", ")} `;
 
         return await this.runQuery(querystring);
     }
@@ -198,6 +191,8 @@ export class DuckDBService {
      * @param targetColumnName - The name of the target column.
      * @param sourceEpsg - The EPSG code of the source geometry format.
      * @param targetEpsg - The EPSG code of the target geometry format.
+     * @param invertedSourceLatLong - If the source geometry uses POINT(long lat) instead of the regular way of lat long.
+     *
      * @throws Error if the spatial extension is not enabled in the DuckDB instance.
      * @throws Error if the source column does not exist in the table.
      * @throws Error if the target column already exists in the table.
@@ -208,13 +203,15 @@ export class DuckDBService {
         sourceColumnName,
         targetColumnName,
         sourceEpsg,
-        targetEpsg
+        targetEpsg,
+        invertedSourceLatLong
     }: {
         tableName: string;
         sourceColumnName: string;
-        targetColumnName: string;
+        targetColumnName?: string;
         sourceEpsg: string;
         targetEpsg: string;
+        invertedSourceLatLong?: boolean;
     }) {
         if (!this.spatialEnabled) {
             throw new Error("This operation requires that the spatial extension is enabled in the DuckDB instance.");
@@ -224,15 +221,25 @@ export class DuckDBService {
             throw new Error(`The column ${sourceColumnName} does not exist in the table ${tableName}.`);
         }
 
-        if (await this.columnExists(tableName, targetColumnName)) {
-            throw new Error(`The column ${targetColumnName} already exists in the table ${tableName}.`);
+        if (
+            targetColumnName !== undefined &&
+            targetColumnName !== sourceColumnName &&
+            (await this.columnExists(tableName, targetColumnName))
+        ) {
+            throw new Error(
+                `The column ${targetColumnName} already exists in the table ${tableName}. This would result in a data overwrite.`
+            );
         }
 
         return await this.runQuery(
-            `
-        ALTER TABLE ${tableName} ADD COLUMN ${targetColumnName} GEOMETRY;    
-        UPDATE ${tableName} 
-        SET ${targetColumnName} = ST_Transform(${sourceColumnName}, '${sourceEpsg}', '${targetEpsg}');`
+            queries.sqlTransformGeometry({
+                tableName,
+                sourceColumnName,
+                targetColumnName,
+                sourceEpsg,
+                targetEpsg,
+                invertedSourceLatLong
+            })
         );
     }
 }

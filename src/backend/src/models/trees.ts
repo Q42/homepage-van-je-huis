@@ -1,4 +1,4 @@
-import { ColumnDefenitions, GeoString } from "../lib/types";
+import { ColumnDefenitions } from "../lib/types";
 import { amsterdamMapsGeoColumns } from "./amsterdamMapsGeo";
 
 export const treesInputColumns: ColumnDefenitions = {
