@@ -1,3 +1,4 @@
+import { pipelineConfig } from '../../backend/configs/pipelineConfig';
 import { BaseView, BaseDataEntity, BaseSliderEntry, ImageRef } from './shared';
 
 export type GeoLevel = 'straat' | 'buurt' | 'wijk' | 'stadsdeel';

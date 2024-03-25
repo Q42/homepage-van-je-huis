@@ -1,5 +1,4 @@
-import { CrawlerConfig } from "../lib/types";
-import { BaseApiResponse } from "../lib/types";
+import { CrawlerConfig , BaseApiResponse } from "../lib/types";
 
 export abstract class AbstractCrawler<T extends BaseApiResponse, Y> {
     crawlerConfig: CrawlerConfig;
@@ -12,7 +11,7 @@ export abstract class AbstractCrawler<T extends BaseApiResponse, Y> {
 
     public abstract crawl(guideRecord: Y): Promise<T[]>;
 
-    public abstract finalize(): Promise<void>;
+    public abstract finalize(): Promise<void>; // include any post-processsing or post-crawl cleanup actions here
 
     public abstract teardown(): Promise<void>;
 }

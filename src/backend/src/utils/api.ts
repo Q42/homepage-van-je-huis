@@ -17,8 +17,8 @@ export function assembleApiRecord(
             houseNumberSuffix: baseAddress.huisletterHoofdadres,
             houseNumberSuffix2: baseAddress.huisnummertoevoegingHoofdadres
         },
-        presentData,
-        pastData
+        pastData,
+        presentData
     };
 }
 

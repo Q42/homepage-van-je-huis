@@ -23,12 +23,12 @@ type BaseCrawlerConfig = {
     outputColumns: ColumnDefenitions;
 };
 
-export interface CrawlerConfig extends BaseCrawlerConfig {
+export type CrawlerConfig = {
     crawler: AnyApiCrawler;
     guideSource?: CsvIngestSource;
     skip?: boolean;
     retryConfig: PRetryOptions;
-}
+} & BaseCrawlerConfig
 
 export type ApiCrawlerConfigs = {
     [key: string]: CrawlerConfig;
@@ -62,22 +62,8 @@ export type IntermediateOutputFormats = "json" | "parquet";
 
 export type BaseApiResponse = Record<string, any>;
 
-export interface EnrichedDBAddress extends DBAddress {
+export type EnrichedDBAddress = {
     straatnaamBeschrijving: string;
-}
+} & DBAddress
 
 export type SparqlBatch = { offset: number; limit: number };
-
-export type ImageApiResponse = {
-    archiveUrl?: string;
-    title: string;
-    imgUrl: string;
-    pandId?: string;
-    addressLink?: string;
-    geoLink?: string;
-    streetLink?: string;
-    streetName?: string;
-    dateString: string;
-    startDate: Date;
-    endDate: Date;
-};
