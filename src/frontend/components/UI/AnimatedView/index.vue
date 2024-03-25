@@ -9,6 +9,7 @@
         :id="getAnimatedElementId(index)"
         :key="index"
         class="entry-wrapper item"
+        :class="{ animating: animationIsSetting }"
         @click="() => setView(elementIds[index])"
       >
         <div class="card-wrapper">
@@ -62,16 +63,20 @@ const addressStore = useAddressStore()
 const mountedStore = useMountStore()
 const elementIds = computed(() => generateIds(props.entries))
 
+const animationIsSetting = ref(false)
+
 const addressInfo = computed(() => {
   const address = addressStore.addressData?.address
   return address ? address.streetName + ' ' + address.houseNumber : ''
 })
 
 const setAnimation = async () => {
+  animationIsSetting.value = true
   ScrollTrigger.killAll()
 
-  // // wait for the next tick to ensure the DOM is updated
-  await nextTick()
+  // to avoid flickering we need to wait till all elements are rendered
+  // TODO: make this event based?
+  await new Promise((resolve) => setTimeout(resolve, 2000))
 
   const scrollTriggers = document.querySelectorAll('.trigger-item')
 
@@ -113,6 +118,8 @@ const setAnimation = async () => {
         '-=1',
       )
   })
+
+  animationIsSetting.value = false
 }
 
 onMounted(() => {
@@ -120,9 +127,9 @@ onMounted(() => {
 
   if (!mountedStore.animatedViewHasBeenMounted) {
     setTimeout(() => {
-      window.scrollTo({ top: 150, behavior: 'smooth' })
+      window.scrollTo({ top: 500, behavior: 'smooth' })
       mountedStore.animatedViewHasBeenMounted = true
-    }, 1000)
+    }, 2000)
   }
 })
 
@@ -163,6 +170,7 @@ watch(() => props.entries, setAnimation)
 .item {
   position: fixed;
 }
+
 .trigger-item {
   width: 300px;
   height: 900px;
@@ -177,6 +185,10 @@ watch(() => props.entries, setAnimation)
   opacity: 0.3; // debug value
   background: lightblue; // debug value
   border-top: black 3px solid; // debug value
+}
+
+.animating {
+  opacity: 0;
 }
 
 .header {

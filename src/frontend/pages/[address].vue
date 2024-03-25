@@ -146,7 +146,7 @@ onMounted(async () => {
 
 const setDataSet = (value: 'past' | 'present') => {
   pastOrPresent.value = value
-  window.scrollTo({ top: 0, behavior: 'smooth' })
+  window.scrollTo({ top: 0, behavior: 'instant' })
   router.push({ query: { view: value } })
 }
 
