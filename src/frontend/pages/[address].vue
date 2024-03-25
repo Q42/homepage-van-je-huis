@@ -92,6 +92,11 @@ defineI18nRoute({
 
 const { params, query } = useRoute()
 
+const pastHasData = computed(() => store.pastData?.timeline.length)
+const presentHasData = computed(() =>
+  store.presentData?.slider.some((entry) => entry.image),
+)
+
 const getViewFromQuery = () => {
   if (query.view === 'past' || query.view === 'present') {
     if (!pastHasData.value) {
@@ -116,13 +121,8 @@ const getCurrentModeFromQuery = () => {
   }
 }
 
-const pastHasData = computed(() => store.pastData?.timeline.length)
-const presentHasData = computed(() =>
-  store.presentData?.slider.some((entry) => entry.image),
-)
-
 const store = useAddressStore()
-const pastOrPresent: Ref<'present' | 'past'> = ref(getViewFromQuery())
+const pastOrPresent: Ref<'present' | 'past'> = ref('past')
 const currentView: Ref<'animated' | 'list'> = ref(getCurrentModeFromQuery())
 const router = useRouter()
 
@@ -137,9 +137,10 @@ const setView = async (elementId: string) => {
   })
 }
 
-onMounted(() => {
+onMounted(async () => {
   if (!store.pastData || !store.presentData) {
-    store.fetchAddressData(params.address as string)
+    await store.fetchAddressData(params.address as string)
+    pastOrPresent.value = getViewFromQuery()
   }
 })
 
