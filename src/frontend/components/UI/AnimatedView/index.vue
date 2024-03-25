@@ -40,7 +40,6 @@
 
 <script setup lang="ts">
 import gsap from 'gsap'
-import debounce from 'lodash.debounce'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { DistanceViewAggregateEntry } from '../../../../common/apiSchema/present'
 import { Entries, AggregateType, EntryWithImage } from '@/models/Entries'
@@ -167,11 +166,6 @@ const setAnimation = async () => {
   loading.value = false
 }
 
-// const handleResize = debounce(() => {
-//   setAnimation()
-//   window.scrollTo(0, 0)
-// }, 50)
-
 onMounted(() => {
   setAnimation()
 
@@ -181,12 +175,6 @@ onMounted(() => {
       mountedStore.animatedViewHasBeenMounted = true
     }, 1000)
   }
-
-  // window.addEventListener('resize', handleResize)
-})
-
-onUnmounted(() => {
-  // window.removeEventListener('resize', handleResize)
 })
 
 watch(() => props.entries, setAnimation)
