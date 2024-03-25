@@ -6,8 +6,8 @@
       </SharedTypography>
       <button
         v-for="(entry, index) in entries"
+        :id="getAnimatedElementId(index)"
         :key="index"
-        :style="getStartPosition(entryIsAggregate(entry))"
         class="entry-wrapper item"
         @click="() => setView(elementIds[index])"
       >
@@ -15,7 +15,6 @@
           <SharedAggregateCard
             v-if="entryIsAggregate(entry)"
             :type="entry.type as AggregateType"
-            class="aggregate-card"
             :count="(entry as DistanceViewAggregateEntry).data.count"
           />
         </div>
@@ -42,6 +41,11 @@
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { DistanceViewAggregateEntry } from '../../../../common/apiSchema/present'
+import {
+  getTranslateFromPosition,
+  getTranslateToPosition,
+  getAnimatedElementId,
+} from './animation-service'
 import { Entries, AggregateType, EntryWithImage } from '@/models/Entries'
 import { generateIds } from '@/utils/entries'
 import { useAddressStore } from '@/store/addressStore'
@@ -54,47 +58,19 @@ export interface AnimatedViewProps {
 
 const props = defineProps<AnimatedViewProps>()
 
-const addresStore = useAddressStore()
+const addressStore = useAddressStore()
 const mountedStore = useMountStore()
 const elementIds = computed(() => generateIds(props.entries))
-const loading = ref(true)
-
-let index = 0
 
 const addressInfo = computed(() => {
-  const address = addresStore.addressData?.address
+  const address = addressStore.addressData?.address
   return address ? address.streetName + ' ' + address.houseNumber : ''
 })
-
-const getPosition = (index: number) => {
-  // the order of the positions is the order in which the items will be entering the screen
-  const positions = ['left', 'top', 'right', 'bottom'] as const
-  const positionIndex = index % 4
-  return positions[positionIndex] as (typeof positions)[number]
-}
-
-const getStartPosition = (isAggregateCard: boolean) => {
-  const percentage = isAggregateCard ? 150 : 100
-  const right = isAggregateCard ? 'calc(100vw + 50%)' : '100vw'
-  const top = isAggregateCard ? 'calc(100vh + 50%)' : '100vh'
-  const startPositions = {
-    left: `transform: translate3d(-${percentage}%, ${Math.floor(Math.random() * 100)}vh, 0);`,
-    right: `transform: translate3d(${right}, ${Math.floor(Math.random() * 100)}vh, 0);`,
-    top: `transform: translate3d(${Math.floor(Math.random() * 100)}px, calc(-${percentage}% - 3px), 0);`,
-    bottom: `transform: translate3d(${Math.floor(Math.random() * 100)}px, ${top}, 0);`,
-  }
-
-  const returnValue = startPositions[getPosition(index)]
-
-  index = index === 3 ? 0 : index + 1
-  return returnValue
-}
 
 const setAnimation = async () => {
   ScrollTrigger.killAll()
 
-  loading.value = true
-  // wait for the next tick to ensure the DOM is updated
+  // // wait for the next tick to ensure the DOM is updated
   await nextTick()
 
   const scrollTriggers = document.querySelectorAll('.trigger-item')
@@ -102,68 +78,41 @@ const setAnimation = async () => {
   const items = gsap.utils.toArray('.item')
 
   items.forEach((item, index) => {
-    const getStartPos = () => {
-      if (index === 0) {
-        return 'top'
-      }
-      if (index > 0) {
-        return `-${index < 4 ? index - 1 : 3}${Math.floor(Math.random() * 20) + 50}%`
-      }
-    }
-
     const tl = gsap.timeline({
       scrollTrigger: {
         trigger: scrollTriggers[index],
         scrub: 1,
-        start: `${getStartPos()} top`,
+        start: `top top`,
       },
     })
 
-    const offset = isTablet(window.innerWidth) ? 50 : 200
-
-    const getYOffset = () => {
-      const position = getPosition(index)
-      if (position === 'top') {
-        return offset
-      } else if (position === 'bottom') {
-        return -offset
-      } else {
-        return 0
-      }
-    }
-
-    const getXOffset = () => {
-      const position = getPosition(index)
-      if (position === 'left') {
-        return offset
-      } else if (position === 'right') {
-        return -offset
-      } else {
-        return 0
-      }
-    }
-
-    const screenWidth = window.innerWidth
-    const screenHeight = window.innerHeight
-
-    const translateValue = `translate3d(calc(-50% + ${screenWidth / 2 - getXOffset()}px), calc(-50% + ${screenHeight / 2 - getYOffset()}px), 0)`
-
-    tl.to(item as HTMLElement, {
-      transform: `${translateValue} scale3d(1, 1, 1)`,
-      duration: 2,
-    })
+    tl.fromTo(
+      item as HTMLElement,
+      {
+        transform: `${getTranslateFromPosition(index)} scale3d(1, 1, 1)`,
+      },
+      {
+        transform: `${getTranslateToPosition(index)} scale3d(1, 1, 1)`,
+        duration: 3,
+      },
+    )
       .to(
         item as HTMLElement,
         {
-          transform: `${translateValue} scale3d(0.2, 0.2, 1)`,
-          duration: 2,
+          transform: `${getTranslateToPosition(index)} scale3d(0.4, 0.4, 1)`,
+          duration: 3,
         },
-        '-=2',
+        '-=3',
       )
-      .to(item as HTMLElement, { opacity: 0, duration: 2 }, '-=1')
+      .to(
+        item as HTMLElement,
+        {
+          opacity: 0,
+          duration: 1,
+        },
+        '-=1',
+      )
   })
-  await nextTick()
-  loading.value = false
 }
 
 onMounted(() => {
@@ -187,10 +136,6 @@ watch(() => props.entries, setAnimation)
   width: 100%;
   top: 0;
   left: 0;
-}
-
-.aggregate-card {
-  transform: scale3d(2, 2, 1);
 }
 
 .image {
@@ -229,9 +174,9 @@ watch(() => props.entries, setAnimation)
   justify-content: center;
   opacity: 0;
 
-  // opacity: 0.3; // debug value
-  // background: lightblue; // debug value
-  // border-top: black 1px solid; // debug value
+  opacity: 0.3; // debug value
+  background: lightblue; // debug value
+  border-top: black 3px solid; // debug value
 }
 
 .header {

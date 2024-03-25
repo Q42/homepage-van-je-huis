@@ -1,9 +1,36 @@
-type Position = { pos: 'left' | 'right' | 'top' | 'bottom'; offset: number }
+type StartPosition = {
+  pos: 'left' | 'right' | 'top' | 'bottom'
+  offsetInPercentage: number
+}
+type EndPosition = {
+  pos: 'left' | 'right' | 'top' | 'bottom'
+  offsetInPx: number
+}
 
-type AnimationPosition = { start: Position; end: Position }
+type AnimationPosition = { start: StartPosition; end: EndPosition }
 
+// In start the offset is in percentages, in end the offset is in pixels
 const animationPositions: AnimationPosition[] = [
-  { start: { pos: 'left', offset: 10 }, end: { pos: 'left', offset: 0 } },
+  {
+    // 1
+    start: { pos: 'top', offsetInPercentage: 50 },
+    end: { pos: 'top', offsetInPx: 100 },
+  },
+  {
+    // 2
+    start: { pos: 'right', offsetInPercentage: 50 },
+    end: { pos: 'right', offsetInPx: 300 },
+  },
+  {
+    // 3
+    start: { pos: 'bottom', offsetInPercentage: 50 },
+    end: { pos: 'bottom', offsetInPx: 100 },
+  },
+  {
+    // 4
+    start: { pos: 'left', offsetInPercentage: 50 },
+    end: { pos: 'left', offsetInPx: 100 },
+  },
 ]
 
 const calculatePositionIndex = (index: number) => {
@@ -32,12 +59,12 @@ export const getTranslateFromPosition = (index: number) => {
     input.pos === 'left'
       ? (x = -elementWidth)
       : (x = windowWidth + elementWidth)
-    y = (windowHeight / 100) * input.offset
+    y = (windowHeight / 100) * input.offsetInPercentage - elementHeight / 2
   } else if (input.pos === 'top' || input.pos === 'bottom') {
     input.pos === 'top'
       ? (y = -elementHeight)
       : (y = windowHeight + elementHeight)
-    x = (windowWidth / 100) * input.offset
+    x = (windowWidth / 100) * input.offsetInPercentage - elementWidth / 2
   }
 
   return `translate(${x}px, ${y}px)`
@@ -58,10 +85,9 @@ export const getTranslateToPosition = (index: number) => {
   let y = 0
 
   if (input.pos === 'left' || input.pos === 'right') {
-    input.pos === 'left' ? (x = -input.offset) : (x = input.offset)
-    y = (windowHeight / 100) * input.offset
+    input.pos === 'left' ? (x = -input.offsetInPx) : (x = input.offsetInPx)
   } else if (input.pos === 'top' || input.pos === 'bottom') {
-    input.pos === 'top' ? (y = -input.offset) : (y = input.offset)
+    input.pos === 'top' ? (y = -input.offsetInPx) : (y = input.offsetInPx)
   }
 
   return `translate(${windowWidth / 2 - elementWidth / 2 + x}px, ${windowHeight / 2 - elementHeight / 2 + y}px)`
