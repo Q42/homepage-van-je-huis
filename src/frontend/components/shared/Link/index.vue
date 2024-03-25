@@ -15,7 +15,7 @@ export interface LinkProps {
   hideIcon?: boolean
 }
 
-const props = defineProps<LinkProps>()
+defineProps<LinkProps>()
 </script>
 
 <style lang="less" scoped>
@@ -33,7 +33,7 @@ const props = defineProps<LinkProps>()
     content: '';
     top: 100%;
     height: 1px;
-    background-color: @primary-black;
+    background-color: currentColor;
     position: absolute;
     display: block;
     width: 100%;

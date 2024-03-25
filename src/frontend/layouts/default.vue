@@ -1,21 +1,21 @@
 <template>
   <div class="page-wrapper">
-    <UIHeader />
+    <UIHeader :hide-title="path === '/nl'" />
     <main class="container">
       <slot />
     </main>
   </div>
 </template>
 
-<script lang="ts" setup></script>
+<script lang="ts" setup>
+const route = useRoute()
+
+const path = computed(() => route.path)
+</script>
 
 <style lang="less" scoped>
-.page-wrapper {
-  position: relative;
-  min-height: 100vh;
-}
-
 .container {
+  margin-top: @header-height;
   padding: 0 20px;
 }
 </style>

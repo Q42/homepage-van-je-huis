@@ -3,6 +3,8 @@ import './main.less'
 import { createI18n } from 'vue-i18n'
 import { translations } from '../translations'
 import { setup } from '@storybook/vue3'
+import { createPinia } from 'pinia'
+import { slugifyStreetName } from '../utils/slugifyAdress'
 
 const i18n = createI18n({
   allowComposition: true,
@@ -12,8 +14,11 @@ const i18n = createI18n({
   availableLocales: Object.keys(translations),
 })
 
+const pinia = createPinia()
+
 setup((app) => {
   app.use(i18n)
+  app.use(pinia)
 })
 
 /** @type { import('@storybook/vue3').Preview } */

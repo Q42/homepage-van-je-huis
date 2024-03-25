@@ -8,25 +8,31 @@
         $t(getTranslationKey('home.subtitle'))
       }}</SharedTypography>
     </div>
-    <div v-if="hasError" class="error">
-      {{ $t(getTranslationKey(error as TranslationKey)) }}
-    </div>
+
     <form class="form" @submit.prevent="handleSubmit">
       <SharedInput
         v-model:value="street"
-        input-id="street-input"
-        :disabled="!Boolean(streets)"
+        :disabled="!Boolean(streets) || inputsAreDisabled"
         class="street-input"
+        :class="{ 'input-error': hasError }"
         :placeholder="$t(getTranslationKey('home.streetInputPlaceHolder'))"
       />
       <SharedInput
         v-model:value="houseNumber"
-        input-id="house-number-input"
-        :disabled="!Boolean(houseNumbers)"
+        :input-id="referenceIds.houseNumberInput"
+        :disabled="!Boolean(houseNumbers) || inputsAreDisabled"
         class="house-number-input"
+        :class="{ 'input-error': hasError }"
         :placeholder="$t(getTranslationKey('home.houseNumberInputPlaceHolder'))"
-        icon="search"
       />
+      <button
+        :aria-label="$t(getTranslationKey('home.ariaSearchButton'))"
+        type="submit"
+        class="icon-btn"
+      >
+        <SharedIcon :height="24" :width="24" type="search" />
+      </button>
+
       <TransitionFade>
         <ul v-if="streetAutocompleteIsOpen" class="autocomplete-panel">
           <li
@@ -74,19 +80,20 @@
         </ul>
       </TransitionFade>
     </form>
+    <div v-if="hasError" class="error">
+      {{ $t(getTranslationKey(error as TranslationKey)) }}
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import { referenceIds } from '@/config/referenceIds'
 import { getTranslationKey, TranslationKey } from '@/translations'
-export interface SearchBlockProps {
-  // TODO
-}
-
-const props = defineProps<SearchBlockProps>()
+import { useAddressStore } from '@/store/addressStore'
 
 const router = useRouter()
 const { locale } = useI18n()
+const { fetchAddressData } = useAddressStore()
 
 const streetItems = ref<HTMLButtonElement[] | null>(null)
 const houseNumberItems = ref<HTMLButtonElement[] | null>(null)
@@ -95,6 +102,7 @@ const houseNumber = ref('')
 const error: Ref<TranslationKey | null> = ref(null)
 const hasError = computed(() => Boolean(error.value))
 const houseNumberIsSelected = ref(false)
+const inputsAreDisabled = ref(true)
 
 const focussedStreetIndex: Ref<number | null> = ref(null)
 const focussedHouseNumberIndex: Ref<number | null> = ref(null)
@@ -146,20 +154,29 @@ const selectStreet = (selectedStreet: string) => {
 const selectHouseNumber = (selectedHouseNumber: string) => {
   error.value = null
   houseNumber.value = selectedHouseNumber
-  const houseNumberInput = document.getElementById('house-number-input')
+  const houseNumberInput = document.getElementById(
+    referenceIds.houseNumberInput,
+  )
   if (houseNumberInput) {
     houseNumberInput.focus()
   }
   houseNumberIsSelected.value = true
 }
 
-const handleSubmit = () => {
+const handleSubmit = async () => {
   if (!street.value || !houseNumber.value) {
     error.value = getTranslationKey('search.invalideAddress')
     return
   }
 
-  router.push(
+  try {
+    await fetchAddressData(slugifyAddress(street.value, houseNumber.value))
+  } catch (e) {
+    error.value = getTranslationKey('search.addressNotFound')
+    return
+  }
+
+  await router.push(
     '/' + locale.value + '/' + slugifyAddress(street.value, houseNumber.value),
   )
 }
@@ -193,7 +210,9 @@ const handleHouseNumberInputInteraction = () => {
 }
 
 onMounted(() => {
-  const houseNumberInput = document.getElementById('house-number-input')
+  const houseNumberInput = document.getElementById(
+    referenceIds.houseNumberInput,
+  )
 
   if (houseNumberInput) {
     houseNumberInput.addEventListener(
@@ -207,10 +226,16 @@ onMounted(() => {
   }
 
   window.addEventListener('keydown', handleKeyDown)
+
+  setTimeout(() => {
+    inputsAreDisabled.value = false
+  }, 1000)
 })
 
 onUnmounted(() => {
-  const houseNumberInput = document.getElementById('house-number-input')
+  const houseNumberInput = document.getElementById(
+    referenceIds.houseNumberInput,
+  )
 
   if (houseNumberInput) {
     houseNumberInput.removeEventListener(
@@ -228,43 +253,56 @@ onUnmounted(() => {
 
 <style lang="less" scoped>
 .search-block {
-  height: 100%;
-  margin: auto;
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
-  width: fit-content;
+  width: 90%;
   justify-content: center;
-  margin-top: calc(50vh - @header-height);
-  transform: translateY(-50%);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  @media @mq-from-tablet {
+    width: fit-content;
+  }
+}
+
+.input-error {
+  border-color: @primary-red;
+}
+
+.error {
+  color: @primary-red;
 }
 
 .street-input {
-  flex: 100;
+  width: 60%;
+
+  @media @mq-from-tablet {
+    width: 70%;
+  }
 }
 
 .house-number-input {
-  flex: 2;
+  width: 40%;
+
+  @media @mq-from-tablet {
+    width: 30%;
+  }
 }
 
 .form {
   position: relative;
   display: flex;
   gap: 5px;
-}
-// TODO: temp styles, not designed
-.error {
-  padding: 10px 20px;
-  background: lighten(@primary-red, 50%);
-  border-radius: 5px;
-  color: @primary-black;
-  border: 2px solid @primary-red;
+  margin-bottom: 0.5rem;
 }
 
+// TODO: temp styles, not designed
 .autocomplete-panel {
   background: @primary-white;
   position: absolute;
-  max-height: 300px;
+  max-height: 140px;
   width: 100%;
   top: 100%;
   box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
@@ -272,6 +310,10 @@ onUnmounted(() => {
   overflow-y: auto;
   border: solid 1px @neutral-grey1;
   z-index: 1;
+
+  @media @mq-from-tablet {
+    max-height: 300px;
+  }
 }
 
 .autocomplete-panel button {
@@ -300,5 +342,17 @@ onUnmounted(() => {
   display: flex;
   flex-direction: column;
   align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.icon-btn {
+  all: unset;
+  padding: 0.5rem 0;
+  cursor: pointer;
+  width: 24px;
+
+  &:focus-visible {
+    outline: 1px solid @neutral-grey2;
+  }
 }
 </style>

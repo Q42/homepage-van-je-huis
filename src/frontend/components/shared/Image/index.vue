@@ -23,5 +23,6 @@ const props = defineProps<ImageProps>()
   width: v-bind(imageWidth);
   position: relative;
   overflow: hidden;
+  object-fit: cover;
 }
 </style>

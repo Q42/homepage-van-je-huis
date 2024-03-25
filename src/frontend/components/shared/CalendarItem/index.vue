@@ -1,12 +1,19 @@
 <template>
   <div class="calendar-item-card">
-    <SharedImage v-if="calendarItem.image" :image="calendarItem.image" />
+    <!-- <SharedImage v-if="calendarItem.image" :image="calendarItem.image" /> -->
+    <SharedImage
+      class="image"
+      :image="{
+        url: `/startanimation/${Math.floor(Math.random() * 10) + 1}.jpg`,
+      }"
+    />
     <div class="calendar-item-card__content">
       <SharedTypography variant="h5">{{ calendarItem.title }}</SharedTypography>
-      <SharedTypography variant="body" :compact="true">
+      <SharedTypography class="text-with-icon" variant="body" :compact="true">
         <span class="icon">
-          <SharedIcon :height="16" :width="16" type="calendar" />{{ date }}
+          <SharedIcon :height="16" :width="16" type="calendar" />
         </span>
+        {{ date }}
       </SharedTypography>
     </div>
   </div>
@@ -37,6 +44,18 @@ const props = defineProps<CalendarItemProps>()
 
 <style lang="less" scoped>
 .icon {
-  margin-right: 5px;
+  display: inline-flex;
+  align-items: center;
+  height: 100%;
+  transform: translateY(-1px); // The icon looks to far down otherwise
+}
+.text-with-icon {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.image {
+  aspect-ratio: 3 / 2;
 }
 </style>

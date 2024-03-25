@@ -1,11 +1,29 @@
 <template>
   <div v-if="entries" class="entry-list">
-    <div v-for="(entry, index) in entries" :key="index" class="entry-wrapper">
+    <SharedIconButton
+      v-if="!isOnTablet"
+      class="close-button"
+      icon="close"
+      @click="
+        () => {
+          // Prevents that the views scrolls to top offset
+          mountedStore.animatedViewHasBeenMounted = true
+          setView(getClosestElementToTop())
+        }
+      "
+    />
+    <div
+      v-for="(entry, index) in entries"
+      :id="elementIds[index]"
+      :key="index"
+      class="entry-wrapper"
+    >
       <div class="card-wrapper">
         <SharedAggregateCard
-          v-if="entryIsAggregate(entry)"
+          v-if="entryIsAggregate(entry) && isOnTablet"
           :type="entry.type as AggregateType"
-          :count="getAggregateCount(entry as DistanceViewAggregateEntry)"
+          class="aggregate-card"
+          :count="(entry as DistanceViewAggregateEntry).data.count"
         />
       </div>
       <SharedImage
@@ -27,44 +45,62 @@
 </template>
 
 <script setup lang="ts">
-import {
-  DistanceViewEntry,
-  DistanceViewAggregateEntry,
-} from '../../../../common/apiSchema/present'
-import { TimelineEntry } from '../../../../common/apiSchema/past'
-
+import { DistanceViewAggregateEntry } from '../../../../common/apiSchema/present'
 import { getTranslationKey } from '@/translations'
+import { Entries, AggregateType, EntryWithImage } from '@/models/Entries'
+import { useMountStore } from '~/store/mountStore'
 
-type EntryWithImage = DistanceViewEntry | TimelineEntry
-type AggregateType =
-  | 'aggregate_trees'
-  | 'aggregate_tree_species'
-  | 'aggregate_bees'
+const mountedStore = useMountStore()
 
 export interface ListViewProps {
-  entries:
-    | (DistanceViewEntry | DistanceViewAggregateEntry | TimelineEntry)[]
-    | undefined
+  entries: Entries
+  setView: (id: string) => void
 }
 
+const innerWidth = useScreenWidth()
+const isOnTablet = computed(() => isTablet(innerWidth.value))
+
+const getClosestElementToTop = () => {
+  const elements = document.getElementsByClassName('entry-wrapper')
+  let closestElement = elements[0]
+  let closestDistance = Math.abs(elements[0].getBoundingClientRect().top)
+
+  for (let i = 1; i < elements.length; i++) {
+    const distance = Math.abs(elements[i].getBoundingClientRect().top)
+
+    if (distance < closestDistance && !(distance < 0)) {
+      closestElement = elements[i]
+      closestDistance = distance
+    }
+  }
+
+  const index = Array.from(elements).indexOf(closestElement)
+
+  return elements[index === 0 ? index : index - 1].id
+}
+
+const elementIds = computed(() => generateIds(props.entries))
 const props = defineProps<ListViewProps>()
-
-const entryIsAggregate = (
-  entry: DistanceViewEntry | DistanceViewAggregateEntry | TimelineEntry,
-) => {
-  return (
-    entry.type === 'aggregate_trees' ||
-    entry.type === 'aggregate_tree_species' ||
-    entry.type === 'aggregate_bees'
-  )
-}
-
-const getAggregateCount = (entry: DistanceViewAggregateEntry) => {
-  return entry.data[Object.keys(entry.data)[0]]
-}
 </script>
 
 <style lang="less" scoped>
+.close-button {
+  position: fixed;
+  top: 30px;
+  right: 35px;
+  z-index: 1;
+
+  @media @mq-from-desktop-md {
+    top: 120px;
+    right: unset;
+    transform: translateX(calc(678px / 2 + 35px));
+  }
+}
+
+.entry-wrapper {
+  width: 100%;
+}
+
 .entry-list {
   width: 100%;
   height: 100%;
@@ -73,16 +109,20 @@ const getAggregateCount = (entry: DistanceViewAggregateEntry) => {
   gap: 1.5rem;
   align-items: center;
   padding-bottom: 1.5rem;
-}
-
-.entry-wrapper {
-  width: 615px;
+  position: relative;
+  width: 678px;
   max-width: 75%;
+  margin: 0 auto;
 }
 
 .card-wrapper {
   width: 100%;
   display: flex;
   justify-content: center;
+}
+
+.aggregate-card {
+  max-width: 100%;
+  padding: 20px 5px;
 }
 </style>

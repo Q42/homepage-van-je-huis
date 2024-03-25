@@ -3,7 +3,9 @@
     <SharedImage v-if="story.image" :image="story.image" />
     <div class="storycard__content">
       <SharedTypography variant="h5">{{ story.title }}</SharedTypography>
-      <SharedTypography variant="body">{{ story.contents }}</SharedTypography>
+      <SharedTypography variant="body" :compact="true">{{
+        story.contents
+      }}</SharedTypography>
     </div>
     <SharedLink
       v-if="story.visitUrl"
@@ -26,7 +28,7 @@ export interface StoryProps {
   }
 }
 
-const props = defineProps<StoryProps>()
+defineProps<StoryProps>()
 </script>
 
 <style lang="less" scoped>
@@ -36,5 +38,10 @@ const props = defineProps<StoryProps>()
   display: flex;
   flex-direction: column;
   gap: 1rem;
+}
+.storycard__content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
 }
 </style>

@@ -6,9 +6,9 @@
       'side-panel--open': panelIsOpen,
     }"
   >
-    <!-- TODO: add aria label -->
     <button
       v-if="!panelIsOpen"
+      :aria-label="$t(getTranslationKey('sidePanel.ariaOpenPanel'))"
       class="side-panel__label"
       @mouseenter="handleMousEnter"
       @mouseleave="handleMouseLeave"
@@ -24,11 +24,16 @@
       </SharedTypography>
     </button>
     <div class="header">
-      <SharedTypography variant="h3">{{ label }}</SharedTypography>
-      <!-- TODO: add aria label -->
-      <button class="close-btn" @click="closePanel">
-        <SharedIcon :width="24" :height="24" type="close" />
-      </button>
+      <SharedTypography v-if="panelIsOpen" variant="h3">{{
+        label
+      }}</SharedTypography>
+      <SharedIconButton
+        v-if="panelIsOpen"
+        :aria-label="$t(getTranslationKey('sidePanel.ariaClosePanel'))"
+        class="close-btn"
+        icon="close"
+        @click="closePanel"
+      />
     </div>
     <div
       class="content-wrapper"
@@ -43,6 +48,7 @@
 
 <script setup lang="ts">
 import { IconType } from '@/models/Icon'
+import { getTranslationKey } from '~/translations'
 
 export interface SidePanelProps {
   label: string
@@ -53,7 +59,7 @@ const panelIsOpen = ref(false)
 
 let timeout: NodeJS.Timeout | null = null
 
-const props = defineProps<SidePanelProps>()
+defineProps<SidePanelProps>()
 
 const openPanel = () => {
   toggleIsHovered.value = false
@@ -86,12 +92,17 @@ const handleMouseLeave = () => {
   top: 0;
   right: 0;
   height: 100vh;
-  width: 500px;
-  z-index: 1;
+  width: 100%;
+  z-index: 2;
   background: @primary-black;
-  transform: translateX(90%);
+  transform: translateX(100%);
   transition: transform 0.3s;
   color: @primary-white;
+
+  @media @mq-from-desktop-md {
+    transform: translateX(80%);
+    width: 500px;
+  }
 }
 
 .close-btn {
@@ -105,7 +116,7 @@ const handleMouseLeave = () => {
 .header {
   height: @header-height;
   position: fixed;
-  padding: 40px;
+  padding: 20px;
   width: 100%;
   top: 0;
   left: 0;
@@ -113,12 +124,15 @@ const handleMouseLeave = () => {
   justify-content: space-between;
   align-items: center;
   gap: 1rem;
-  z-index: 1;
   background: @primary-black;
+
+  @media @mq-from-desktop-md {
+    padding: 40px;
+  }
 }
 
 .side-panel--hover {
-  transform: translateX(80%);
+  transform: translateX(70%);
 }
 
 .side-panel--open {
@@ -136,9 +150,14 @@ const handleMouseLeave = () => {
   color: @primary-white;
   padding-inline: 20px;
   background: @primary-black;
-  transform: translate(calc(-100% + 1px), 12px);
+  transform: translate(calc(-100% + 48px + 1px), calc(100% + 100px))
+    rotate(-90deg);
   gap: 1rem;
   cursor: pointer;
+
+  @media @mq-from-desktop-md {
+    transform: translate(calc(-100% + 1px), 12px) rotate(0);
+  }
 }
 
 .side-panel__label__text {
@@ -149,10 +168,14 @@ const handleMouseLeave = () => {
   position: absolute;
   left: 0;
   top: 0;
-  height: 100%;
-  padding-inline: 40px;
+  height: calc(100% - @header-height);
+  padding: 0 20px 20px 20px 20px;
   margin-top: @header-height;
-  overflow: auto;
+  overflow: hidden;
+
+  @media @mq-from-desktop-md {
+    padding-inline: 40px;
+  }
 }
 
 .content-wrapper--open {

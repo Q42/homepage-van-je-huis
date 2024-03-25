@@ -4,10 +4,13 @@ import { useAutocompleteStore } from '@/store/autocompleteStore'
 
 export const useAddressService = () => {
   const autocompleteStore = useAutocompleteStore()
+  const runtimeConfig = useRuntimeConfig()
+
+  const baseUrl = runtimeConfig.public.baseUrl
 
   const getAddressJSONandParse = async (addressSlug: string) => {
-    const filePath = `/api/address/${addressSlug}.json`
-    const response = await fetch(filePath)
+    const path = baseUrl + `/api/address/${addressSlug}.json`
+    const response = await fetch(path)
     if (!response.ok) {
       // TODO: Add error handling
       console.error('Error - Adress not found')
@@ -18,8 +21,8 @@ export const useAddressService = () => {
   }
 
   const getAutocompleteStreets = async () => {
-    const filePath = `/api/resolve/streetNames.json`
-    const response = await fetch(filePath)
+    const path = baseUrl + `/api/resolve/streetNames.json`
+    const response = await fetch(path)
     if (!response.ok) {
       // TODO: Add error handling
       console.error('Error - No autocomplete street names found')
@@ -30,15 +33,15 @@ export const useAddressService = () => {
   }
 
   const getHouseNumbers = async (streetSlug: string) => {
-    const filePath = `/api/resolve/numbers/${streetSlug}.json`
-    const response = await fetch(filePath)
+    const path = baseUrl + `/api/resolve/numbers/${streetSlug}.json`
+    const response = await fetch(path)
     if (!response.ok) {
       // TODO: Add error handling
       console.error('Error - No autocomplete house numbers names found')
       return
     }
     const jsonData = await response.json()
-    return jsonData.numbers as string[] //TODO: dit kan nog mis gaan
+    return jsonData.numbers as string[] // TODO: dit kan nog mis gaan
   }
 
   return {

@@ -25,3 +25,7 @@ export const slugifyStreetName = (streetName: string) => {
 export const slugifyAddress = (streetName: string, houseNumber: string) => {
   return slugify(streetName + '-' + houseNumber, defaultSlugifyConfig)
 }
+
+export const slugToAddress = (slug: string) => {
+  return slug.split(/[_-]/).join(' ')
+}

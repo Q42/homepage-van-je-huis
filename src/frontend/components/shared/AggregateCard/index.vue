@@ -5,7 +5,12 @@
       <SharedTypography variant="h5">{{
         $t(titleKey, { total: count })
       }}</SharedTypography>
-      <SharedLink href="/bees" :label="$t(linkLabelKey)" :hide-icon="true" />
+      <!-- TODO: there is no visit url in the data -->
+      <!-- <SharedLink
+        :href="visitUrl"
+        :label="$t(linkLabelKey)"
+        :hide-icon="true"
+      /> -->
     </div>
   </div>
 </template>
@@ -40,13 +45,13 @@ const titleKey = computed(() => {
   }
 })
 
-const linkLabelKey = computed(() => {
-  if (props.type === 'aggregate_tree_species') {
-    return getTranslationKey('aggregateCard.seeWhichTreeSpecies')
-  }
+// const linkLabelKey = computed(() => {
+//   if (props.type === 'aggregate_tree_species') {
+//     return getTranslationKey('aggregateCard.seeWhichTreeSpecies')
+//   }
 
-  return getTranslationKey('aggregateCard.seeWhere')
-})
+//   return getTranslationKey('aggregateCard.seeWhere')
+// })
 
 const props = defineProps<AggregateCardProps>()
 </script>
@@ -58,13 +63,14 @@ const props = defineProps<AggregateCardProps>()
   display: flex;
   align-items: center;
   gap: 20px;
-  padding: 30px 20px;
+  padding: 40px;
   width: fit-content;
+  background: @primary-white;
 }
 .content {
   display: flex;
   flex-direction: column;
   gap: 20px;
-  max-width: 206px;
+  max-width: 240px;
 }
 </style>

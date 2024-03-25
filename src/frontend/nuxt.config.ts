@@ -10,11 +10,26 @@ export default defineNuxtConfig({
     strategy: 'prefix',
     vueI18n: './i18n.config.ts',
   },
+  app: {
+    head: {
+      title: 'Homepage van je Huis',
+      meta: [
+        { name: 'viewport', content: 'width=device-width, initial-scale=1' },
+        { charset: 'utf-8' },
+      ],
+    },
+  },
   ssr: false,
   devtools: { enabled: true },
   css: ['@/assets/css/main.less'],
   robots: {
     configPath: './robots.config.ts',
+  },
+  runtimeConfig: {
+    public: {
+      baseUrl: process.env.API_BASE_URL,
+      environment: process.env.ENVIRONMENT,
+    },
   },
   vite: {
     plugins: [svgLoader()],
