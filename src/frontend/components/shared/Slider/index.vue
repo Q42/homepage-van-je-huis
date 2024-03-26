@@ -52,6 +52,8 @@ const setAnimation = () => {
 
   setTimeout(async () => {
     props.positions.forEach((position, index) => {
+      // In list view and animated view these ids are set on the entries. The ids are the positions of the entries.
+      // When they correspond with one of the positions this trigger will be triggered.
       const element = document.getElementById(position.toString())
 
       if (!element) {
