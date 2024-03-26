@@ -68,6 +68,7 @@
       "
       :positions="getEntryPositions(entries)"
       :is-distance-view="pastOrPresent === 'present'"
+      :view="currentView"
     />
   </div>
 </template>

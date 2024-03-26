@@ -1,6 +1,10 @@
 <template>
   <TransitionFade>
-    <div v-if="entries" class="animated-view">
+    <div
+      v-if="entries"
+      :id="referenceIds.animatedViewBox"
+      class="animated-view"
+    >
       <SharedTypography class="header" variant="h1">
         {{ addressInfo }}
       </SharedTypography>
@@ -51,6 +55,7 @@ import { Entries, AggregateType, EntryWithImage } from '@/models/Entries'
 import { generateIds } from '@/utils/entries'
 import { useAddressStore } from '@/store/addressStore'
 import { useMountStore } from '@/store/mountStore'
+import { referenceIds } from '@/config/referenceIds'
 
 export interface AnimatedViewProps {
   entries: Entries

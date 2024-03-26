@@ -1,6 +1,6 @@
 <template>
   <TransitionFade>
-    <div v-if="!loading" id="slider" class="slider">
+    <div v-if="!loading" :id="referenceIds.slider" class="slider">
       <div :style="currentStyle" class="pointer">
         <div class="pointer-label">
           <SharedTypography variant="body-small" :compact="true">
@@ -14,9 +14,8 @@
 
 <script setup lang="ts">
 import gsap from 'gsap'
-import debounce from 'lodash.debounce'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import { getPercentageInRange } from '@/utils/timelineUtils'
+import { referenceIds } from '@/config/referenceIds'
 gsap.registerPlugin(ScrollTrigger)
 
 export interface SliderProps {
@@ -24,25 +23,21 @@ export interface SliderProps {
   rangeMax: number
   rangeMin: number
   isDistanceView?: boolean
+  view: 'animated' | 'list'
 }
 
 const props = defineProps<SliderProps>()
 
 const currentPosition = ref(props.rangeMax)
 const loading = ref(true)
+const percentage = ref(0)
 
 const currentStyle = computed(() => {
-  const percentage = getPercentageInRange(
-    props.rangeMax,
-    props.rangeMin,
-    currentPosition.value,
-  )
-
   const slider = document.getElementById('slider')
-  const sliderheight = slider ? slider.clientHeight : 0
-  const topOfset = (sliderheight / 100) * percentage
+  const sliderHeight = slider ? slider.clientHeight : 0
+  const topOffset = (sliderHeight / 100) * percentage.value
 
-  return `transform: translateY(calc(${props.isDistanceView ? topOfset : sliderheight - topOfset}px - 12px)) translateX(-50%)`
+  return `transform: translateY(calc(${topOffset}px - 12px)) translateX(-50%)`
 })
 
 const innerWidth = useScreenWidth()
@@ -63,7 +58,7 @@ const setAnimation = () => {
         return
       }
 
-      // This helps to set the positoions of the trigger so that the last element also scrolls trough a trigger
+      // This helps to set the positions of the trigger so that the last element also scrolls trough a trigger
       const getTriggerPosition = () => {
         if (index === props.positions.length - 2) {
           const elementAfter = document.getElementById(
@@ -104,18 +99,30 @@ const setAnimation = () => {
   }, 500)
 }
 
-// const handleResize = debounce(() => {
-//   setAnimation()
-//   window.scrollTo(0, 0)
-// }, 50)
+const handleScrollHeight = () => {
+  const scrollPosition = window.scrollY
+  const scrollHeight =
+    props.view === 'animated'
+      ? document.getElementById(referenceIds.animatedViewBox)?.scrollHeight
+      : document.body.scrollHeight
+
+  if (!scrollHeight) {
+    console.error('No scroll height found')
+    return
+  }
+
+  const totalHeight = scrollHeight - window.innerHeight
+  percentage.value = (scrollPosition / totalHeight) * 100
+}
 
 onMounted(() => {
   setAnimation()
-  // window.addEventListener('resize', handleResize)
+
+  window.addEventListener('scroll', handleScrollHeight)
 })
 
 onUnmounted(() => {
-  // window.removeEventListener('resize', handleResize)
+  window.removeEventListener('scroll', handleScrollHeight)
 })
 
 watch(() => props.positions, setAnimation)
