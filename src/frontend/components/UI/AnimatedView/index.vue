@@ -127,7 +127,7 @@ onMounted(() => {
 
   if (!mountedStore.animatedViewHasBeenMounted) {
     setTimeout(() => {
-      window.scrollTo({ top: 500, behavior: 'smooth' })
+      window.scrollTo({ top: 150, behavior: 'smooth' })
       mountedStore.animatedViewHasBeenMounted = true
     }, 2000)
   }
