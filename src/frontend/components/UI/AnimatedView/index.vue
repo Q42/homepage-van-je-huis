@@ -165,6 +165,10 @@ watch(() => props.entries, setAnimation)
   }
 }
 
+.aggregate-card {
+  transform: scale(3);
+}
+
 .entry-wrapper {
   all: unset;
   cursor: pointer;
