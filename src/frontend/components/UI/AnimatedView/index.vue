@@ -50,6 +50,7 @@ import {
   getTranslateFromPosition,
   getTranslateToPosition,
   getAnimatedElementId,
+  aggregateCardScale,
 } from './animation-service'
 import { Entries, AggregateType, EntryWithImage } from '@/models/Entries'
 import { generateIds } from '@/utils/entries'
@@ -81,7 +82,7 @@ const setAnimation = async () => {
 
   // to avoid flickering we need to wait till all elements are rendered
   // TODO: make this event based?
-  await new Promise((resolve) => setTimeout(resolve, 2000))
+  await new Promise((resolve) => setTimeout(resolve, 4000))
 
   const scrollTriggers = document.querySelectorAll('.trigger-item')
 
@@ -166,7 +167,7 @@ watch(() => props.entries, setAnimation)
 }
 
 .aggregate-card {
-  transform: scale(3);
+  transform: scale(v-bind(aggregateCardScale));
 }
 
 .entry-wrapper {
