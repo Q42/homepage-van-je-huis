@@ -1,3 +1,9 @@
+type FirstPosition = {
+  x: number
+  y: number
+  scale: number
+}
+
 type StartPosition = {
   pos: 'left' | 'right' | 'top' | 'bottom'
   offsetInPercentage: number
@@ -8,10 +14,24 @@ type EndPosition = {
 }
 
 type AnimationPosition = { start: StartPosition; end: EndPosition }
+type FirstAnimationPosition = { start: FirstPosition; end: EndPosition }
 
 export const aggregateCardScale = 3
 
-// In start the offset is in percentages, in end the offset is in pixels
+// We want the first elements to have a different start position.
+// The items you add here are not part of the normal animation flow.
+const firstPosition: FirstAnimationPosition[] = [
+  {
+    start: { x: 100, y: 100, scale: 0.5 },
+    end: { pos: 'top', offsetInPx: 100 },
+  },
+  {
+    start: { x: -100, y: 700, scale: 0.8 },
+    end: { pos: 'left', offsetInPx: 200 },
+  },
+]
+
+// This are the animation positions of the elements after the first ones.
 const animationPositions: AnimationPosition[] = [
   {
     // 1
@@ -36,15 +56,14 @@ const animationPositions: AnimationPosition[] = [
 ]
 
 const calculatePositionIndex = (index: number) => {
-  return index % animationPositions.length
+  return (index - firstPosition.length) % animationPositions.length
 }
 
 export const getAnimatedElementId = (index: number) => {
   return `animated-element-${index.toString()}`
 }
 
-export const getTranslateFromPosition = (index: number) => {
-  const input = animationPositions[calculatePositionIndex(index)].start
+export const getTransformFrom = (index: number) => {
   const element = document.getElementById(
     getAnimatedElementId(index),
   ) as HTMLElement
@@ -57,6 +76,16 @@ export const getTranslateFromPosition = (index: number) => {
   const elementHeight = isAggregateCard
     ? element.offsetHeight * ((aggregateCardScale / 3) * 2)
     : element.offsetHeight
+
+  if (index <= firstPosition.length - 1) {
+    const scale = firstPosition[index].start.scale
+    const x = firstPosition[index].start.x - (elementWidth * scale) / 2
+    const y = firstPosition[index].start.y - (elementHeight * scale) / 2
+
+    return `translate(${x}px, ${y}px) scale(${scale})`
+  }
+
+  const input = animationPositions[calculatePositionIndex(index)].start
 
   let x = 0
   let y = 0
@@ -76,8 +105,12 @@ export const getTranslateFromPosition = (index: number) => {
   return `translate(${x}px, ${y}px)`
 }
 
-export const getTranslateToPosition = (index: number) => {
-  const input = animationPositions[calculatePositionIndex(index)].end
+export const getTransformTo = (index: number) => {
+  const isFirstPosition = index <= firstPosition.length - 1
+
+  const input = isFirstPosition
+    ? firstPosition[index].end
+    : animationPositions[calculatePositionIndex(index)].end
   const element = document.getElementById(
     getAnimatedElementId(index),
   ) as HTMLElement
@@ -96,5 +129,11 @@ export const getTranslateToPosition = (index: number) => {
     input.pos === 'top' ? (y = -input.offsetInPx) : (y = input.offsetInPx)
   }
 
-  return `translate(${windowWidth / 2 - elementWidth / 2 + x}px, ${windowHeight / 2 - elementHeight / 2 + y}px)`
+  const translateValue = `translate(${windowWidth / 2 - elementWidth / 2 + x}px, ${windowHeight / 2 - elementHeight / 2 + y}px)`
+
+  const scale = `scale(
+   ${isFirstPosition ? firstPosition[index].start.scale : 1}
+    )`
+
+  return translateValue + ' ' + scale
 }

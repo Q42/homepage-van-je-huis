@@ -50,8 +50,8 @@ import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { DistanceViewAggregateEntry } from '../../../../common/apiSchema/present'
 import {
-  getTranslateFromPosition,
-  getTranslateToPosition,
+  getTransformFrom,
+  getTransformTo,
   getAnimatedElementId,
   aggregateCardScale,
 } from './animation-service'
@@ -102,17 +102,17 @@ const setAnimation = async () => {
     tl.fromTo(
       item as HTMLElement,
       {
-        transform: `${getTranslateFromPosition(index)} scale3d(1, 1, 1)`,
+        transform: `${getTransformFrom(index)}`,
       },
       {
-        transform: `${getTranslateToPosition(index)} scale3d(1, 1, 1)`,
+        transform: `${getTransformTo(index)}`,
         duration: 3,
       },
     )
       .to(
         item as HTMLElement,
         {
-          transform: `${getTranslateToPosition(index)} scale3d(0.4, 0.4, 1)`,
+          transform: `${getTransformTo(index)} scale3d(0.4, 0.4, 1)`,
           duration: 3,
         },
         '-=3',
