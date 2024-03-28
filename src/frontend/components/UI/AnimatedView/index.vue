@@ -82,7 +82,7 @@ const setAnimation = async () => {
 
   // to avoid flickering we need to wait till all elements are rendered
   // TODO: make this event based?
-  await new Promise((resolve) => setTimeout(resolve, 4000))
+  await new Promise((resolve) => setTimeout(resolve, 2000))
 
   const scrollTriggers = document.querySelectorAll('.trigger-item')
 
@@ -130,13 +130,6 @@ const setAnimation = async () => {
 
 onMounted(() => {
   setAnimation()
-
-  if (!mountedStore.animatedViewHasBeenMounted) {
-    setTimeout(() => {
-      window.scrollTo({ top: 150, behavior: 'smooth' })
-      mountedStore.animatedViewHasBeenMounted = true
-    }, 2000)
-  }
 })
 
 watch(() => props.entries, setAnimation)
@@ -173,6 +166,7 @@ watch(() => props.entries, setAnimation)
 .entry-wrapper {
   all: unset;
   cursor: pointer;
+
   will-change: transform;
   will-change: opacity;
 }
