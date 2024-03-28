@@ -58,8 +58,8 @@ import {
 import { Entries, AggregateType, EntryWithImage } from '@/models/Entries'
 import { generateIds } from '@/utils/entries'
 import { useAddressStore } from '@/store/addressStore'
-import { useMountStore } from '@/store/mountStore'
 import { referenceIds } from '@/config/referenceIds'
+import { config } from '@/config/config'
 
 export interface AnimatedViewProps {
   entries: Entries
@@ -69,7 +69,6 @@ export interface AnimatedViewProps {
 const props = defineProps<AnimatedViewProps>()
 
 const addressStore = useAddressStore()
-const mountedStore = useMountStore()
 const elementIds = computed(() => generateIds(props.entries))
 
 const animationIsSetting = ref(false)
@@ -85,7 +84,7 @@ const setAnimation = async () => {
 
   // to avoid flickering we need to wait till all elements are rendered
   // TODO: make this event based?
-  await new Promise((resolve) => setTimeout(resolve, 2000))
+  await sleep(config.animationDelay)
 
   const scrollTriggers = document.querySelectorAll('.trigger-item')
 
@@ -131,10 +130,7 @@ const setAnimation = async () => {
   animationIsSetting.value = false
 }
 
-onMounted(() => {
-  setAnimation()
-})
-
+onMounted(setAnimation)
 watch(() => props.entries, setAnimation)
 </script>
 

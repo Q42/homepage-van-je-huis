@@ -16,6 +16,7 @@
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { referenceIds } from '@/config/referenceIds'
+import { config } from '@/config/config'
 gsap.registerPlugin(ScrollTrigger)
 
 export interface SliderProps {
@@ -98,7 +99,7 @@ const setAnimation = () => {
 
     await nextTick()
     loading.value = false
-  }, 500)
+  }, config.animationDelay)
 }
 
 const handleScrollHeight = () => {
