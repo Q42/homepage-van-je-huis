@@ -38,6 +38,9 @@
       >
         {{ elementIds[index] }}
       </div>
+
+      <!-- Add one last scroll trigger to assure the last item is also scrolled into view -->
+      <div class="trigger-item" aria-hidden="true"></div>
     </div>
   </TransitionFade>
 </template>
