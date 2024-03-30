@@ -33,6 +33,7 @@
         v-for="(_, index) in entries"
         :id="elementIds[index]"
         :key="index"
+        :style="`transform: ${getScrollTriggerTransform(index)}`"
         class="trigger-item"
         aria-hidden="true"
       >
@@ -54,6 +55,7 @@ import {
   getTransformTo,
   getAnimatedElementId,
   aggregateCardScale,
+  getScrollTriggerTransform,
 } from './animation-service'
 import { Entries, AggregateType, EntryWithImage } from '@/models/Entries'
 import { generateIds } from '@/utils/entries'

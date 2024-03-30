@@ -26,8 +26,8 @@ const firstPosition: FirstAnimationPosition[] = [
     end: { offsetX: 0, offsetY: -100 },
   },
   {
-    start: { x: -100, y: 700, scale: 0.8 },
-    end: { offsetX: -200, offsetY: -100 },
+    start: { x: window.innerWidth - 300, y: 700, scale: 0.8 },
+    end: { offsetX: 200, offsetY: 100 },
   },
 ]
 
@@ -133,4 +133,14 @@ export const getTransformTo = (index: number) => {
     )`
 
   return translateValue + ' ' + scale
+}
+
+export const getScrollTriggerTransform = (index: number) => {
+  if (index <= firstPosition.length - 1) {
+    const percentage = 100 * index
+    return `translateY(-${percentage}%)`
+  } else {
+    const percentage = 100 + (index - (firstPosition.length - 1)) * 30
+    return `translateY(-${percentage}%)`
+  }
 }
