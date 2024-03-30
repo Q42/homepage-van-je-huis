@@ -73,9 +73,15 @@ export const getTransformFrom = (index: number) => {
   const windowWidth = window.innerWidth
   const windowHeight = window.innerHeight
   const elementWidth = element.offsetWidth
-  const elementHeight = isAggregateCard
-    ? element.offsetHeight * ((aggregateCardScale / 3) * 2)
-    : element.offsetHeight
+  const elementHeight = element.offsetHeight
+
+  // Aggregate cards are scaled in animated view to make them accessible. That's why we need to calculate the offset.
+  const offsetX = isAggregateCard
+    ? (elementWidth * aggregateCardScale) / 2 - elementWidth / 2
+    : 0
+  const offsetY = isAggregateCard
+    ? (elementHeight * aggregateCardScale) / 2 - elementHeight / 2
+    : 0
 
   if (index <= firstPosition.length - 1) {
     const scale = firstPosition[index].start.scale
@@ -92,13 +98,13 @@ export const getTransformFrom = (index: number) => {
 
   if (input.pos === 'left' || input.pos === 'right') {
     input.pos === 'left'
-      ? (x = -elementWidth)
-      : (x = windowWidth + (isAggregateCard ? elementWidth : 0))
+      ? (x = -elementWidth - offsetX)
+      : (x = windowWidth + offsetX)
     y = (windowHeight / 100) * input.offsetInPercentage - elementHeight / 2
   } else if (input.pos === 'top' || input.pos === 'bottom') {
     input.pos === 'top'
-      ? (y = -elementHeight)
-      : (y = windowHeight + (isAggregateCard ? elementHeight : 0))
+      ? (y = -elementHeight - offsetY)
+      : (y = windowHeight + offsetY)
     x = (windowWidth / 100) * input.offsetInPercentage - elementWidth / 2
   }
 
