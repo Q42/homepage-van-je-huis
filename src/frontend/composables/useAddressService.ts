@@ -12,8 +12,16 @@ export const useAddressService = () => {
     const path = baseUrl + `/api/address/${addressSlug}.json`
     const response = await fetch(path)
     if (!response.ok) {
-      // TODO: Add error handling
-      console.error('Error - Adress not found')
+      if (response.status === 404) {
+        throw createError({
+          statusCode: 404,
+          statusMessage: 'Address Not Found',
+          fatal: true,
+        })
+      } else {
+        // TODO: Maybe more error handling?
+        console.log('Error - 500')
+      }
       return null
     }
     const jsonData = await response.json()
