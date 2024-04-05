@@ -141,8 +141,8 @@ const setView = async (elementId: string) => {
 onMounted(async () => {
   if (!store.pastData || !store.presentData) {
     await store.fetchAddressData(params.address as string)
-    pastOrPresent.value = getViewFromQuery()
   }
+  pastOrPresent.value = getViewFromQuery()
 })
 
 const setDataSet = (value: 'past' | 'present') => {
