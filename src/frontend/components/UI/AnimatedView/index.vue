@@ -12,8 +12,8 @@
         v-for="(entry, index) in entries"
         :id="getAnimatedElementId(index)"
         :key="index"
+        :style="`transform: ${getTransformFrom(index)}; opacity: ${animationIsSetting ? 0 : 1}`"
         class="entry-wrapper item"
-        :class="{ animating: animationIsSetting }"
         @click="() => setView(elementIds[index])"
       >
         <div class="card-wrapper">
@@ -30,18 +30,27 @@
         />
       </button>
       <div
-        v-for="(_, index) in entries"
-        :id="elementIds[index]"
-        :key="index"
-        :style="`transform: ${getScrollTriggerTransform(index)}`"
-        class="trigger-item"
-        aria-hidden="true"
+        :style="`height: ${calculateScrollBoxHeight(entries.length + 1)}`"
+        class="scroll-triggers"
       >
-        {{ elementIds[index] }}
-      </div>
+        <div
+          v-for="(_, index) in entries"
+          :id="elementIds[index]"
+          :key="index"
+          :style="`transform: ${getScrollTriggerTransform(index)}`"
+          class="trigger-item"
+          aria-hidden="true"
+        >
+          {{ elementIds[index] }}
+        </div>
 
-      <!-- Add one last scroll trigger to assure the last item is also scrolled into view -->
-      <div class="trigger-item" aria-hidden="true"></div>
+        <!-- Add one last scroll trigger to assure the last item is also scrolled into view -->
+        <div
+          :style="`transform: ${getScrollTriggerTransform(entries.length)}`"
+          class="trigger-item"
+          aria-hidden="true"
+        ></div>
+      </div>
     </div>
   </TransitionFade>
 </template>
@@ -54,8 +63,10 @@ import {
   getTransformFrom,
   getTransformTo,
   getAnimatedElementId,
-  aggregateCardScale,
+  AGGREGATE_CARD_SCALE,
+  SCROLL_TRIGGER_CONTAINER_HEIGHT,
   getScrollTriggerTransform,
+  calculateScrollBoxHeight,
 } from './animation-service'
 import { Entries, AggregateType, EntryWithImage } from '@/models/Entries'
 import { generateIds } from '@/utils/entries'
@@ -72,6 +83,7 @@ const props = defineProps<AnimatedViewProps>()
 
 const addressStore = useAddressStore()
 const elementIds = computed(() => generateIds(props.entries))
+const scrollTriggerHeight = SCROLL_TRIGGER_CONTAINER_HEIGHT + 'px'
 
 const animationIsSetting = ref(false)
 
@@ -161,7 +173,7 @@ watch(() => props.entries, setAnimation)
 }
 
 .aggregate-card {
-  transform: scale(v-bind(aggregateCardScale));
+  transform: scale(v-bind(AGGREGATE_CARD_SCALE));
 }
 
 .entry-wrapper {
@@ -176,20 +188,24 @@ watch(() => props.entries, setAnimation)
   position: fixed;
 }
 
+.scroll-triggers {
+  width: fit-content;
+  height: fit-content;
+}
+
 .trigger-item {
   width: 300px;
-  height: 900px;
+  height: v-bind(scrollTriggerHeight);
   pointer-events: none;
-  // opacity: 0;
   font-size: bigger;
   font-weight: bolder;
   display: flex;
   justify-content: center;
   opacity: 0;
 
-  opacity: 0.3; // debug value
-  background: lightblue; // debug value
-  border-top: black 3px solid; // debug value
+  // opacity: 0.3; // debug value
+  // background: lightblue; // debug value
+  // border-top: black 3px solid; // debug value
 }
 
 .animating {

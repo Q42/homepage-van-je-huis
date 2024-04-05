@@ -8,6 +8,7 @@ type StartPosition = {
   pos: 'left' | 'right' | 'top' | 'bottom'
   offsetInPercentage: number
 }
+
 type EndPosition = {
   offsetX: number
   offsetY: number
@@ -16,7 +17,8 @@ type EndPosition = {
 type AnimationPosition = { start: StartPosition; end: EndPosition }
 type FirstAnimationPosition = { start: FirstPosition; end: EndPosition }
 
-export const aggregateCardScale = 3
+export const AGGREGATE_CARD_SCALE = 3
+export const SCROLL_TRIGGER_CONTAINER_HEIGHT = 900
 
 // We want the first elements to have a different start position.
 // The items you add here are not part of the normal animation flow.
@@ -67,6 +69,9 @@ export const getTransformFrom = (index: number) => {
   const element = document.getElementById(
     getAnimatedElementId(index),
   ) as HTMLElement
+  if (!element) {
+    return
+  }
 
   const isAggregateCard = Boolean(element.querySelector('.aggregate-card'))
 
@@ -77,10 +82,10 @@ export const getTransformFrom = (index: number) => {
 
   // Aggregate cards are scaled in animated view to make them accessible. That's why we need to calculate the offset.
   const offsetX = isAggregateCard
-    ? (elementWidth * aggregateCardScale) / 2 - elementWidth / 2
+    ? (elementWidth * AGGREGATE_CARD_SCALE) / 2 - elementWidth / 2
     : 0
   const offsetY = isAggregateCard
-    ? (elementHeight * aggregateCardScale) / 2 - elementHeight / 2
+    ? (elementHeight * AGGREGATE_CARD_SCALE) / 2 - elementHeight / 2
     : 0
 
   if (index <= firstPosition.length - 1) {
@@ -135,12 +140,28 @@ export const getTransformTo = (index: number) => {
   return translateValue + ' ' + scale
 }
 
+const SCROLL_TRIGGER_OFFSET_PERCENTAGE = 30
+
 export const getScrollTriggerTransform = (index: number) => {
   if (index <= firstPosition.length - 1) {
     const percentage = 100 * index
     return `translateY(-${percentage}%)`
   } else {
-    const percentage = 100 + (index - (firstPosition.length - 1)) * 30
+    const percentage =
+      100 +
+      (index - (firstPosition.length - 1)) * SCROLL_TRIGGER_OFFSET_PERCENTAGE
     return `translateY(-${percentage}%)`
   }
+}
+
+export const calculateScrollBoxHeight = (numberOfElements: number) => {
+  const elementsAfterFirst = numberOfElements - firstPosition.length
+  const heightFactor = (100 - SCROLL_TRIGGER_OFFSET_PERCENTAGE) / 100
+  const actualTriggerHeight = SCROLL_TRIGGER_CONTAINER_HEIGHT * heightFactor
+
+  return (
+    SCROLL_TRIGGER_CONTAINER_HEIGHT +
+    elementsAfterFirst * actualTriggerHeight +
+    'px'
+  )
 }

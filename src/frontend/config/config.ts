@@ -1,3 +1,3 @@
 export const config = {
-  animationDelay: 2000,
+  animationDelay: 1000,
 }
