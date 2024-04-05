@@ -115,7 +115,10 @@ const handleScrollHeight = () => {
   }
 
   const totalHeight = scrollHeight - window.innerHeight
-  percentage.value = (scrollPosition / totalHeight) * 100
+  percentage.value =
+    (scrollPosition / totalHeight) * 100 < 100
+      ? (scrollPosition / totalHeight) * 100
+      : 100
 }
 
 onMounted(() => {
