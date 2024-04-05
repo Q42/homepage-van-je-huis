@@ -26,6 +26,7 @@
           v-for="(calenderItem, index) in store.presentData.agenda"
           :key="index"
           :calendar-item="calenderItem"
+          :image-url="`/calendar-images/${index + 1}.png`"
         />
       </div>
     </SharedSidePanel>

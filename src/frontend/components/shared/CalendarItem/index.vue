@@ -4,7 +4,7 @@
     <SharedImage
       class="image"
       :image="{
-        url: `/startanimation/${Math.floor(Math.random() * 10) + 1}.jpg`,
+        url: imageUrl,
       }"
     />
     <div class="calendar-item-card__content">
@@ -31,6 +31,7 @@ interface CalendarItem extends Omit<AgendaItem, 'date'> {
 
 export interface CalendarItemProps {
   calendarItem: CalendarItem
+  imageUrl: string // TODO: remove, this is only mock data
 }
 
 const date = computed(() =>
