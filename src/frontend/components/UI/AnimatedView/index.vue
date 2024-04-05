@@ -73,6 +73,7 @@ import { generateIds } from '@/utils/entries'
 import { useAddressStore } from '@/store/addressStore'
 import { referenceIds } from '@/config/referenceIds'
 import { config } from '@/config/config'
+import debounce from 'lodash.debounce'
 
 export interface AnimatedViewProps {
   entries: Entries
@@ -145,7 +146,17 @@ const setAnimation = async () => {
   animationIsSetting.value = false
 }
 
-onMounted(setAnimation)
+const onResize = debounce(async () => {
+  // await nextTick()
+  // setAnimation()
+  // TODO: check this with ipad and stuff
+}, 30)
+
+onMounted(() => {
+  setAnimation()
+
+  window.addEventListener('resize', onResize)
+})
 watch(() => props.entries, setAnimation)
 </script>
 
