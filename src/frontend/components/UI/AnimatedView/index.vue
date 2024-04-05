@@ -12,7 +12,7 @@
         v-for="(entry, index) in entries"
         :id="getAnimatedElementId(index)"
         :key="index"
-        :style="`transform: ${getTransformFrom(index)}; opacity: ${animationIsSetting ? 0 : 1}`"
+        :style="`transform: ${getTransformFrom(index)}; opacity: ${animationIsSetting ? 0 : 1}; transition: ${animationIsSetting ? 'none' : 'opacity 1s'}`"
         class="entry-wrapper item"
         @click="() => setView(elementIds[index])"
       >
@@ -135,6 +135,7 @@ const setAnimation = async () => {
         item as HTMLElement,
         {
           opacity: 0,
+          transition: 'none',
           duration: 1,
         },
         '-=1',
