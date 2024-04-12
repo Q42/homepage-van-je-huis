@@ -1,14 +1,16 @@
 <template>
-  <div class="error-section">
-    <SharedTypography variant="h1">{{
-      $t(getTranslationKey('error.notFound'))
-    }}</SharedTypography>
-    <button class="button" @click="handleClearError">
-      <SharedTypography variant="body">{{
-        $t(getTranslationKey('error.backToHome'))
+  <NuxtLayout>
+    <div class="error-section">
+      <SharedTypography variant="h1">{{
+        $t(getTranslationKey('error.notFound'))
       }}</SharedTypography>
-    </button>
-  </div>
+      <button class="button" @click="handleClearError">
+        <SharedTypography variant="body">{{
+          $t(getTranslationKey('error.backToHome'))
+        }}</SharedTypography>
+      </button>
+    </div>
+  </NuxtLayout>
 </template>
 
 <script setup lang="ts">
@@ -29,7 +31,7 @@ const handleClearError = () => {
 
 <style lang="less" scoped>
 .error-section {
-  transform: translateY(calc(50vh - 50%));
+  transform: translateY(calc(50vh - 50% - @header-height));
   display: flex;
   flex-direction: column;
   align-items: center;
