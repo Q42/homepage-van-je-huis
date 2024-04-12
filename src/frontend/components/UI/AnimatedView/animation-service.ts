@@ -37,7 +37,7 @@ const firstPosition: FirstAnimationPosition[] = [
 const animationPositions: AnimationPosition[] = [
   {
     // 1
-    start: { pos: 'top', offsetInPercentage: 50 },
+    start: { pos: 'top', offsetInPercentage: 10 },
     end: { offsetX: 0, offsetY: -100 },
   },
   {

@@ -95,14 +95,14 @@ const animate = async () => {
 
     const toPositions = [
       {
-        x: definePositions([100, 0, 100], [0, 0, 0], round),
-        y: definePositions([0, 0, 0], [0, 0, 0], round),
+        x: definePositions([100, 0, 100], [110, 110, 110], round),
+        y: definePositions([0, 0, 0], [30, 30, 30], round),
       }, // top left
       {
         x:
           windowWidth -
           elementWidth -
-          definePositions([0, 0, 0], [-100, -100, -100], round),
+          definePositions([0, 0, 0], [-30, -30, -30], round),
         y: definePositions(
           [0, 0, 0],
           [
@@ -114,11 +114,11 @@ const animate = async () => {
         ),
       }, // top right
       {
-        x: definePositions([0, 110, 0], [-50, -50, -50], round),
+        x: definePositions([0, 110, 0], [-20, -20, -20], round),
         y:
           windowHeight -
           elementHeight -
-          definePositions([0, 0, 0], [0, 0, 0], round),
+          definePositions([0, 0, 0], [-10, -10, -10], round),
       }, // bottom left
       {
         x:
@@ -175,7 +175,7 @@ const definePositions = (
     : desktopPositions[count - 1]
 }
 
-const numberOfRepetitions = isDesktopMd(window.innerWidth) ? 1 : 3
+const numberOfRepetitions = isDesktopMd(window.innerWidth) ? 2 : 3
 let count = 1
 let interval: NodeJS.Timeout | null = null
 
@@ -212,7 +212,7 @@ onMounted(startAnimation)
 
 .animate-item {
   position: absolute;
-  width: 60%;
+  width: 50%;
   aspect-ratio: 3/2;
   overflow: hidden;
   opacity: 0;
