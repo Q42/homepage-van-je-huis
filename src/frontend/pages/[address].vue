@@ -80,7 +80,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { getTranslationKey } from '@/translations'
 import { useAddressStore } from '@/store/addressStore'
 import { Entries } from '@/models/Entries'
-import { temporaryMockCalendar } from '~/components/shared/CalendarItem/temporaryMockCalendar'
+import { temporaryMockCalendar } from '@/components/shared/CalendarItem/temporaryMockCalendar'
 
 const innerWidth = useScreenWidth()
 const isOnTablet = computed(() => isTablet(innerWidth.value))

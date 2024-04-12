@@ -46,7 +46,7 @@
 <script setup lang="ts">
 import { format, parseISO } from 'date-fns'
 import { nl } from 'date-fns/locale'
-import { getTranslationKey } from '~/translations'
+import { getTranslationKey } from '@/translations'
 
 type TemporaryCalenderItem = {
   Event_ID: string
@@ -83,6 +83,9 @@ const props = defineProps<CalendarItemProps>()
 <style lang="less" scoped>
 .calendar-item-card {
   max-width: 350px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 
 .icon {

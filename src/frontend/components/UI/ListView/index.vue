@@ -48,7 +48,7 @@
 import { DistanceViewAggregateEntry } from '../../../../common/apiSchema/present'
 import { getTranslationKey } from '@/translations'
 import { Entries, AggregateType, EntryWithImage } from '@/models/Entries'
-import { useMountStore } from '~/store/mountStore'
+import { useMountStore } from '@/store/mountStore'
 
 const mountedStore = useMountStore()
 

@@ -166,7 +166,7 @@ const definePositions = (
     : desktopPositions[count - 1]
 }
 
-const numberOfRepetitions = isDesktopMd(window.innerWidth) ? 2 : 3
+const numberOfRepetitions = isDesktopMd(window.innerWidth) ? 1 : 3
 let count = 1
 let interval: NodeJS.Timeout | null = null
 
