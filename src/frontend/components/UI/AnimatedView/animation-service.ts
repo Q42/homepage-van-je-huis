@@ -24,12 +24,16 @@ export const SCROLL_TRIGGER_CONTAINER_HEIGHT = 900
 // The items you add here are not part of the normal animation flow.
 const firstPosition: FirstAnimationPosition[] = [
   {
-    start: { x: 100, y: 100, scale: 0.5 },
-    end: { offsetX: 0, offsetY: -100 },
+    start: { x: window.innerWidth * 0.6, y: 100, scale: 0.5 },
+    end: { offsetX: 200, offsetY: -200 },
   },
   {
-    start: { x: window.innerWidth - 300, y: 700, scale: 0.8 },
-    end: { offsetX: 200, offsetY: 100 },
+    start: {
+      x: 250,
+      y: window.innerHeight / 2 + 300,
+      scale: 0.7,
+    },
+    end: { offsetX: -300, offsetY: 200 },
   },
 ]
 
@@ -37,23 +41,28 @@ const firstPosition: FirstAnimationPosition[] = [
 const animationPositions: AnimationPosition[] = [
   {
     // 1
-    start: { pos: 'top', offsetInPercentage: 10 },
-    end: { offsetX: 0, offsetY: -100 },
+    start: { pos: 'top', offsetInPercentage: -20 },
+    end: { offsetX: -300, offsetY: -200 },
   },
   {
     // 2
     start: { pos: 'right', offsetInPercentage: 50 },
-    end: { offsetX: 300, offsetY: 0 },
+    end: { offsetX: 420, offsetY: 200 },
   },
   {
     // 3
     start: { pos: 'bottom', offsetInPercentage: 50 },
-    end: { offsetX: 0, offsetY: 100 },
+    end: { offsetX: 0, offsetY: 200 },
   },
   {
     // 4
-    start: { pos: 'left', offsetInPercentage: 50 },
-    end: { offsetX: -100, offsetY: 0 },
+    start: { pos: 'left', offsetInPercentage: 90 },
+    end: { offsetX: -420, offsetY: 0 },
+  },
+  {
+    // 5
+    start: { pos: 'top', offsetInPercentage: 100 },
+    end: { offsetX: 300, offsetY: -200 },
   },
 ]
 
@@ -162,6 +171,7 @@ export const calculateScrollBoxHeight = (numberOfElements: number) => {
   return (
     SCROLL_TRIGGER_CONTAINER_HEIGHT +
     elementsAfterFirst * actualTriggerHeight +
+    900 +
     'px'
   )
 }

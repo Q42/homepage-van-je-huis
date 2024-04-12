@@ -43,13 +43,6 @@
         >
           {{ elementIds[index] }}
         </div>
-
-        <!-- Add one last scroll trigger to assure the last item is also scrolled into view -->
-        <div
-          :style="`transform: ${getScrollTriggerTransform(entries.length)}`"
-          class="trigger-item"
-          aria-hidden="true"
-        ></div>
       </div>
     </div>
   </TransitionFade>
