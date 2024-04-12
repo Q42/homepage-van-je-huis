@@ -13,18 +13,18 @@
 <script setup lang="ts">
 import gsap from 'gsap'
 
-const imagesIds = Array.from({ length: 35 }, (_, i) => i + 1)
+const imagesIds = Array.from({ length: 23 }, (_, i) => i + 1)
 
 const getRandomImageUrl = () => {
   if (imagesIds.length === 4) {
     imagesIds.length = 0
-    imagesIds.push(...Array.from({ length: 35 }, (_, i) => i + 1))
+    imagesIds.push(...Array.from({ length: 23 }, (_, i) => i + 1))
   }
 
   const randomIndex = Math.floor(Math.random() * imagesIds.length)
   const pickedItem = imagesIds.splice(randomIndex, 1)[0]
 
-  return `/startanimation/${pickedItem}.jpg`
+  return `/startanimation/${pickedItem}.webp`
 }
 
 const randomImages: Ref<string[] | null> = ref(null)
