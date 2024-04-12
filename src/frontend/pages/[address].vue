@@ -23,10 +23,10 @@
         class="side-panel-items side-panel-items--calendar"
       >
         <SharedCalendarItem
-          v-for="(calenderItem, index) in store.presentData.agenda"
+          v-for="(calenderItem, index) in temporaryMockCalendar"
           :key="index"
           :calendar-item="calenderItem"
-          :image-url="`/calendar-images/${index + 1}.png`"
+          :image-url="`/calendar-images/${calenderItem.Event_ID}.png`"
         />
       </div>
     </SharedSidePanel>
@@ -80,6 +80,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { getTranslationKey } from '@/translations'
 import { useAddressStore } from '@/store/addressStore'
 import { Entries } from '@/models/Entries'
+import { temporaryMockCalendar } from '~/components/shared/CalendarItem/temporaryMockCalendar'
 
 const innerWidth = useScreenWidth()
 const isOnTablet = computed(() => isTablet(innerWidth.value))

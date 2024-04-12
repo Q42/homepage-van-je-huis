@@ -8,42 +8,83 @@
       }"
     />
     <div class="calendar-item-card__content">
-      <SharedTypography variant="h5">{{ calendarItem.title }}</SharedTypography>
+      <SharedTypography variant="h5">{{
+        calendarItem.Name_event
+      }}</SharedTypography>
       <SharedTypography class="text-with-icon" variant="body" :compact="true">
         <span class="icon">
           <SharedIcon :height="16" :width="16" type="calendar" />
         </span>
-        {{ date }}
+        {{ fromDate }} {{ isOneDayEvent ? '' : ` - ${toDate}` }}
+      </SharedTypography>
+      <SharedTypography
+        v-if="calendarItem.Location"
+        class="text-with-icon"
+        variant="body"
+        :compact="true"
+      >
+        <span class="icon">
+          <SharedIcon :height="16" :width="16" type="location" />
+        </span>
+        {{ calendarItem.Location }}
       </SharedTypography>
     </div>
+    <SharedTypography
+      v-if="calendarItem.Description"
+      variant="body"
+      :compact="true"
+    >
+      {{ calendarItem.Description }}
+    </SharedTypography>
+    <SharedLink
+      :href="calendarItem.Link"
+      :label="$t(getTranslationKey('calendarItem.goToLink'))"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
 import { format, parseISO } from 'date-fns'
 import { nl } from 'date-fns/locale'
-import { AgendaItem } from '../../../../common/apiSchema/present'
+import { getTranslationKey } from '~/translations'
 
-interface CalendarItem extends Omit<AgendaItem, 'date'> {
-  // TODO: fix this. date is alsways a string on FE
-  date: string | Date
+type TemporaryCalenderItem = {
+  Event_ID: string
+  Name_event: string
+  Date_start: string
+  Date_end: string
+  Location: string
+  Description: string
+  Link: string
 }
 
 export interface CalendarItemProps {
-  calendarItem: CalendarItem
+  calendarItem: TemporaryCalenderItem
   imageUrl: string // TODO: remove, this is only mock data
 }
 
-const date = computed(() =>
-  format(parseISO(props.calendarItem.date as string), 'dd MMMM yyyy', {
+const fromDate = computed(() =>
+  format(parseISO(props.calendarItem.Date_start as string), 'dd MMMM yyyy', {
     locale: nl,
   }),
 )
+
+const toDate = computed(() =>
+  format(parseISO(props.calendarItem.Date_end as string), 'dd MMMM yyyy', {
+    locale: nl,
+  }),
+)
+
+const isOneDayEvent = computed(() => fromDate.value === toDate.value)
 
 const props = defineProps<CalendarItemProps>()
 </script>
 
 <style lang="less" scoped>
+.calendar-item-card {
+  max-width: 350px;
+}
+
 .icon {
   display: inline-flex;
   align-items: center;

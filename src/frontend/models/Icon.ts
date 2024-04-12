@@ -9,3 +9,4 @@ export type IconType =
   | 'bees'
   | 'trees'
   | 'tree-species'
+  | 'location'

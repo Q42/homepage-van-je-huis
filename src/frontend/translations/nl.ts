@@ -34,4 +34,7 @@ export const nl = {
     notFound: 'Helaas! Deze pagina bestaat niet.',
     backToHome: 'Terug naar Homepage',
   },
+  calendarItem: {
+    goToLink: 'Naar Evenement',
+  },
 }
