@@ -181,6 +181,8 @@ const currentDataSet = computed(() => {
   display: flex;
   flex-direction: column;
   gap: 80px;
+  padding: 0 20px;
+  align-items: center;
 }
 
 .tab-buttons {
