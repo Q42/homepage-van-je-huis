@@ -79,7 +79,7 @@ const animate = async () => {
       },
       {
         // 3
-        x: definePositions([0, -100, 400], [-50, -50, -50], round),
+        x: definePositions([0, -100, 550], [-50, -50, -50], round),
         y:
           windowHeight -
           elementHeight -
