@@ -5,7 +5,7 @@
         $t(getTranslationKey('error.notFound'))
       }}</SharedTypography>
       <button class="button" @click="handleClearError">
-        <SharedTypography variant="body">{{
+        <SharedTypography variant="body-small">{{
           $t(getTranslationKey('error.backToHome'))
         }}</SharedTypography>
       </button>
@@ -34,10 +34,13 @@ const handleClearError = () => {
   transform: translateY(calc(50vh - 50% - @header-height));
   display: flex;
   flex-direction: column;
-  align-items: center;
   justify-content: center;
   gap: 2.5rem;
   height: 100%;
+
+  @media @mq-from-tablet {
+    align-items: center;
+  }
 }
 
 .button {
@@ -47,6 +50,8 @@ const handleClearError = () => {
   border: none;
   transition: background 0.2s ease;
   cursor: pointer;
+  width: fit-content;
+  font-family: inherit;
 
   &:focus,
   &:hover {
