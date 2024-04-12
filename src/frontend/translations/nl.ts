@@ -30,4 +30,8 @@ export const nl = {
     seeWhere: 'Bekijk waar ze staan',
     seeWhichTreeSpecies: 'Bekijk welke boomsoorten',
   },
+  error: {
+    notFound: 'Helaas! Deze pagina bestaat niet.',
+    backToHome: 'Terug naar Homepage',
+  },
 }
