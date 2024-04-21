@@ -66,8 +66,20 @@ const animationPositions: AnimationPosition[] = [
   },
 ]
 
-const calculatePositionIndex = (index: number) => {
-  return (index - firstPosition.length) % animationPositions.length
+const calculatePositionIndex = (index: number, isAggregateCard: boolean) => {
+  const position = (index - firstPosition.length) % animationPositions.length
+
+  const aggregateCardComesFromRight =
+    isAggregateCard &&
+    position ===
+      animationPositions.findIndex((pos) => pos.start.pos === 'right')
+
+  if (aggregateCardComesFromRight) {
+    // Aggregate cards that come from the right don't work, so we place them at the left.
+    return animationPositions.findIndex((pos) => pos.start.pos === 'left')
+  } else {
+    return position
+  }
 }
 
 export const getAnimatedElementId = (index: number) => {
@@ -105,7 +117,8 @@ export const getTransformFrom = (index: number) => {
     return `translate(${x}px, ${y}px) scale(${scale})`
   }
 
-  const input = animationPositions[calculatePositionIndex(index)].start
+  const input =
+    animationPositions[calculatePositionIndex(index, isAggregateCard)].start
 
   let x = 0
   let y = 0
@@ -128,12 +141,15 @@ export const getTransformFrom = (index: number) => {
 export const getTransformTo = (index: number) => {
   const isFirstPosition = index <= firstPosition.length - 1
 
-  const input = isFirstPosition
-    ? firstPosition[index].end
-    : animationPositions[calculatePositionIndex(index)].end
   const element = document.getElementById(
     getAnimatedElementId(index),
   ) as HTMLElement
+
+  const isAggregateCard = Boolean(element.querySelector('.aggregate-card'))
+
+  const input = isFirstPosition
+    ? firstPosition[index].end
+    : animationPositions[calculatePositionIndex(index, isAggregateCard)].end
 
   const windowWidth = window.innerWidth
   const windowHeight = window.innerHeight
