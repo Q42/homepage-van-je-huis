@@ -41,7 +41,7 @@
       :entries="entries"
     />
     <!-- TODO: accessibility -->
-    <div v-if="currentView === 'animated' || isOnTablet" class="tab-buttons">
+    <div v-if="currentView === 'animated' || isOnDesktopLg" class="tab-buttons">
       <SharedButton
         v-if="pastHasData"
         :active="pastOrPresent === 'past'"
@@ -83,7 +83,7 @@ import { Entries } from '@/models/Entries'
 import { temporaryMockCalendar } from '@/components/shared/CalendarItem/temporaryMockCalendar'
 
 const innerWidth = useScreenWidth()
-const isOnTablet = computed(() => isTablet(innerWidth.value))
+const isOnDesktopLg = computed(() => isDesktopLg(innerWidth.value))
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -115,7 +115,7 @@ const getViewFromQuery = () => {
 }
 
 const getCurrentModeFromQuery = () => {
-  if (isOnTablet.value) {
+  if (isOnDesktopLg.value) {
     return 'list'
   } else if (query.mode === 'animated' || query.mode === 'list') {
     return query.mode

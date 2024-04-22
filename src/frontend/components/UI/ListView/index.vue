@@ -1,7 +1,7 @@
 <template>
   <div v-if="entries" class="entry-list">
     <SharedIconButton
-      v-if="!isOnTablet"
+      v-if="!isOnDesktopLg"
       class="close-button"
       icon="close"
       @click="
@@ -20,7 +20,7 @@
     >
       <div class="card-wrapper">
         <SharedAggregateCard
-          v-if="entryIsAggregate(entry) && isOnTablet"
+          v-if="entryIsAggregate(entry) && isOnDesktopLg"
           :type="entry.type as AggregateType"
           class="aggregate-card"
           :count="(entry as DistanceViewAggregateEntry).data.count"
@@ -58,7 +58,7 @@ export interface ListViewProps {
 }
 
 const innerWidth = useScreenWidth()
-const isOnTablet = computed(() => isTablet(innerWidth.value))
+const isOnDesktopLg = computed(() => isDesktopLg(innerWidth.value))
 
 const getClosestElementToTop = () => {
   const elements = document.getElementsByClassName('entry-wrapper')
