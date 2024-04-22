@@ -1,5 +1,5 @@
 <template>
-  <div v-if="randomImages" class="start-animation">
+  <div v-if="randomImages && showAnimation" class="start-animation">
     <div
       v-for="(image, index) in randomImages"
       :key="index"
@@ -12,6 +12,9 @@
 
 <script setup lang="ts">
 import gsap from 'gsap'
+
+const orientationAngle = useOrientationAngle()
+const showAnimation = computed(() => orientationAngle.value === 0)
 
 const imagesIds = Array.from({ length: 23 }, (_, i) => i + 1)
 
