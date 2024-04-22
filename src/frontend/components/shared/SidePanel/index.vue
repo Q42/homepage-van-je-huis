@@ -48,7 +48,7 @@
 
 <script setup lang="ts">
 import { IconType } from '@/models/Icon'
-import { getTranslationKey } from '~/translations'
+import { getTranslationKey } from '@/translations'
 
 export interface SidePanelProps {
   label: string
@@ -172,9 +172,11 @@ const handleMouseLeave = () => {
   padding: 0 20px 20px 20px 20px;
   margin-top: @header-height;
   overflow: hidden;
+  width: 100%;
 
   @media @mq-from-desktop-md {
     padding-inline: 40px;
+    width: unset;
   }
 }
 

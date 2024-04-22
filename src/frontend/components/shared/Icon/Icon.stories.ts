@@ -77,3 +77,8 @@ export const TreeSpecies = Template.bind({})
 TreeSpecies.args = {
   type: 'tree-species',
 }
+
+export const Location = Template.bind({})
+Location.args = {
+  type: 'location',
+}

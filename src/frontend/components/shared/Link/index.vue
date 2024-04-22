@@ -1,5 +1,5 @@
 <template>
-  <NuxtLink :to="href" class="link"
+  <NuxtLink :to="href" target="_blank" class="link"
     ><SharedTypography variant="body" :compact="true">{{
       label
     }}</SharedTypography>

@@ -14,6 +14,7 @@ import {
   Bees,
   Trees,
   TreeSpecies,
+  Location,
 } from '@/assets/icons'
 import { IconType } from '@/models/Icon'
 
@@ -47,6 +48,8 @@ const iconComponent = computed(() => {
       return Trees
     case 'tree-species':
       return TreeSpecies
+    case 'location':
+      return Location
   }
 })
 </script>

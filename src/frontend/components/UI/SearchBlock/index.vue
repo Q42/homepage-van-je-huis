@@ -1,7 +1,7 @@
 <template>
   <div class="search-block">
     <div class="title">
-      <SharedTypography variant="h1">{{
+      <SharedTypography as="h1" variant="h1" :compact="isCompactTitle">{{
         $t(getTranslationKey('home.title'))
       }}</SharedTypography>
       <SharedTypography variant="body">{{
@@ -101,6 +101,7 @@ const street = ref('')
 const houseNumber = ref('')
 const error: Ref<TranslationKey | null> = ref(null)
 const hasError = computed(() => Boolean(error.value))
+const isCompactTitle = computed(() => isTablet(window.innerWidth))
 const houseNumberIsSelected = ref(false)
 const inputsAreDisabled = ref(true)
 
@@ -276,19 +277,11 @@ onUnmounted(() => {
 }
 
 .street-input {
-  width: 60%;
-
-  @media @mq-from-tablet {
-    width: 70%;
-  }
+  width: 70%;
 }
 
 .house-number-input {
-  width: 40%;
-
-  @media @mq-from-tablet {
-    width: 30%;
-  }
+  width: 30%;
 }
 
 .form {
@@ -341,8 +334,11 @@ onUnmounted(() => {
   width: auto;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
+
+  @media @mq-from-tablet {
+    align-items: center;
+  }
 }
 
 .icon-btn {

@@ -3,7 +3,7 @@ export const nl = {
     title: 'Homepage van je Huis',
     subtitle: 'Ontdek het verleden en heden van je huis en de buurt.',
     streetInputPlaceHolder: 'Zoek een straatnaam',
-    houseNumberInputPlaceHolder: 'Huisnummer',
+    houseNumberInputPlaceHolder: 'Huisnr.',
     ariaSearchButton: 'Ga zoeken',
   },
   images: {
@@ -29,5 +29,12 @@ export const nl = {
     treeSpecies: 'Jouw buurt heeft {total} boomsoorten',
     seeWhere: 'Bekijk waar ze staan',
     seeWhichTreeSpecies: 'Bekijk welke boomsoorten',
+  },
+  error: {
+    notFound: 'Helaas! Deze pagina bestaat niet.',
+    backToHome: 'Terug naar Homepage',
+  },
+  calendarItem: {
+    goToLink: 'Naar Evenement',
   },
 }

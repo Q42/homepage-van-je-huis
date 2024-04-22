@@ -23,9 +23,10 @@
         class="side-panel-items side-panel-items--calendar"
       >
         <SharedCalendarItem
-          v-for="(calenderItem, index) in store.presentData.agenda"
+          v-for="(calenderItem, index) in temporaryMockCalendar"
           :key="index"
           :calendar-item="calenderItem"
+          :image-url="`/calendar-images/${calenderItem.Event_ID}.png`"
         />
       </div>
     </SharedSidePanel>
@@ -40,7 +41,7 @@
       :entries="entries"
     />
     <!-- TODO: accessibility -->
-    <div v-if="currentView === 'animated' || isOnTablet" class="tab-buttons">
+    <div v-if="currentView === 'animated' || isOnDesktopLg" class="tab-buttons">
       <SharedButton
         v-if="pastHasData"
         :active="pastOrPresent === 'past'"
@@ -68,6 +69,7 @@
       "
       :positions="getEntryPositions(entries)"
       :is-distance-view="pastOrPresent === 'present'"
+      :view="currentView"
     />
   </div>
 </template>
@@ -78,9 +80,10 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { getTranslationKey } from '@/translations'
 import { useAddressStore } from '@/store/addressStore'
 import { Entries } from '@/models/Entries'
+import { temporaryMockCalendar } from '@/components/shared/CalendarItem/temporaryMockCalendar'
 
 const innerWidth = useScreenWidth()
-const isOnTablet = computed(() => isTablet(innerWidth.value))
+const isOnDesktopLg = computed(() => isDesktopLg(innerWidth.value))
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -91,6 +94,11 @@ defineI18nRoute({
 })
 
 const { params, query } = useRoute()
+
+const pastHasData = computed(() => store.pastData?.timeline.length)
+const presentHasData = computed(() =>
+  store.presentData?.slider.some((entry) => entry.image),
+)
 
 const getViewFromQuery = () => {
   if (query.view === 'past' || query.view === 'present') {
@@ -107,7 +115,7 @@ const getViewFromQuery = () => {
 }
 
 const getCurrentModeFromQuery = () => {
-  if (isOnTablet.value) {
+  if (isOnDesktopLg.value) {
     return 'list'
   } else if (query.mode === 'animated' || query.mode === 'list') {
     return query.mode
@@ -116,13 +124,8 @@ const getCurrentModeFromQuery = () => {
   }
 }
 
-const pastHasData = computed(() => store.pastData?.timeline.length)
-const presentHasData = computed(() =>
-  store.presentData?.slider.some((entry) => entry.image),
-)
-
 const store = useAddressStore()
-const pastOrPresent: Ref<'present' | 'past'> = ref(getViewFromQuery())
+const pastOrPresent: Ref<'present' | 'past'> = ref('past')
 const currentView: Ref<'animated' | 'list'> = ref(getCurrentModeFromQuery())
 const router = useRouter()
 
@@ -137,15 +140,16 @@ const setView = async (elementId: string) => {
   })
 }
 
-onMounted(() => {
+onMounted(async () => {
   if (!store.pastData || !store.presentData) {
-    store.fetchAddressData(params.address as string)
+    await store.fetchAddressData(params.address as string)
   }
+  pastOrPresent.value = getViewFromQuery()
 })
 
 const setDataSet = (value: 'past' | 'present') => {
   pastOrPresent.value = value
-  window.scrollTo({ top: 0, behavior: 'smooth' })
+  window.scrollTo({ top: 0, behavior: 'instant' })
   router.push({ query: { view: value } })
 }
 
@@ -177,6 +181,8 @@ const currentDataSet = computed(() => {
   display: flex;
   flex-direction: column;
   gap: 80px;
+  padding: 0 20px;
+  align-items: center;
 }
 
 .tab-buttons {
