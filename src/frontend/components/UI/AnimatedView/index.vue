@@ -50,6 +50,7 @@
 
 <script setup lang="ts">
 import gsap from 'gsap'
+import debounce from 'lodash.debounce'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { DistanceViewAggregateEntry } from '../../../../common/apiSchema/present'
 import {
@@ -66,7 +67,6 @@ import { generateIds } from '@/utils/entries'
 import { useAddressStore } from '@/store/addressStore'
 import { referenceIds } from '@/config/referenceIds'
 import { config } from '@/config/config'
-import debounce from 'lodash.debounce'
 
 export interface AnimatedViewProps {
   entries: Entries
