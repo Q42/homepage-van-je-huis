@@ -5,7 +5,6 @@ For the Amsterdam 750 campaign, the idea is to give al residents of the city of 
 ## 🧰 External tooling
 
 - [trello](https://trello.com/b/AHRzG005/homepage-van-je-huis-dev)
-
 - [figma](https://www.figma.com/file/xENvvr5YeosgiLiVbdkKrd/Homepage-van-je-huis---Concept?type=design&node-id=1228-39993&mode=design&t=LxlNmGQXvJT4CRv3-0) (Ask Daniël Wortel from Fabrique for access)
 
 # Repository setup

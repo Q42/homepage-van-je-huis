@@ -1,0 +1,1 @@
+Het intellectuele eigendom van deze repo behoort toe aan Q42. Het doel is om deze repo uiteindelijk onder de EUPL-licentie open source te maken.
